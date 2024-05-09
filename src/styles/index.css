@@ -1,0 +1,170 @@
+:root {
+  --xv-xray-panel-header-height: 62px;
+  --xv-xray-panel-width: 468px;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+:root {
+  --nav-icon-width: 24px;
+  --nav-icon-height: 24px;
+  --music-color-background: #1f2222;
+  --music-color-headerBackground: #2b2b2b;
+  --music-color-containerBackground: #393939;
+  --music-color-base: #14191a;
+  --music-color-primary: white;
+  --music-color-secondary: black;
+  --music-color-inactive: #e0e0e0;
+  --music-color-secondaryNonTransparent: #0a0b0b;
+  --music-color-accent: #25d1da;
+  --hover-blue: #a8edf0;
+  --music-color-accentNonTransparent: #0e2f36;
+  --music-color-brand: #4400ff;
+  --music-color-error: #f43e21;
+  --music-color-errorNonTransparent: #2c1312;
+  --music-color-glass-primary-1: rgba(255, 255, 255, 0.05);
+  --music-color-glass-primary-2: rgba(255, 255, 255, 0.15);
+  --music-color-glass-primary-3: rgba(255, 255, 255, 0.3);
+  --music-color-glass-primary-4: rgba(255, 255, 255, 0.6);
+  --music-color-glass-primary-5: rgba(255, 255, 255, 0.75);
+  --music-color-glass-secondary-1: rgba(0, 0, 0, 0.05);
+  --music-color-glass-secondary-2: rgba(0, 0, 0, 0.15);
+  --music-color-glass-secondary-3: rgba(0, 0, 0, 0.3);
+  --music-color-glass-secondary-4: rgba(0, 0, 0, 0.6);
+  --music-color-glass-secondary-5: rgba(0, 0, 0, 0.75);
+  --music-color-glass-accent-1: rgba(37, 209, 218, 0.05);
+  --music-color-glass-accent-2: rgba(37, 209, 218, 0.15);
+  --music-color-glass-accent-3: rgba(37, 209, 218, 0.3);
+  --music-color-glass-accent-4: rgba(37, 209, 218, 0.6);
+  --music-color-glass-accent-5: rgba(37, 209, 218, 0.75);
+  --music-color-glass-error-1: rgba(244, 62, 33, 0.05);
+  --music-color-glass-error-2: rgba(244, 62, 33, 0.15);
+  --music-color-glass-error-3: rgba(244, 62, 33, 0.3);
+  --music-color-glass-error-4: rgba(244, 62, 33, 0.6);
+  --music-color-glass-error-5: rgba(244, 62, 33, 0.75);
+  --music-tier-color-unlimited: #4400ff;
+  --music-tier-color-prime: #00a8e1;
+  --music-tier-color-HD: #ffdf00;
+  --music-spacer-nano: 2px;
+  --music-spacer-micro: 4px;
+  --music-spacer-mini: 8px;
+  --music-spacer-small: 12px;
+  --music-spacer-base: 16px;
+  --music-spacer-medium: 20px;
+  --music-spacer-large: 24px;
+  --music-spacer-huge: 32px;
+  --music-spacer-giant: 36px;
+  --music-spacer-epic: 48px;
+  --music-corner-radius-tiny: 2px;
+  --music-corner-radius-small: 4px;
+  --music-corner-radius-medium: 8px;
+  --music-corner-radius-large: 16px;
+  --music-corner-radius-huge: 20px;
+  --music-corner-radius-giant: 24px;
+  --music-corner-radius-max: 50%;
+  color: var(--music-color-primary);
+}
+.hydrated {
+  visibility: inherit;
+}
+
+injected stylesheet :host,
+:root {
+  --rem: 16;
+}
+html,
+body {
+  height: 100%;
+}
+html {
+  width: 100%;
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html {
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+}
+html {
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+user agent stylesheet [dir='ltr' i] {
+  unicode-bidi: isolate;
+}
+user agent stylesheet :root {
+  view-transition-name: root;
+}
+user agent stylesheet html {
+  display: block;
+}
+::-webkit-scrollbar {
+  z-index: 100;
+  width: 8px;
+}
+::-webkit-scrollbar {
+  z-index: 100;
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  z-index: 101;
+  background: var(--music-color-glass-primary-3);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  z-index: 101;
+  background: var(--music-color-glass-primary-3);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--music-color-glass-secondary-4);
+}
+::-webkit-scrollbar-track {
+  background: var(--music-color-glass-secondary-4);
+}
+
+.regular-font,
+body,
+.dp-tertiary,
+:root .music-dp-teriary-text,
+.tertiary-text,
+:root .music-tertiary-text,
+.secondary-text,
+:root .music-secondary-text,
+.primary-text,
+:root .music-primary-text {
+  font-family: 'Ember', 'Helvetica', 'Arial', 'sans-serif';
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  -webkit-user-drag: none;
+  -ms-content-zooming: none;
+  word-wrap: break-word;
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  text-size-adjust: none;
+}
