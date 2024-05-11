@@ -65,15 +65,12 @@ html {
   --music-corner-radius-giant: 24px;
   --music-corner-radius-max: 50%;
   color: var(--music-color-primary);
+  font-size: 16px;
 }
 .hydrated {
   visibility: inherit;
 }
 
-injected stylesheet :host,
-:root {
-  --rem: 16;
-}
 html,
 body {
   height: 100%;
