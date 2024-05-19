@@ -14,7 +14,7 @@ const Logo = (props) => (
     <text
       x='10' // Adjusted x position
       y='50' // Adjusted y position
-      fontFamily='Ember, Helvetica, Arial, sans-serif'
+      fontFamily='Georgia'
       fontSize={48}
       fontWeight={800}
       fill='#ffffff'
@@ -33,7 +33,7 @@ const Logo = (props) => (
     <text
       x='230' // Adjusted x position
       y='50' // Adjusted y position
-      fontFamily='Arial, sans-serif'
+      fontFamily='Georgia'
       fontSize={48}
       fontWeight={800}
       fill='#ffffff'

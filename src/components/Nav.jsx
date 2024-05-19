@@ -6,12 +6,22 @@ import WhatshotIcon from '@mui/icons-material/Whatshot';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import SearchIcon from '@mui/icons-material/Search';
 
+import CancelIcon from '@mui/icons-material/Cancel';
 const Nav = () => {
-  // const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // const handleOpen = () => {};
+  const clearSearchQuery = (event) => {
+    event.preventDefault();
+    setSearchQuery('');
+  };
 
-  // const handleBlur = () => {};
+  const handleSearchQueryInput = (event) => {
+    event.preventDefault();
+    setSearchQuery(event.target.value);
+  };
+
+  console.log('search value ', searchQuery);
+
   return (
     <nav className='nav'>
       <ul>
@@ -52,12 +62,28 @@ const Nav = () => {
               type='search'
               id='search'
               placeholder='Search'
+              value={searchQuery}
+              onChange={handleSearchQueryInput}
             />
-            {/* <button className='search-icon-button'>
-              <SearchIcon style={{ color: '#0000004d' }} />
-            </button> */}
+            <button
+              className='search-icon-button'
+              onClick={(event) => {
+                event.preventDefault();
+              }}
+            >
+              <SearchIcon />
+            </button>
+
+            {searchQuery ? (
+              <button className='cancel-search' onClick={clearSearchQuery}>
+                <CancelIcon />
+              </button>
+            ) : null}
           </form>
         </div>
+        <button className='sign-in'>
+          <a>sign in</a>
+        </button>
       </ul>
     </nav>
   );
