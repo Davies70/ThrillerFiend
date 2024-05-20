@@ -164,4 +164,8 @@ body {
   -moz-text-size-adjust: none;
   -ms-text-size-adjust: none;
   text-size-adjust: none;
+  padding: 0;
+  margin: 0;
+  background: linear-gradient(to bottom, black, rgb(31, 34, 34));
+  color: red;
 }
