@@ -10,62 +10,13 @@ html {
 :root {
   --nav-icon-width: 24px;
   --nav-icon-height: 24px;
-  --music-color-background: #1f2222;
-  --music-color-headerBackground: #2b2b2b;
-  --music-color-containerBackground: #393939;
-  --music-color-base: #14191a;
-  --music-color-primary: white;
-  --music-color-secondary: black;
-  --music-color-inactive: #e0e0e0;
-  --music-color-secondaryNonTransparent: #0a0b0b;
-  --music-color-accent: #25d1da;
   --hover-blue: #a8edf0;
-  --music-color-accentNonTransparent: #0e2f36;
-  --music-color-brand: #4400ff;
-  --music-color-error: #f43e21;
-  --music-color-errorNonTransparent: #2c1312;
-  --music-color-glass-primary-1: rgba(255, 255, 255, 0.05);
-  --music-color-glass-primary-2: rgba(255, 255, 255, 0.15);
-  --music-color-glass-primary-3: rgba(255, 255, 255, 0.3);
-  --music-color-glass-primary-4: rgba(255, 255, 255, 0.6);
-  --music-color-glass-primary-5: rgba(255, 255, 255, 0.75);
-  --music-color-glass-secondary-1: rgba(0, 0, 0, 0.05);
-  --music-color-glass-secondary-2: rgba(0, 0, 0, 0.15);
-  --music-color-glass-secondary-3: rgba(0, 0, 0, 0.3);
-  --music-color-glass-secondary-4: rgba(0, 0, 0, 0.6);
-  --music-color-glass-secondary-5: rgba(0, 0, 0, 0.75);
-  --music-color-glass-accent-1: rgba(37, 209, 218, 0.05);
-  --music-color-glass-accent-2: rgba(37, 209, 218, 0.15);
-  --music-color-glass-accent-3: rgba(37, 209, 218, 0.3);
-  --music-color-glass-accent-4: rgba(37, 209, 218, 0.6);
-  --music-color-glass-accent-5: rgba(37, 209, 218, 0.75);
-  --music-color-glass-error-1: rgba(244, 62, 33, 0.05);
-  --music-color-glass-error-2: rgba(244, 62, 33, 0.15);
-  --music-color-glass-error-3: rgba(244, 62, 33, 0.3);
-  --music-color-glass-error-4: rgba(244, 62, 33, 0.6);
-  --music-color-glass-error-5: rgba(244, 62, 33, 0.75);
-  --music-tier-color-unlimited: #4400ff;
-  --music-tier-color-prime: #00a8e1;
-  --music-tier-color-HD: #ffdf00;
-  --music-spacer-nano: 2px;
-  --music-spacer-micro: 4px;
-  --music-spacer-mini: 8px;
-  --music-spacer-small: 12px;
-  --music-spacer-base: 16px;
-  --music-spacer-medium: 20px;
-  --music-spacer-large: 24px;
-  --music-spacer-huge: 32px;
-  --music-spacer-giant: 36px;
-  --music-spacer-epic: 48px;
-  --music-corner-radius-tiny: 2px;
-  --music-corner-radius-small: 4px;
-  --music-corner-radius-medium: 8px;
-  --music-corner-radius-large: 16px;
-  --music-corner-radius-huge: 20px;
-  --music-corner-radius-giant: 24px;
-  --music-corner-radius-max: 50%;
-  color: var(--music-color-primary);
+  --primary-color: white;
+  color: var(--primary-color);
   font-size: 16px;
+  --light-gray-1: rgba(255, 255, 255, 0.3);
+  --gray-1: rgba(0, 0, 0, 0.3);
+  --gray-2: rgba(0, 0, 0, 0.6);
 }
 .hydrated {
   visibility: inherit;
@@ -111,37 +62,25 @@ user agent stylesheet html {
   z-index: 100;
   width: 8px;
 }
-::-webkit-scrollbar {
-  z-index: 100;
-  width: 8px;
-}
+
 ::-webkit-scrollbar-thumb {
   z-index: 101;
-  background: var(--music-color-glass-primary-3);
+  background: var(--light-gray-1);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb {
   z-index: 101;
-  background: var(--music-color-glass-primary-3);
+  background: var(--light-gray-1);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--music-color-glass-secondary-4);
+  background: var(--gray-1);
 }
 ::-webkit-scrollbar-track {
-  background: var(--music-color-glass-secondary-4);
+  background: var(--gray-2);
 }
 
-.regular-font,
-body,
-.dp-tertiary,
-:root .music-dp-teriary-text,
-.tertiary-text,
-:root .music-tertiary-text,
-.secondary-text,
-:root .music-secondary-text,
-.primary-text,
-:root .music-primary-text {
+body {
   font-family: 'Ember', 'Helvetica', 'Arial', 'sans-serif';
 }
 
@@ -167,5 +106,5 @@ body {
   padding: 0;
   margin: 0;
   background: linear-gradient(to bottom, black, rgb(31, 34, 34));
-  color: red;
+  font-family: 'Ember', 'Helvetica', 'Arial', 'sans-serif';
 }

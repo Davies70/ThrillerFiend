@@ -1,0 +1,9 @@
+.hot-authors {
+  
+  display: flex;
+  color: #fff;
+  height: 45vh;
+  line-height: 18.4px;
+  padding: 24px 0px 12px;
+  flex-direction: column;
+}

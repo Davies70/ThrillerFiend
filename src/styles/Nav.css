@@ -161,7 +161,7 @@
 }
 
 .search-form:focus-within > .cancel-search:hover {
-  color: #a8edf0;
+  color: --hover-blue;
 }
 
 .search-form:focus-within > .cancel-search-disable {
@@ -219,12 +219,19 @@ input {
   border-width: 1.6px;
   justify-content: center;
   align-items: center;
-  font-size: 13.5px;
-  width: 79px;
+  font-size: 90%;
+  width: 5vw;
   height: 39px;
   text-align: center;
   line-height: 20px;
   text-transform: capitalize;
   margin-right: 10px;
   cursor: pointer;
+  padding: 0px 0px;
+  /* flex-shrink: 0; */
+}
+
+.sign-in:hover {
+  transform: scale(1.05);
+  background-color: var(--hover-blue);
 }

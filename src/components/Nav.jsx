@@ -20,8 +20,6 @@ const Nav = () => {
     setSearchQuery(event.target.value);
   };
 
-  console.log('search value ', searchQuery);
-
   return (
     <nav className='nav'>
       <ul>
@@ -82,7 +80,9 @@ const Nav = () => {
           </form>
         </div>
         <button className='sign-in'>
-          <a>sign in</a>
+          <a>
+            <span>sign in</span>
+          </a>
         </button>
       </ul>
     </nav>

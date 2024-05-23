@@ -1,5 +1,5 @@
 import Layout from './components/Layout';
-import HotThrills from './components/HotThrills';
+import HotThrills from './components/sections/HotAuthors';
 import './styles/App.css';
 
 function App() {
