@@ -15,6 +15,7 @@ html {
   color: var(--primary-color);
   font-size: 16px;
   --light-gray-1: rgba(255, 255, 255, 0.3);
+  --light-gray-2: rgba(255, 255, 255, 0.15);
   --gray-1: rgba(0, 0, 0, 0.3);
   --gray-2: rgba(0, 0, 0, 0.6);
 }
@@ -48,16 +49,9 @@ html {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+  visibility: inherit;
 }
-user agent stylesheet [dir='ltr' i] {
-  unicode-bidi: isolate;
-}
-user agent stylesheet :root {
-  view-transition-name: root;
-}
-user agent stylesheet html {
-  display: block;
-}
+
 ::-webkit-scrollbar {
   z-index: 100;
   width: 8px;
@@ -107,4 +101,5 @@ body {
   margin: 0;
   background: linear-gradient(to bottom, black, rgb(31, 34, 34));
   font-family: 'Ember', 'Helvetica', 'Arial', 'sans-serif';
+  transition: all 0.15s ease 0s;
 }

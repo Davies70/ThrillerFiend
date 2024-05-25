@@ -6,6 +6,8 @@
   box-sizing: border-box;
   margin: 0px;
   min-height: 1px;
+  scrollbar-width: none;
+  
 }
 
 @media (pointer: fine) and (min-width: 1024px) {
@@ -75,5 +77,6 @@
 }
 
 .wrapper {
-  position: relative;
+  display: flex;
+  height: 100%;
 }
