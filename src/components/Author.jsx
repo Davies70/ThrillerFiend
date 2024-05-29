@@ -10,14 +10,14 @@ const Author = ({ authorName, coverPhoto }) => {
         <div className='imageWrapper'>
           <img src={coverPhoto} loading='lazy' alt={authorName} />
         </div>
-        <div className='bg'>
+        <a className='bg'>
           <button className='left-button' tabIndex='-1'>
             <ArrowCircleRightOutlinedIcon />
           </button>
           <button className='right-button'>
             <MoreHorizOutlinedIcon />
           </button>
-        </div>
+        </a>
 
         <div className='tag'>
           <a className='taglink'>{authorName}</a>

@@ -1,12 +1,12 @@
 import Layout from './components/Layout';
-import HotThrills from './components/sections/HotAuthors';
+import HotAuthors from './components/sections/HotAuthors';
 import './styles/App.css';
 
 function App() {
   return (
     <>
       <Layout>
-        <HotThrills />
+        <HotAuthors />
       </Layout>
     </>
   );

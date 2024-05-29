@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-const Logo = (props) => (
+const LogoSmall = (props) => (
   <svg
-    viewBox='0 0 400 100' // Adjusted viewBox to fit the content
+    viewBox='0 0 600 150' // Adjusted viewBox height to fit the content
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
     {...props}
@@ -23,17 +23,17 @@ const Logo = (props) => (
 
     {/* Polygon */}
     <polygon
-      points='180,20 240,60 220,60 230,80 170,40 200,40' // Adjusted points to make it larger
-      fill='#ff0000' // Changed fill color
-      opacity='0.3' // Reduced opacity to make it flashy
+      points='90,70 150,110 130,110 140,130 80,90 110,90' // Adjusted points to make it fit the column design
+      fill='#ff0000'
+      opacity='0.3'
     />
 
     {/* Text "Fiend" */}
     <text
-      x='230' // Adjusted x position
-      y='50' // Adjusted y position
+      x='10' // Adjusted x position
+      y='130' // Adjusted y position to be below "Thriller"
       fontFamily='Georgia'
-      fontSize={48}
+      fontSize={30}
       fontWeight={300}
       fill='#ffffff'
     >
@@ -42,4 +42,4 @@ const Logo = (props) => (
   </svg>
 );
 
-export default Logo;
+export default LogoSmall;

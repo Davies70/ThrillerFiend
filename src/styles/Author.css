@@ -5,7 +5,6 @@
   flex-direction: column;
   height: 100%;
   opacity: 1;
-  /* border: 5px solid red; */
 }
 
 .card-content {
@@ -62,6 +61,7 @@
 
 .card-content a {
   text-decoration: none;
+  cursor: pointer;
 }
 
 .bg {

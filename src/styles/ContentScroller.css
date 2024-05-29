@@ -7,31 +7,7 @@
   margin: 0px;
   min-height: 1px;
   scrollbar-width: none;
-  
-}
-
-@media (pointer: fine) and (min-width: 1024px) {
-  .content-scroll {
-    width: calc(100% - 12px);
-  }
-}
-
-@media (pointer: fine) and (min-width: 840px) {
-  .content-scroll {
-    width: calc(100% - 12px);
-  }
-}
-
-@media (pointer: fine) and (min-width: 640px) {
-  .content-scroll {
-    width: calc(100% - 12px);
-  }
-}
-
-@media (pointer: fine) and (min-width: 360px) {
-  .content-scroll {
-    width: calc(100% - 4px);
-  }
+  scroll-behavior: smooth;
 }
 
 @media (pointer: fine) and (min-width: 0) {
@@ -39,22 +15,41 @@
     width: calc(100% - 4px);
   }
 }
-
-@media (min-width: 1024px) {
+@media (pointer: fine) and (min-width: 360px) {
   .content-scroll {
-    padding-inline: 36px;
+    width: calc(100% - 4px);
+  }
+}
+@media (pointer: fine) and (min-width: 640px) {
+  .content-scroll {
+    width: calc(100% - 12px);
+  }
+}
+@media (pointer: fine) and (min-width: 840px) {
+  .content-scroll {
+    width: calc(100% - 12px);
+  }
+}
+@media (pointer: fine) and (min-width: 1024px) {
+  .content-scroll {
+    width: calc(100% - 12px);
   }
 }
 
-@media (min-width: 840px) {
+@media (pointer: fine) and (min-width: 1440px) {
   .content-scroll {
-    padding-inline: 36px;
+    width: calc(100% - 20px);
   }
 }
 
-@media (min-width: 640px) {
+@media (min-width: 0) {
   .content-scroll {
-    padding-inline: 36px;
+    padding-inline: 20px;
+  }
+}
+@media (min-width: 360px) {
+  .content-scroll {
+    padding-inline: 20px;
   }
 }
 
@@ -63,16 +58,30 @@
     padding-inline: 36px;
   }
 }
-
-@media (min-width: 360px) {
+@media (min-width: 640px) {
+  .content-scroll {
+    padding-inline: 36px;
+  }
+}
+@media (min-width: 840px) {
+  .content-scroll {
+    padding-inline: 36px;
+  }
+}
+@media (min-width: 1024px) {
   .content-scroll {
     padding-inline: 36px;
   }
 }
 
-@media (min-width: 0) {
+@media (min-width: 1280px) {
   .content-scroll {
-    padding-inline: 20px;
+    padding-inline: 52px;
+  }
+}
+@media (min-width: 1440px) {
+  .content-scroll {
+    padding-inline: 52px;
   }
 }
 
