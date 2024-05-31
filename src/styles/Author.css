@@ -3,25 +3,24 @@
   padding-bottom: 4px;
   display: flex;
   flex-direction: column;
-  height: 100%;
   opacity: 1;
 }
 
 .card-content {
-  display: flex;
-  flex-direction: column;
+  /* display: flex; */
+  /* flex-direction: column; */
   overflow: hidden;
   position: relative;
 }
 
 .imageWrapper {
-  height: 167px;
-  width: 167px;
-  display: flex;
+  /* display: flex; */
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
+  width: 100%;
+  padding-top: 100%;
 }
 
 .imageWrapper img {
@@ -31,11 +30,16 @@
   height: 100%;
   transition: opacity 0.2s ease 0s;
   display: block;
-  width: 100%;
-  display: flex;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
   overflow: hidden;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* .imageWrapper img:hover {
@@ -73,8 +77,8 @@
   position: absolute;
   inset-inline-start: 0px;
   top: 0px;
-  height: 167px;
-  width: 167px;
+  height: 100%;
+  width: 100%;
 }
 
 .imageWrapper:hover + .bg,

@@ -9,16 +9,15 @@ const Author = ({ authorName, coverPhoto }) => {
       <div className='card-content'>
         <div className='imageWrapper'>
           <img src={coverPhoto} loading='lazy' alt={authorName} />
+          <a className='bg'>
+            <button className='left-button' tabIndex='-1'>
+              <ArrowCircleRightOutlinedIcon />
+            </button>
+            <button className='right-button'>
+              <MoreHorizOutlinedIcon />
+            </button>
+          </a>
         </div>
-        <a className='bg'>
-          <button className='left-button' tabIndex='-1'>
-            <ArrowCircleRightOutlinedIcon />
-          </button>
-          <button className='right-button'>
-            <MoreHorizOutlinedIcon />
-          </button>
-        </a>
-
         <div className='tag'>
           <a className='taglink'>{authorName}</a>
         </div>
