@@ -2,7 +2,7 @@ import * as React from 'react';
 
 const Logo = (props) => (
   <svg
-    viewBox='0 0 400 100' // Adjusted viewBox to fit the content
+    viewBox='0 0 400 70' // Adjusted viewBox to fit the content
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
     {...props}
@@ -11,10 +11,10 @@ const Logo = (props) => (
 
     {/* Text "Thriller" */}
     <text
-      x='10' // Adjusted x position
+      x='0' // Adjusted x position
       y='50' // Adjusted y position
-      fontFamily='Georgia'
-      fontSize={48}
+      fontFamily='Nosifer, sans-serif'
+      fontSize={38}
       fontWeight={800}
       fill='#ffffff'
     >
@@ -30,11 +30,11 @@ const Logo = (props) => (
 
     {/* Text "Fiend" */}
     <text
-      x='230' // Adjusted x position
-      y='50' // Adjusted y position
-      fontFamily='Georgia'
-      fontSize={48}
-      fontWeight={300}
+      x='270' // Adjusted x position
+      y='60' // Adjusted y position
+      fontFamily='Creepster, system-ui'
+      fontSize={45}
+      fontWeight={100}
       fill='#ffffff'
     >
       {'Fiend'}

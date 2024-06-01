@@ -6,8 +6,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import SearchIcon from '@mui/icons-material/Search';
-
 import CancelIcon from '@mui/icons-material/Cancel';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 const Nav = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -48,6 +48,9 @@ const Nav = () => {
           </span>
           <span className='nav-text'>Collections</span>
         </a>
+        <button className='search-icon-small'>
+          <SearchIcon />
+        </button>
         <div className='search-container'>
           <form className='search-form'>
             <input
@@ -79,6 +82,9 @@ const Nav = () => {
           <a>
             <span>sign in</span>
           </a>
+        </button>
+        <button className='profile'>
+          <AccountCircleIcon />
         </button>
       </ul>
     </nav>

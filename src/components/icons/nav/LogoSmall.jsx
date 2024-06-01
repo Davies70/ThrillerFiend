@@ -2,7 +2,7 @@ import * as React from 'react';
 
 const LogoSmall = (props) => (
   <svg
-    viewBox='0 0 600 150' // Adjusted viewBox height to fit the content
+    viewBox='10 0 200 135' // Adjusted viewBox width to fit the content
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
     {...props}
@@ -13,9 +13,9 @@ const LogoSmall = (props) => (
     <text
       x='10' // Adjusted x position
       y='50' // Adjusted y position
-      fontFamily='Georgia'
-      fontSize={48}
-      fontWeight={800}
+      fontFamily='Nosifer, sans-serif'
+      fontSize={25}
+      fontWeight={300}
       fill='#ffffff'
     >
       {'Thriller'}
@@ -23,18 +23,18 @@ const LogoSmall = (props) => (
 
     {/* Polygon */}
     <polygon
-      points='90,70 150,110 130,110 140,130 80,90 110,90' // Adjusted points to make it fit the column design
+      points='15,30 75,70 55,70 65,90 5,50 35,50' // Adjusted points to overlap with "Thriller"
       fill='#ff0000'
       opacity='0.3'
     />
 
     {/* Text "Fiend" */}
     <text
-      x='10' // Adjusted x position
-      y='130' // Adjusted y position to be below "Thriller"
-      fontFamily='Georgia'
-      fontSize={30}
-      fontWeight={300}
+      x='55' // Adjusted x position
+      y='100' // Adjusted y position to be below "Thriller"
+      fontFamily='Creepster, system-ui'
+      fontSize={35}
+      fontWeight={400}
       fill='#ffffff'
     >
       {'Fiend'}

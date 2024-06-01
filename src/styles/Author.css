@@ -48,21 +48,6 @@
   cursor: pointer;
 } */
 
-/* .imageWrapper .left-button {
-  padding: 14px;
-  position: absolute;
-  padding-inline-start: 16px;
-  background-color: var(--light-gray-2);
-  color: white;
-  border: 2px solid transparent;
-  box-shadow: none;
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-} */
-
 .card-content a {
   text-decoration: none;
   cursor: pointer;
@@ -81,22 +66,61 @@
   width: 100%;
 }
 
-.imageWrapper:hover + .bg,
+.imageWrapper:hover .bg,
 .bg:hover {
   background: rgba(0, 0, 0, 0.7);
   opacity: 1;
 }
 
+.bg .left-button {
+  padding: 14px;
+  position: absolute;
+  padding-inline-start: 16px;
+  background-color: var(--light-gray-2);
+  color: white;
+  border: 2px solid transparent;
+  box-shadow: none;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.bg .left-button:hover {
+  background-color: var(--light-gray-1);
+  transform: scale(1.2);
+}
+
+.bg .right-button {
+  color: white;
+  border: 0px;
+  box-shadow: none;
+  backdrop-filter: blur(10px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inset-inline-end: 0px;
+  white-space: nowrap;
+  position: absolute;
+  background-color: transparent;
+  font-weight: bold;
+}
+
 @media (pointer: fine) {
-  .imageWrapper .left-button {
+  .bg .left-button {
     font-size: 16px;
     line-height: 20px;
   }
 }
 
-.imageWrapper .right-button {
+.bg .right-button {
   position: absolute;
   right: 10px;
+}
+
+.bg .right-button:hover {
+  color: var(--hover-blue);
 }
 
 @media (min-width: 0) {
