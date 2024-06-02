@@ -2,7 +2,7 @@ import * as React from 'react';
 
 const Logo = (props) => (
   <svg
-    viewBox='0 0 400 70' // Adjusted viewBox to fit the content
+    viewBox='0 0 400 85' // Adjusted viewBox to fit the content
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
     {...props}

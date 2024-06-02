@@ -31,7 +31,7 @@ const Nav = () => {
           <LogoSmall />
         </a>
         <a className='nav-link'>
-          <span id='nav-icon'>
+          <span id='nav-icon home-icon'>
             <HomeIcon />
           </span>
           <span className='nav-text'> Home</span>
@@ -46,7 +46,7 @@ const Nav = () => {
           <span id='nav-icon'>
             <LibraryBooksIcon />
           </span>
-          <span className='nav-text'>Collections</span>
+          <span className='nav-text home-icon'>Collections</span>
         </a>
         <button className='search-icon-small'>
           <SearchIcon />
@@ -78,11 +78,11 @@ const Nav = () => {
             ) : null}
           </form>
         </div>
-        <button className='sign-in'>
-          <a>
+        <li className='sign-in-wrapper'>
+          <button className='sign-in'>
             <span>sign in</span>
-          </a>
-        </button>
+          </button>
+        </li>
         <button className='profile'>
           <AccountCircleIcon />
         </button>
