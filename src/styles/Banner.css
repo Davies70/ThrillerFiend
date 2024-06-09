@@ -1,0 +1,81 @@
+.bg-container {
+  position: relative;
+  display: block;
+  padding: 24px 0;
+  width: 100%;
+  visibility: inherit;
+}
+
+.bg-banner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.banner-img {
+  cursor: pointer;
+  display: block;
+  object-fit: scale-down;
+  border-radius: 8px;
+  align-self: flex-start;
+  background: url(https://github.com/supahfunk/gradientwaves-svg/blob/master/dist/img/bg-gradient-wave.png?raw=true)
+    repeat center / cover;
+}
+
+@media (min-width: 0) {
+  .bg-container {
+    padding-inline: calc(20px);
+  }
+  .banner-img {
+    min-width: calc(66.6667% - 6.66667px);
+  }
+}
+
+@media (min-width: 360px) {
+  .bg-container {
+    padding-inline: calc(20px);
+  }
+}
+
+@media (min-width: 480px) {
+  .bg-container {
+    padding-inline: calc(36px);
+  }
+  .banner-img {
+    min-width: calc(100%);
+  }
+}
+
+@media (min-width: 640px) {
+  .bg-container {
+    padding-inline: calc(36px);
+  }
+}
+
+@media (min-width: 840px) {
+  .bg-container {
+    padding-inline: calc(36px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .bg-container {
+    padding-inline: calc(36px);
+  }
+  .banner-img {
+    min-width: calc(90% - 4px);
+  }
+}
+
+@media (min-width: 1280px) {
+  .bg-container {
+    padding-inline: calc(52px);
+  }
+}
+
+@media (min-width: 1440px) {
+  .bg-container {
+    padding-inline: calc(52px);
+  }
+}

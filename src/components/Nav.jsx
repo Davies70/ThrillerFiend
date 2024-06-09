@@ -15,8 +15,6 @@ const Nav = () => {
 
   const inputRef = useRef(null);
 
-  console.log(showSearchContainer);
-
   const clearSearchQuery = (event) => {
     event.preventDefault();
     setSearchQuery('');
