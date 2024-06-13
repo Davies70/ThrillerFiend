@@ -1,12 +1,11 @@
 import React, { useRef } from 'react';
-import '../../styles/Section.css';
 import Header from '../Header';
 import ContentScroller from '../ContentScroller';
-import authors from '../../api/authors';
+import books from '../../api/books';
 
-const HotAuthors = () => {
+const HotBooks = () => {
   const contentScrollRef = useRef();
-  const shape = 'circle';
+  const shape = 'square';
   const handleScrollerX = (direction) => {
     const scrollBarWidth = 8;
     const scrollWidth = window.innerWidth - scrollBarWidth;
@@ -21,15 +20,15 @@ const HotAuthors = () => {
       <Header
         handleScrollerX={handleScrollerX}
         contentScrollRef={contentScrollRef}
-        headerText='Hot Authors'
+        headerText='Thrills of the Week'
       />
       <ContentScroller
         contentScrollRef={contentScrollRef}
-        data={authors}
         shape={shape}
+        data={books}
       />
     </section>
   );
 };
 
-export default HotAuthors;
+export default HotBooks;

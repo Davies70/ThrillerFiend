@@ -11,11 +11,12 @@
   display: flex;
   justify-content: center;
   position: relative;
+  border-radius: 8px;
 }
 
 .banner-img {
   cursor: pointer;
-  display: block;
+  display: flex;
   object-fit: scale-down;
   border-radius: 8px;
   align-self: flex-start;
@@ -71,6 +72,9 @@
 @media (min-width: 1280px) {
   .bg-container {
     padding-inline: calc(52px);
+  }
+  .banner-img {
+    min-width: calc(66.6667% - 6.66667px);
   }
 }
 

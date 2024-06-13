@@ -1,4 +1,4 @@
-export const books = {
+const books = {
   kind: 'books#volumes',
   totalItems: 200,
   items: [
@@ -9,7 +9,7 @@ export const books = {
       selfLink: 'https://www.googleapis.com/books/v1/volumes/3Vi2uQAACAAJ',
       volumeInfo: {
         title: 'The Da Vinci Code',
-        authors: ['Dan Brown'],
+        authors: ['Dan Brown', 'Daniel Gerroll', 'Paul Michael'],
         publishedDate: '2004',
         description:
           'A murder in the silent, late night halls of the Louvre reveals a sinister plot to uncover a secret that has been protected by a clandestine society since the days of Christ. The victim is a high­ranking agent of this ancient society who, in the moments before his death, manages to leave gruesome clues at the scene that only his cryptographer daughter and her symbologist friend can untangle. The duo become both suspects and detectives searching not only for the murderer, but also the stunning secret he was charged to protect.',
@@ -721,3 +721,4 @@ export const books = {
     },
   ],
 };
+export default books.items;

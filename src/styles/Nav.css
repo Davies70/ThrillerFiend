@@ -1,6 +1,6 @@
 /* Navigation Styles */
 .nav {
-  background-color: #0a0b0b;
+  background-color: rgba(0, 0, 0, 0);
   backdrop-filter: blur(30px);
   color: #fff;
   width: 100%;
@@ -14,6 +14,9 @@
   inset-inline-start: 0;
   inset-inline-end: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  max-width: 1600px;
+  min-width: 320px;
+  flex: 1 1 0%;
 }
 
 /* Navigation List Styles */
@@ -314,7 +317,7 @@ input {
   padding-inline-start: 24px;
   border-radius: 0;
   background-color: inherit;
-  
+
   outline: none;
   margin-inline-end: 0;
 }

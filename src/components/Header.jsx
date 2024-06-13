@@ -4,11 +4,11 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import '../styles/Header.css';
 import PropTypes from 'prop-types';
 
-const Header = ({ handleScrollerX }) => {
+const Header = ({ handleScrollerX, headerText }) => {
   return (
     <header>
       <div className='header-text'>
-        <h2>Hot Authors</h2>
+        <h2>{headerText}</h2>
       </div>
       <div className='controls'>
         <button className='arrow' onClick={() => handleScrollerX('right')}>
@@ -27,6 +27,7 @@ const Header = ({ handleScrollerX }) => {
 
 Header.propTypes = {
   handleScrollerX: PropTypes.func,
+  headerText: PropTypes.string,
 };
 
 export default Header;

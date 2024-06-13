@@ -1,3 +1,5 @@
 #content {
   margin-top: 72px;
+  display: block;
+  unicode-bidi: isolate;
 }

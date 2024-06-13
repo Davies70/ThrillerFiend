@@ -25,7 +25,7 @@
 
 .imageWrapper img {
   background-size: contain;
-  border-radius: 50%;
+  /* border-radius: 50%; */
   width: 100%;
   height: 100%;
   transition: opacity 0.2s ease 0s;
@@ -40,6 +40,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.circle {
+  border-radius: 50%;
+}
+
+.square {
+  border-radius: 8px;
 }
 
 /* .imageWrapper img:hover {
@@ -58,7 +66,7 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  border-radius: 50%;
+  background-color: transparent;
   position: absolute;
   inset-inline-start: 0px;
   top: 0px;
@@ -73,6 +81,23 @@
 }
 
 .bg .left-button {
+  color: white;
+  border: 0px;
+  box-shadow: none;
+  backdrop-filter: blur(10px);
+  display: inline-flex;
+  inset-inline-start: 0px;
+  position: absolute;
+  background-color: transparent;
+  font-weight: bold;
+  top: 45%;
+  left: 15px;
+}
+
+.bg .left-button:hover {
+  color: var(--hover-blue);
+}
+.bg .center-button {
   padding: 14px;
   position: absolute;
   padding-inline-start: 16px;
@@ -87,7 +112,7 @@
   border-radius: 50%;
 }
 
-.bg .left-button:hover {
+.bg .center-button:hover {
   background-color: var(--light-gray-1);
   transform: scale(1.2);
 }
@@ -108,7 +133,7 @@
 }
 
 @media (pointer: fine) {
-  .bg .left-button {
+  .bg .center-button {
     font-size: 16px;
     line-height: 20px;
   }
@@ -220,6 +245,7 @@
   contain: content;
   overflow: hidden;
   margin-top: 8px;
+  font-size: 15px;
 }
 
 .taglink {
@@ -228,4 +254,35 @@
   white-space: nowrap;
   padding-inline-end: 10px;
   text-decoration: none;
+}
+
+.taglink:hover {
+  color: var(--hover-blue);
+}
+
+.primary-tag {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+  contain: content;
+  overflow: hidden;
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+.primary-tag:first-child {
+  line-height: 26px;
+}
+
+.secondary-tag {
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-inline-end: 10px;
+  line-height: 16px;
+  font-size: 13px;
+  max-width: 100%;
 }
