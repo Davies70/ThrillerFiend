@@ -1,20 +1,27 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Header from '../Header';
 import ContentScroller from '../ContentScroller';
 import books from '../../api/books';
 
 const HotBooks = () => {
   const contentScrollRef = useRef();
+  const [moreRight, setMoreRight] = useState(false);
+
   const shape = 'square';
+
   const handleScrollerX = (direction) => {
-    const scrollBarWidth = 8;
-    const scrollWidth = window.innerWidth - scrollBarWidth;
-    if (direction === 'left') {
-      contentScrollRef.current.scrollLeft += scrollWidth;
+    if (direction === 'right') {
+      contentScrollRef.current.scrollLeft +=
+        contentScrollRef.current.clientWidth;
     } else {
-      contentScrollRef.current.scrollLeft -= scrollWidth;
+      contentScrollRef.current.scrollLeft -=
+        contentScrollRef.current.clientWidth;
+      contentScrollRef.current.scrollLeft === 0
+        ? setMoreRight(true)
+        : setMoreRight(false);
     }
   };
+  console.log(moreRight);
   return (
     <section className='section'>
       <Header

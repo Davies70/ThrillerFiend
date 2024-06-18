@@ -8,7 +8,6 @@ h2 {
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
   width: 40vw;
- 
 }
 
 header {
@@ -20,7 +19,6 @@ header {
   margin: 0 0 16px;
   line-height: 18.4px;
   align-items: center;
-  
 }
 
 .controls {
@@ -44,11 +42,15 @@ header {
   line-height: 16px;
   font-weight: 700;
   font-size: 13px;
-  color: #ffffff4d;
+  color: white;
   border-width: 1.6px;
   border-radius: 300px;
   border-color: #0000;
   background-color: inherit;
+}
+
+.hidden {
+  color: #ffffff4d;
 }
 
 .see-all {

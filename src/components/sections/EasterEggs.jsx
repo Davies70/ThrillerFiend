@@ -6,21 +6,17 @@ import books from '../../api/books';
 const EasterEggs = () => {
   const contentScrollRef = useRef();
   const handleScrollerX = (direction) => {
-    const scrollBarWidth = 8;
-    const scrollWidth = window.innerWidth - scrollBarWidth;
-    if (direction === 'left') {
-      contentScrollRef.current.scrollLeft += scrollWidth;
+    if (direction === 'right') {
+      contentScrollRef.current.scrollLeft +=
+        contentScrollRef.current.clientWidth;
     } else {
-      contentScrollRef.current.scrollLeft -= scrollWidth;
+      contentScrollRef.current.scrollLeft -=
+        contentScrollRef.current.clientWidth;
     }
   };
   return (
     <section className='section'>
-      <Header
-        handleScrollerX={handleScrollerX}
-        contentScrollRef={contentScrollRef}
-        headerText='Easter Eggs'
-      />
+      <Header handleScrollerX={handleScrollerX} headerText='Easter Eggs' />
       <GridContentScroller contentScrollRef={contentScrollRef} data={books} />
     </section>
   );
