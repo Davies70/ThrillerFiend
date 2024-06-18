@@ -29,7 +29,7 @@ const Banner = () => {
             x='36%'
             y='25%'
             fontFamily='Roboto, sans-serif'
-            fontSize='20'
+            fontSize='25'
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'
@@ -37,10 +37,10 @@ const Banner = () => {
             Welcome,
           </text>
           <text
-            x='54%'
+            x='56%'
             y='25%'
             fontFamily='Nosifer, sans-serif'
-            fontSize='18'
+            fontSize='20'
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'
@@ -51,7 +51,7 @@ const Banner = () => {
             x='48%'
             y='45%'
             fontFamily='Roboto, sans-serif'
-            fontSize='20'
+            fontSize='25'
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'

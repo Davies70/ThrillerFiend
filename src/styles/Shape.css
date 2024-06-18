@@ -23,7 +23,8 @@
   padding-top: 100%;
 }
 
-.imageWrapper img {
+.imageWrapper img,
+.rectangle-ImageWrapper img {
   background-size: contain;
   /* border-radius: 50%; */
   width: 100%;
@@ -40,6 +41,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.rectangle-ImageWrapper img {
+  border-radius: 4px;
 }
 
 .circle {
@@ -286,3 +291,4 @@
   font-size: 13px;
   max-width: 100%;
 }
+

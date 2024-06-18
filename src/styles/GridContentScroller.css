@@ -1,90 +1,92 @@
-.content-scroll {
+.content-scroll-grid {
+  flex-flow: column wrap;
+  align-content: flex-start;
+  max-height: 275px;
   overflow: auto;
-  display: flex;
-  height: 100%;
-  width: 100%;
-  box-sizing: border-box;
-  margin: 0px;
-  min-height: 1px;
   scrollbar-width: none;
-  scroll-behavior: smooth;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  margin: 0px;
+  padding: 0px;
+  min-height: 1px;
 }
 
 @media (pointer: fine) and (min-width: 0) {
-  .content-scroll {
+  .content-scroll-grid {
     width: calc(100% - 4px);
   }
 }
 @media (pointer: fine) and (min-width: 360px) {
-  .content-scroll {
+  .content-scroll-grid {
     width: calc(100% - 4px);
   }
 }
 @media (pointer: fine) and (min-width: 640px) {
-  .content-scroll {
+  .content-scroll-grid {
     width: calc(100% - 12px);
   }
 }
 @media (pointer: fine) and (min-width: 840px) {
-  .content-scroll {
+  .content-scroll-grid {
     width: calc(100% - 12px);
   }
 }
 @media (pointer: fine) and (min-width: 1024px) {
-  .content-scroll {
+  .content-scroll-grid {
     width: calc(100% - 12px);
   }
 }
 
 @media (pointer: fine) and (min-width: 1440px) {
-  .content-scroll {
+  .content-scroll-grid {
     width: calc(100% - 20px);
   }
 }
 
 @media (min-width: 0) {
-  .content-scroll {
+  .content-scroll-grid {
     padding-inline: 20px;
   }
 }
 @media (min-width: 360px) {
-  .content-scroll {
+  .content-scroll-grid {
     padding-inline: 20px;
   }
 }
 
 @media (min-width: 480px) {
-  .content-scroll {
+  .content-scroll-grid {
     padding-inline: 36px;
   }
 }
 @media (min-width: 640px) {
-  .content-scroll {
+  .content-scroll-grid {
     padding-inline: 36px;
   }
 }
 @media (min-width: 840px) {
-  .content-scroll {
+  .content-scroll-grid {
     padding-inline: 36px;
   }
 }
 @media (min-width: 1024px) {
-  .content-scroll {
+  .content-scroll-grid {
     padding-inline: 36px;
   }
 }
 
 @media (min-width: 1280px) {
-  .content-scroll {
+  .content-scroll-grid {
     padding-inline: 52px;
   }
 }
 @media (min-width: 1440px) {
-  .content-scroll {
+  .content-scroll-grid {
     padding-inline: 52px;
   }
 }
 
 .wrapper {
-  display: flex;
+  position: relative;
 }

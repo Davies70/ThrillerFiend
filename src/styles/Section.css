@@ -4,4 +4,5 @@
   line-height: 18.4px;
   padding: 24px 0px 12px;
   flex-direction: column;
+  background-color: linear-gradient(to bottom, black, rgb(31, 34 34));
 }

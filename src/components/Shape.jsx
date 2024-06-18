@@ -5,9 +5,9 @@ import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOu
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import AddIcon from '@mui/icons-material/Add';
 const Shape = ({ name, photo, shape, authors }) => {
-  return (
-    <div className='card'>
-      {shape === 'circle' ? (
+  if (shape === 'circle') {
+    return (
+      <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper circle'>
             <img src={photo} loading='lazy' alt={name} />
@@ -24,12 +24,19 @@ const Shape = ({ name, photo, shape, authors }) => {
             <a className='taglink'>{name}</a>
           </div>
         </div>
-      ) : (
+      </div>
+    );
+  } else {
+    return (
+      <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper square'>
             <img src={photo} loading='lazy' alt={name} />
             <a className='bg square'>
-              <button aria-label='Add to Collections' title='Add to Collections'>
+              <button
+                aria-label='Add to Collections'
+                title='Add to Collections'
+              >
                 <AddIcon className='left-button' />
               </button>
               <button className='center-button' tabIndex='-1'>
@@ -47,16 +54,16 @@ const Shape = ({ name, photo, shape, authors }) => {
             </div>
           </div>
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  }
 };
 
 Shape.propTypes = {
   name: Proptypes.string,
   photo: Proptypes.string,
   shape: Proptypes.string,
-  authors: !Proptypes.array,
+  authors: Proptypes.array,
 };
 
 export default Shape;
