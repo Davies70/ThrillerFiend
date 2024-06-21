@@ -4,9 +4,15 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import '../styles/Header.css';
 import PropTypes from 'prop-types';
 
-const Header = ({ handleScrollerX, headerText, moreRight }) => {
-  let arrowClassRight = moreRight ? 'arrow hidden' : 'arrow';
-  let arrowClassLeft = moreRight ? 'arrow' : 'arrow hidden';
+const Header = ({
+  handleScrollerX,
+  headerText,
+  moreRight,
+  moreLeft,
+  contentScrollRef,
+}) => {
+  let arrowClassRight = moreRight ? 'arrow' : 'disabled arrow';
+  let arrowClassLeft = moreLeft ? 'arrow' : 'disabled arrow';
   return (
     <header>
       <div className='header-text'>
@@ -15,13 +21,13 @@ const Header = ({ handleScrollerX, headerText, moreRight }) => {
       <div className='controls'>
         <button
           className={arrowClassLeft}
-          onClick={() => handleScrollerX('left')}
+          onClick={() => handleScrollerX(contentScrollRef, 'left')}
         >
           <KeyboardArrowLeftIcon />
         </button>
         <button
           className={arrowClassRight}
-          onClick={() => handleScrollerX('right')}
+          onClick={() => handleScrollerX(contentScrollRef, 'right')}
         >
           <KeyboardArrowRightIcon />
         </button>
@@ -37,6 +43,8 @@ Header.propTypes = {
   handleScrollerX: PropTypes.func,
   headerText: PropTypes.string,
   moreRight: PropTypes.bool,
+  moreLeft: PropTypes.bool,
+  contentScrollRef: PropTypes.object,
 };
 
 export default Header;

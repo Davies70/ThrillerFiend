@@ -4,10 +4,9 @@ import PropTypes from 'prop-types';
 import GridItem from './GridItem';
 
 const GridContentScroller = ({ contentScrollRef, data }) => {
-  const className = 'content-scroll-grid';
   return (
-    <div className='wrapper'>
-      <div className={className} ref={contentScrollRef}>
+    <div className='grid-wrapper'>
+      <div className='content-scroll-grid' ref={contentScrollRef}>
         {data.map(
           (book, i) =>
             book.volumeInfo?.imageLinks?.thumbnail && (

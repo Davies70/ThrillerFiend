@@ -49,7 +49,11 @@ header {
   background-color: inherit;
 }
 
-.hidden {
+.arrow:hover:not(.disabled) {
+  color: var(--hover-blue);
+}
+
+.disabled {
   color: #ffffff4d;
 }
 

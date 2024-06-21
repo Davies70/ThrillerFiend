@@ -5,10 +5,9 @@ import Shape from './Shape';
 import PropTypes from 'prop-types';
 
 const ContentScroller = ({ contentScrollRef, shape, data }) => {
-  const className = 'content-scroll';
   return (
     <div className='wrapper'>
-      <div className={className} ref={contentScrollRef}>
+      <div className='content-scroll' ref={contentScrollRef}>
         {shape === 'circle'
           ? data.map((author, i) => (
               <Shape

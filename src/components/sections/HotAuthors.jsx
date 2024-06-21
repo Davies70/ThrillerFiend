@@ -1,33 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import '../../styles/Section.css';
 import Header from '../Header';
 import ContentScroller from '../ContentScroller';
 import authors from '../../api/authors';
+import { useScroll } from '../../utils';
 
 const HotAuthors = () => {
   const contentScrollRef = useRef();
-  const [moreRight, setMoreRight] = useState(false);
+  const { moreRight, moreLeft, handleScrollerX } = useScroll();
 
   const shape = 'circle';
-
-  const handleScrollerX = (direction) => {
-    if (direction === 'right') {
-      console.log(
-        contentScrollRef.current?.scrollLeft,
-        contentScrollRef.current.clientWidth,
-        contentScrollRef.current.scrollWidth
-      );
-      contentScrollRef.current.scrollLeft +=
-        contentScrollRef.current.clientWidth;
-      console.log(contentScrollRef.current?.scrollLeft);
-    } else {
-      contentScrollRef.current.scrollLeft -=
-        contentScrollRef.current.clientWidth;
-      contentScrollRef.current.scrollLeft === 0
-        ? setMoreRight(true)
-        : setMoreRight(false);
-    }
-  };
 
   return (
     <section className='section'>
@@ -35,6 +17,8 @@ const HotAuthors = () => {
         handleScrollerX={handleScrollerX}
         headerText='Hot Authors'
         moreRight={moreRight}
+        moreLeft={moreLeft}
+        contentScrollRef={contentScrollRef}
       />
       <ContentScroller
         contentScrollRef={contentScrollRef}
