@@ -1,19 +1,25 @@
 import Layout from './components/Layout';
-import HotAuthors from './components/sections/HotAuthors';
-import HotBooks from './components/sections/HotBooks';
-import Banner from './components/sections/Banner';
-import EasterEggs from './components/sections/EasterEggs';
+import React from 'react';
+import Home from './pages/Home';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import NewThrills from './pages/NewThrills';
+import Collections from './pages/Collections';
+import NotFound from './pages/NotFound';
 
 import './styles/App.css';
 
 function App() {
   return (
-    <Layout>
-      <HotAuthors />
-      <Banner />
-      <HotBooks />
-      <EasterEggs />
-    </Layout>
+    <Router>
+      <Layout>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/new' element={<NewThrills />} />
+          <Route path='/collections' element={<Collections />} />
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </Layout>
+    </Router>
   );
 }
 

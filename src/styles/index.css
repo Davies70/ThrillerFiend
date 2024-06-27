@@ -100,3 +100,8 @@ body {
   background: black;
   padding-bottom: 72px;
 }
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

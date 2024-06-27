@@ -26,13 +26,14 @@ const Banner = () => {
             ry='8'
           />
           <text
-            x='36%'
+            x='28%'
             y='25%'
             fontFamily='Roboto, sans-serif'
-            fontSize='25'
+            fontSize='30'
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'
+            
           >
             Welcome,
           </text>
@@ -40,7 +41,7 @@ const Banner = () => {
             x='56%'
             y='25%'
             fontFamily='Nosifer, sans-serif'
-            fontSize='20'
+            fontSize='30'
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'
@@ -48,10 +49,10 @@ const Banner = () => {
             Thrill-Seekers
           </text>
           <text
-            x='48%'
-            y='45%'
+            x='49%'
+            y='52%'
             fontFamily='Roboto, sans-serif'
-            fontSize='25'
+            fontSize='30'
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'
@@ -60,7 +61,7 @@ const Banner = () => {
           </text>
           <text
             x='33.5%'
-            y='75%'
+            y='80%'
             fontFamily='Roboto, sans-serif'
             fontSize='20'
             fill='#000'
@@ -71,7 +72,7 @@ const Banner = () => {
           </text>
           <text
             x='43.5%'
-            y='74.5%'
+            y='80%'
             fontFamily='Creepster, sans-serif'
             fontSize='25'
             fill='#000'
@@ -82,7 +83,7 @@ const Banner = () => {
           </text>
           <text
             x='58.5%'
-            y='75%'
+            y='80%'
             fontFamily='Roboto, sans-serif'
             fontSize='20'
             fill='#000'

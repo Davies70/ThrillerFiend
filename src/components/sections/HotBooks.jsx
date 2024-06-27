@@ -9,8 +9,7 @@ const HotBooks = () => {
   const { moreRight, moreLeft, handleScrollerX } = useScroll();
   const shape = 'square';
 
-  console.log(moreLeft, moreRight);
-
+  
   return (
     <section className='section'>
       <Header

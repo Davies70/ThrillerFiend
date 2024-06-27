@@ -61,7 +61,8 @@
 }
 
 /* Navigation Link Styles */
-.nav-link {
+.nav-link,
+.nav-link-active {
   flex: 0 0 auto;
   display: inline-flex;
   border-color: #0000;
@@ -78,7 +79,8 @@
 }
 
 /* Navigation Link Hover Styles */
-.nav-link:hover {
+.nav-link:hover,
+.nav-link-active {
   color: var(--hover-blue);
 }
 
@@ -390,7 +392,8 @@ input {
     display: none;
   }
 
-  .nav-link {
+  .nav-link,
+  .nav-link-active {
     padding: 10px;
     margin-inline-end: 0;
   }
@@ -443,7 +446,8 @@ input {
   .nav-text {
     display: none;
   }
-  .nav-link {
+  .nav-link,
+  .nav-link-active {
     margin-inline-end: 0;
   }
   #logo-small {

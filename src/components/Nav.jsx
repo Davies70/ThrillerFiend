@@ -8,12 +8,14 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import SearchIcon from '@mui/icons-material/Search';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Link, useLocation } from 'react-router-dom';
 
 const Nav = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchContainer, setShowSearchContainer] = useState(false);
 
   const inputRef = useRef(null);
+  const location = useLocation();
 
   const clearSearchQuery = (event) => {
     event.preventDefault();
@@ -82,30 +84,50 @@ const Nav = () => {
         searchContainer()
       ) : (
         <ul className='nav-list'>
-          <a id='logo'>
+          <Link to={'/'} id='logo'>
             <Logo />
-          </a>
-          <a id='logo-small'>
+          </Link>
+
+          <Link to={'/'} id='logo-small'>
             <LogoSmall />
-          </a>
-          <a className='nav-link' id='home-icon'>
+          </Link>
+
+          <Link
+            className={
+              location.pathname === '/' ? 'nav-link-active' : 'nav-link'
+            }
+            id='home-icon'
+            to={'/'}
+          >
             <span id='nav-icon '>
               <HomeIcon />
             </span>
             <span className='nav-text'> Home</span>
-          </a>
-          <a className='nav-link'>
+          </Link>
+          <Link
+            className={
+              location.pathname === '/new' ? 'nav-link-active' : 'nav-link'
+            }
+            to={'/new'}
+          >
             <span id='nav-icon'>
               <WhatshotIcon />
             </span>
             <span className='nav-text'>New Thrills</span>
-          </a>
-          <a className='nav-link'>
+          </Link>
+          <Link
+            className={
+              location.pathname === '/collections'
+                ? 'nav-link-active'
+                : 'nav-link'
+            }
+            to={'/collections'}
+          >
             <span id='nav-icon'>
               <LibraryBooksIcon />
             </span>
             <span className='nav-text home-icon'>Collections</span>
-          </a>
+          </Link>
           <button className='search-icon-small' onClick={handleSearchIconClick}>
             <SearchIcon />
           </button>
