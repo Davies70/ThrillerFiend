@@ -370,9 +370,9 @@ input {
 /* Media Queries for Small Screens */
 @media only screen and (min-width: 0) {
   .nav-list {
-    padding-inline-end: 0;
+    padding-inline-end: 5px;
     justify-content: space-between;
-    padding-inline-start: 5px;
+    padding-inline-start: 2px;
   }
   .hide-nav-list {
     display: none;

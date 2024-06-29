@@ -166,7 +166,9 @@ const Nav = () => {
             </button>
           </li>
           <button className='profile'>
-            <AccountCircleIcon />
+            <Link to={'/signin'}>
+              <AccountCircleIcon />
+            </Link>
           </button>
         </ul>
       )}

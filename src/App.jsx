@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import NewThrills from './pages/NewThrills';
 import Collections from './pages/Collections';
 import NotFound from './pages/NotFound';
+import SignIn from './pages/SignIn';
 
 import './styles/App.css';
 
@@ -17,6 +18,7 @@ function App() {
           <Route path='/new' element={<NewThrills />} />
           <Route path='/collections' element={<Collections />} />
           <Route path='*' element={<NotFound />} />
+          <Route path='/signin' element={<SignIn />} />
         </Routes>
       </Layout>
     </Router>
