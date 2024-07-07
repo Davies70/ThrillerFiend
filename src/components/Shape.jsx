@@ -4,24 +4,27 @@ import Proptypes from 'prop-types';
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import AddIcon from '@mui/icons-material/Add';
-const Shape = ({ name, photo, shape, authors }) => {
+import { Link } from 'react-router-dom';
+const Shape = ({ name, photo, shape, authors, id }) => {
   if (shape === 'circle') {
     return (
       <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper circle'>
             <img src={photo} loading='lazy' alt={name} />
-            <a className='bg cirlce'>
+            <Link className='bg cirlce' to={`/author/${id}`}>
               <button className='center-button' tabIndex='-1'>
                 <ArrowCircleRightOutlinedIcon />
               </button>
               <button className='right-button'>
                 <MoreHorizOutlinedIcon />
               </button>
-            </a>
+            </Link>
           </div>
           <div className='tag'>
-            <a className='taglink'>{name}</a>
+            <Link className='taglink' to={`/author/${id}`}>
+              {name}
+            </Link>
           </div>
         </div>
       </div>
@@ -32,7 +35,7 @@ const Shape = ({ name, photo, shape, authors }) => {
         <div className='card-content'>
           <div className='imageWrapper square'>
             <img src={photo} loading='lazy' alt={name} />
-            <a className='bg square'>
+            <Link className='bg square'>
               <button
                 aria-label='Add to Collections'
                 title='Add to Collections'
@@ -45,10 +48,10 @@ const Shape = ({ name, photo, shape, authors }) => {
               <button className='right-button'>
                 <MoreHorizOutlinedIcon />
               </button>
-            </a>
+            </Link>
           </div>
           <div className='primary-tag'>
-            <a className='taglink'>{name}</a>
+            <Link className='taglink'>{name}</Link>
             <div className='secondary-tag'>
               <span>{authors.join(', ')}</span>
             </div>
@@ -64,6 +67,7 @@ Shape.propTypes = {
   photo: Proptypes.string,
   shape: Proptypes.string,
   authors: Proptypes.array,
+  id: Proptypes.number,
 };
 
 export default Shape;

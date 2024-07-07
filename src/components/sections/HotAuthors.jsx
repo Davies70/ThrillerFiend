@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import '../../styles/Section.css';
 import Header from '../Header';
 import ContentScroller from '../ContentScroller';
-import authors from '../../api/authors';
+import { getAuthors } from '../../services/authors';
 import { useScroll } from '../../utils';
 
 const HotAuthors = () => {
@@ -22,7 +22,7 @@ const HotAuthors = () => {
       />
       <ContentScroller
         contentScrollRef={contentScrollRef}
-        data={authors}
+        data={getAuthors()}
         shape={shape}
       />
     </section>

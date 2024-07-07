@@ -16,6 +16,7 @@ html {
   font-size: 16px;
   --light-gray-1: rgba(255, 255, 255, 0.3);
   --light-gray-2: rgba(255, 255, 255, 0.15);
+  --light-gray-3: rgba(255, 255, 255, 0.6);
   --gray-1: rgba(0, 0, 0, 0.3);
   --gray-2: rgba(0, 0, 0, 0.6);
 }
@@ -65,14 +66,13 @@ html {
   border-radius: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--gray-1);
+  background: var(--gray-2);
 }
 ::-webkit-scrollbar-track {
   background: var(--gray-2);
 }
 
 body {
-  font-family: 'Ember', 'Helvetica', 'Arial', 'sans-serif';
   position: relative;
 }
 
@@ -99,6 +99,9 @@ body {
   transition: all 0.15s ease 0s;
   background: black;
   padding-bottom: 72px;
+  font-weight: normal;
+  white-space: normal;
+  text-overflow: ellipsis;
 }
 
 a {

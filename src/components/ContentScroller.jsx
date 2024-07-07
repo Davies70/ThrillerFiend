@@ -15,6 +15,7 @@ const ContentScroller = ({ contentScrollRef, shape, data }) => {
                 photo={author.coverPhoto}
                 key={i}
                 shape={shape}
+                id={author.id}
               />
             ))
           : data.map(
@@ -26,6 +27,7 @@ const ContentScroller = ({ contentScrollRef, shape, data }) => {
                     key={i}
                     shape={shape}
                     authors={book.volumeInfo.authors}
+                    id={book.id}
                   />
                 )
             )}

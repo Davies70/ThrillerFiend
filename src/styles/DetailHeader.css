@@ -1,0 +1,140 @@
+.detailHeader {
+  padding-inline-start: 8px;
+}
+
+.detailHeader div small {
+  color: var(--hover-blue);
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  font-family: 'Sharp Grotesk Semi Bold 20', 'Helvetica', 'Arial', 'sans-serif';
+}
+
+.detailHeader div h1 {
+  padding: 0px;
+  margin: 0px 0px 4px;
+  visibility: visible;
+  white-space: normal;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-family: 'Sharp Grotesk Semi Bold 20', 'Helvetica', 'Arial', 'sans-serif';
+  font-size: 60px;
+  line-height: 80px;
+  text-overflow: ellipsis;
+}
+
+.detailHeader div p {
+  font-size: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--light-gray-3);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.detailHeadericons {
+  margin-top: 15px;
+  white-space: nowrap;
+  display: inline-flex;
+}
+
+.detailHeadericons span {
+  margin-inline-end: 16px;
+}
+
+.detailIcons {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: white;
+}
+
+.followBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  padding: 10px 6px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: bold;
+}
+
+.followBtn svg,
+.shareBtn svg {
+  margin-inline-end: 8px;
+  align-self: center;
+  width: 16px;
+  height: 16px;
+}
+
+.shareBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  margin-top: 3px;
+}
+
+.detailHeadericons span button:hover {
+  color: var(--hover-blue);
+}
+
+@media (min-width: 0) {
+  .detailHeader {
+    padding-inline: 20px;
+  }
+}
+
+@media (min-width: 360px) {
+  .detailHeader {
+    padding-inline: 20px;
+  }
+}
+
+@media (min-width: 640px) {
+  .detailHeader {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .detailHeaderContainer {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 5000;
+  }
+}
+
+@media (min-width: 840px) {
+  .detailHeader {
+    padding-inline: 36px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .detailHeader {
+    padding-inline: 36px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .detailHeader {
+    padding-inline: 52px;
+    -webkit-padding-start: 52px;
+    -webkit-padding-end: 52px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .detailHeader {
+    padding-inline: 52px;
+  }
+}
