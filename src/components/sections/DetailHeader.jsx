@@ -1,7 +1,7 @@
 import React from 'react';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import ShareIcon from '@mui/icons-material/Share';
-import proptypes from 'prop-types';
+import Proptypes from 'prop-types';
 import '../../styles/DetailHeader.css';
 
 const DetailHeader = ({ authorName }) => {
@@ -28,15 +28,22 @@ const DetailHeader = ({ authorName }) => {
               <p>20 books published</p>
               <div className='detailHeadericons'>
                 <span>
-                  <button className='followBtn detailIcons' tabIndex={-1}>
+                  <button
+                    className='followBtn detailIcons'
+                    tabIndex={-1}
+                    aria-label='Follow this author'
+                    title='Follow this author'
+                  >
                     <FavoriteBorderOutlinedIcon />
                     <div>follow</div>
                   </button>
                 </span>
-                <span className='shareBtnSpan' tabIndex={-1}>
+                <span className='shareBtnSpan' tabIndex={3}>
                   <button
-                    aria-label='Share this autor'
+                    aria-label='Share this author'
+                    title='Share this author'
                     className='shareBtn detailIcons'
+                    tabIndex={3}
                   >
                     <ShareIcon />
                   </button>
@@ -51,7 +58,7 @@ const DetailHeader = ({ authorName }) => {
 };
 
 DetailHeader.propTypes = {
-  authorName: proptypes.string.isRequired,
+  authorName: Proptypes.string.isRequired,
 };
 
 export default DetailHeader;

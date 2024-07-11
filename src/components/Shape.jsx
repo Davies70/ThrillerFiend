@@ -5,14 +5,14 @@ import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOu
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
-const Shape = ({ name, photo, shape, authors, id }) => {
+const Shape = ({ name, photo, shape, authors, shapeId }) => {
   if (shape === 'circle') {
     return (
       <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper circle'>
             <img src={photo} loading='lazy' alt={name} />
-            <Link className='bg cirlce' to={`/author/${id}`}>
+            <Link className='bg cirlce' to={`/author/${shapeId}`}>
               <button className='center-button' tabIndex='-1'>
                 <ArrowCircleRightOutlinedIcon />
               </button>
@@ -22,7 +22,7 @@ const Shape = ({ name, photo, shape, authors, id }) => {
             </Link>
           </div>
           <div className='tag'>
-            <Link className='taglink' to={`/author/${id}`}>
+            <Link className='taglink' to={`/author/${shapeId}`}>
               {name}
             </Link>
           </div>
@@ -35,7 +35,7 @@ const Shape = ({ name, photo, shape, authors, id }) => {
         <div className='card-content'>
           <div className='imageWrapper square'>
             <img src={photo} loading='lazy' alt={name} />
-            <Link className='bg square'>
+            <Link className='bg square' to={`/book/${shapeId}`}>
               <button
                 aria-label='Add to Collections'
                 title='Add to Collections'
@@ -51,7 +51,9 @@ const Shape = ({ name, photo, shape, authors, id }) => {
             </Link>
           </div>
           <div className='primary-tag'>
-            <Link className='taglink'>{name}</Link>
+            <Link className='taglink' to={`/book/${shapeId}`}>
+              {name}
+            </Link>
             <div className='secondary-tag'>
               <span>{authors.join(', ')}</span>
             </div>
@@ -67,7 +69,7 @@ Shape.propTypes = {
   photo: Proptypes.string,
   shape: Proptypes.string,
   authors: Proptypes.array,
-  id: Proptypes.number,
+  shapeId: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
 };
 
 export default Shape;

@@ -1,0 +1,8 @@
+.cancel-notification:hover svg {
+  color: var(--hover-blue);
+  cursor: pointer;
+}
+
+.cancel-notification:active svg {
+  opacity: 0.5;
+}

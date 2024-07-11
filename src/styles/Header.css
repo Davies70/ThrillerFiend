@@ -74,6 +74,7 @@ header {
   justify-content: center;
   font-family: 'Ember', 'Helvetica', 'Arial', 'sans-serif';
   backdrop-filter: blur(10px);
+  cursor: pointer;
 }
 
 .see-all:hover {

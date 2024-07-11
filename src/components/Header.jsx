@@ -31,7 +31,7 @@ const Header = ({
         >
           <KeyboardArrowRightIcon />
         </button>
-        <button className='see-all'>
+        <button className='see-all' aria-label={headerText} title={headerText}>
           <span>see all</span>
         </button>
       </div>

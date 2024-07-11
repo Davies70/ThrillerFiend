@@ -7,6 +7,7 @@ import Collections from './pages/Collections';
 import NotFound from './pages/NotFound';
 import SignIn from './pages/SignIn';
 import Author from './pages/Author';
+import Book from './pages/Book';
 
 import './styles/App.css';
 
@@ -21,6 +22,7 @@ function App() {
           <Route path='*' element={<NotFound />} />
           <Route path='/signin' element={<SignIn />} />
           <Route path='/author/:id' element={<Author />} />
+          <Route path='/book/:id' element={<Book />} />
         </Routes>
       </Layout>
     </Router>
