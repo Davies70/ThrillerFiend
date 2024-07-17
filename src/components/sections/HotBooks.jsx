@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import Header from '../Header';
 import ContentScroller from '../ContentScroller';
-import books from '../../api/books';
+import bookServices from '../../services/bookServices';
 import { useScroll } from '../../utils';
 
 const HotBooks = () => {
@@ -9,7 +9,6 @@ const HotBooks = () => {
   const { moreRight, moreLeft, handleScrollerX } = useScroll();
   const shape = 'square';
 
-  
   return (
     <section className='section'>
       <Header
@@ -22,7 +21,7 @@ const HotBooks = () => {
       <ContentScroller
         contentScrollRef={contentScrollRef}
         shape={shape}
-        data={books}
+        data={bookServices.getBooks()}
       />
     </section>
   );

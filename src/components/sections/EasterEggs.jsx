@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import Header from '../Header';
 import GridContentScroller from '../GridContentScroller';
-import easterEggs from '../../api/easterEggs';
+import easterEggServices from '../../services/easterEggServices';
 import { useScroll } from '../../utils';
 
 const EasterEggs = () => {
@@ -19,7 +19,7 @@ const EasterEggs = () => {
       />
       <GridContentScroller
         contentScrollRef={contentScrollRef}
-        data={easterEggs}
+        data={easterEggServices.getEasterEggs()}
       />
     </section>
   );

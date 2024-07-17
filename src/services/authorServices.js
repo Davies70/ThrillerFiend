@@ -1,4 +1,4 @@
-import authors from '../api/authors';
+import authors from '../../../api/authors';
 
 const getAuthors = () => authors;
 

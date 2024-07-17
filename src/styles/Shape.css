@@ -77,6 +77,8 @@
   top: 0px;
   height: 100%;
   width: 100%;
+  transition: opacity 0.2s ease 0s;
+  cursor: pointer;
 }
 
 .imageWrapper:hover .bg,
@@ -101,6 +103,7 @@
 
 .bg .left-button:hover {
   color: var(--hover-blue);
+  cursor: pointer;
 }
 .bg .center-button {
   padding: 14px;
@@ -120,6 +123,8 @@
 .bg .center-button:hover {
   background-color: var(--light-gray-1);
   transform: scale(1.2);
+  transition: opacity 0.2s ease 0s;
+  cursor: pointer;
 }
 
 .bg .right-button {
@@ -135,6 +140,11 @@
   position: absolute;
   background-color: transparent;
   font-weight: bold;
+}
+
+.bg .right-button:hover {
+  color: var(--hover-blue);
+  cursor: pointer;
 }
 
 @media (pointer: fine) {
@@ -291,4 +301,3 @@
   font-size: 13px;
   max-width: 100%;
 }
-
