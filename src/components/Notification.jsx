@@ -1,8 +1,12 @@
 import React from 'react';
 import '../styles/Notification.css';
 import CancelIcon from '@mui/icons-material/Cancel';
+import Proptypes from 'prop-types';
 
-const Notification = () => {
+const Notification = ({ isAlert }) => {
+  if (!isAlert) {
+    return null;
+  }
   return (
     <div
       style={{
@@ -57,6 +61,10 @@ const Notification = () => {
       </button>
     </div>
   );
+};
+
+Notification.propTypes = {
+  isAlert: Proptypes.bool,
 };
 
 export default Notification;

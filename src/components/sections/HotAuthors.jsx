@@ -2,27 +2,25 @@ import React, { useRef } from 'react';
 import '../../styles/Section.css';
 import Header from '../Header';
 import ContentScroller from '../ContentScroller';
-import { getAuthors } from '../../services/authorServices';
-import { useScroll } from '../../utils';
+import { getHotAuthors } from '../../services/authorServices';
 
 const HotAuthors = () => {
   const contentScrollRef = useRef();
-  const { moreRight, moreLeft, handleScrollerX } = useScroll();
+
+  const navLink = '/authors';
 
   const shape = 'circle';
 
   return (
     <section className='section'>
       <Header
-        handleScrollerX={handleScrollerX}
         headerText='Hot Authors'
-        moreRight={moreRight}
-        moreLeft={moreLeft}
         contentScrollRef={contentScrollRef}
+        navLink={navLink}
       />
       <ContentScroller
         contentScrollRef={contentScrollRef}
-        data={getAuthors()}
+        data={getHotAuthors()}
         shape={shape}
       />
     </section>

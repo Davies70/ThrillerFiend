@@ -269,6 +269,7 @@
   white-space: nowrap;
   padding-inline-end: 10px;
   text-decoration: none;
+  max-width: 100%;
 }
 
 .taglink:hover {

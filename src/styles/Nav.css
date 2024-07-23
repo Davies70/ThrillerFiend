@@ -17,6 +17,7 @@
   max-width: 1600px;
   min-width: 320px;
   flex: 1 1 0%;
+  margin: 0 auto;
 }
 
 /* Navigation List Styles */

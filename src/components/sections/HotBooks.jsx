@@ -1,27 +1,34 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Header from '../Header';
 import ContentScroller from '../ContentScroller';
 import bookServices from '../../services/bookServices';
-import { useScroll } from '../../utils';
 
 const HotBooks = () => {
+  const [books, setBooks] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const hotBooks = await bookServices.getHotBooks();
+      setBooks(hotBooks);
+    };
+    fetchData();
+  }, []);
+
   const contentScrollRef = useRef();
-  const { moreRight, moreLeft, handleScrollerX } = useScroll();
   const shape = 'square';
 
+  const navLink = '/books';
   return (
     <section className='section'>
       <Header
-        handleScrollerX={handleScrollerX}
         contentScrollRef={contentScrollRef}
         headerText='Thrills of the Week'
-        moreRight={moreRight}
-        moreLeft={moreLeft}
+        navLink={navLink}
       />
       <ContentScroller
         contentScrollRef={contentScrollRef}
         shape={shape}
-        data={bookServices.getBooks()}
+        data={books}
       />
     </section>
   );

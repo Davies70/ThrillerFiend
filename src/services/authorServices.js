@@ -1,7 +1,9 @@
-import authors from '../../../api/authors';
+import hotAuthors from '../../../api/authors';
 
-const getAuthors = () => authors;
+const getHotAuthors = () => hotAuthors.slice(0, 12);
 
-const getAuthorById = (id) => authors.find((author) => author.id === id);
+const getAuthors = () => hotAuthors;
 
-export { getAuthors, getAuthorById };
+const getAuthorById = (id) => hotAuthors.find((author) => author.id === id);
+
+export { getHotAuthors, getAuthors, getAuthorById };

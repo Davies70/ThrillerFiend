@@ -8,6 +8,8 @@ import NotFound from './pages/NotFound';
 import SignIn from './pages/SignIn';
 import Author from './pages/Author';
 import Book from './pages/Book';
+import Books from './pages/Books';
+import Authors from './pages/Authors';
 
 import './styles/App.css';
 
@@ -23,6 +25,8 @@ function App() {
           <Route path='/signin' element={<SignIn />} />
           <Route path='/author/:id' element={<Author />} />
           <Route path='/book/:id' element={<Book />} />
+          <Route path='/books' element={<Books />} />
+          <Route path='/authors' element={<Authors />} />
         </Routes>
       </Layout>
     </Router>

@@ -51,7 +51,7 @@ const Author = () => {
         <h2>Popular Similar Authors</h2>
       </div>
 
-      <Notification />
+      <Notification isAlert={false} />
     </div>
   );
 };

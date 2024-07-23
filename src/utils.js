@@ -1,35 +1,17 @@
-import { useState } from 'react';
 
-const useScroll = () => {
-  const [moreRight, setMoreRight] = useState(true);
-  const [moreLeft, setMoreLeft] = useState(false);
-  const handleScrollerX = (contentScrollRef, direction) => {
-    if (direction === 'right') {
-      contentScrollRef.current.scrollLeft +=
-        contentScrollRef.current.clientWidth;
-    } else {
-      contentScrollRef.current.scrollLeft -=
-        contentScrollRef.current.clientWidth;
-    }
-    contentScrollRef.current?.scrollLeft === 0 ||
-    Math.round(
-      contentScrollRef.current.scrollLeft + contentScrollRef.current.clientWidth
-    ) < contentScrollRef.current.scrollWidth
-      ? setMoreRight(true)
-      : setMoreRight(false);
-    Math.round(
-      contentScrollRef.current.scrollLeft + contentScrollRef.current.clientWidth
-    ) >= contentScrollRef.current.scrollWidth
-      ? setMoreLeft(true)
-      : setMoreLeft(false);
-    // let scrollLength =
-    //   contentScrollRef.current.clientWidth +
-    //   contentScrollRef.current.scrollLeft;
-    // let scrollWidth = contentScrollRef.current.scrollWidth;
-    // console.log('scrolllength', scrollLength);
-    // console.log('scrollWidth', scrollWidth);
-  };
+// async function makeRequestWithRetry(options, maxRetries = 5) {
+//   for (let i = 0; i < maxRetries; i++) {
+//     try {
+//       const response = await axios.request(options);
+//       if (response.status === 429) {
+//         const waitTime = Math.pow(2, i) * 1000;
+//         await new Promise((resolve) => setTimeout(resolve, waitTime));
+//       } else {
+//         return response;
+//       }
+//     } catch (error) {
+//       if (i === maxRetries - 1) throw error;
+//     }
+//   }
+// }
 
-  return { moreRight, moreLeft, handleScrollerX };
-};
-export { useScroll };
