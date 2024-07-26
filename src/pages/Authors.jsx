@@ -1,6 +1,7 @@
 import React from 'react';
 import { getAuthors } from '../services/authorServices';
 import Shape from '../components/Shape';
+import '../styles/Authors.css';
 
 const Authors = () => {
   const authors = getAuthors();
@@ -24,16 +25,17 @@ const Authors = () => {
           overflow: 'auto',
           position: 'relative',
         }}
-      ></div>
-      {authors.map((author, i) => (
-        <Shape
-          name={author.authorName}
-          photo={author.coverPhoto}
-          key={i}
-          shape={shape}
-          shapeId={author.id}
-        />
-      ))}
+      >
+        {authors.map((author, i) => (
+          <Shape
+            name={author.authorName}
+            photo={author.coverPhoto}
+            shape={shape}
+            shapeId={author.id}
+            key={i}
+          />
+        ))}
+      </div>
     </div>
   );
 };

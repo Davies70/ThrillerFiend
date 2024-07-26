@@ -37,18 +37,10 @@ const Shape = ({ name, photo, shape, authors, shapeId }) => {
     );
   } else {
     return (
-      <div
-        className='card'
-        
-      >
+      <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper square'>
-            <img
-              src={photo}
-              loading='lazy'
-              alt={name}
-             
-            />
+            <img src={photo} loading='lazy' alt={name} />
             <Link className='bg square' to={`/book/${shapeId}`}>
               <button
                 aria-label='Add to Collections'

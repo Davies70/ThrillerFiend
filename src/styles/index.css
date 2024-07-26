@@ -99,11 +99,13 @@ body {
   margin: 0;
   font-family: 'Ember', 'Helvetica', 'Arial', 'sans-serif';
   transition: all 0.15s ease 0s;
-  background: black;
+
   padding-bottom: 72px;
   font-weight: normal;
   white-space: normal;
   text-overflow: ellipsis;
+  background: black;
+  z-index: -1;
 }
 
 a {

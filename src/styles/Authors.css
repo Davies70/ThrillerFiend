@@ -1,0 +1,31 @@
+.authors {
+  margin: 0;
+  box-sizing: content-box !important;
+  padding-top: 24px;
+  overflow: hidden !important;
+  height: 100% !important;
+  position: relative;
+}
+
+.authors {
+  padding-inline-start: 20px;
+  padding-inline-end: 20px;
+}
+
+.authors .card {
+  display: inline-block;
+}
+
+@media only screen and (min-width: 480px) {
+  .authors {
+    padding-inline-start: 36px;
+    padding-inline-end: 36px;
+  }
+}
+
+@media only screen and (min-width: 1289px) {
+  .authors {
+    padding-inline-start: 52px;
+    padding-inline-end: 52px;
+  }
+}

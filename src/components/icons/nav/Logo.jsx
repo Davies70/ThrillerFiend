@@ -31,9 +31,9 @@ const Logo = (props) => (
     {/* Text "Fiend" */}
     <text
       x='270' // Adjusted x position
-      y='60' // Adjusted y position
+      y='65' // Adjusted y position
       fontFamily='Creepster, system-ui'
-      fontSize={45}
+      fontSize={55}
       fontWeight={100}
       fill='#ffffff'
     >

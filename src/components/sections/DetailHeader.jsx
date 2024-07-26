@@ -11,6 +11,7 @@ const DetailHeader = ({ authorName }) => {
         style={{
           minHeight: '40px',
           paddingTop: '10px',
+          zIndex: '-1'
         }}
       ></div>
       <div
