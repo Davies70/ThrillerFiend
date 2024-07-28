@@ -8,7 +8,11 @@ const BestSellers = () => {
 
   return (
     <section className='section'>
-      <Header headerText='Best Sellers' contentScrollRef={contentScrollRef} />
+      <Header
+        headerText='Best Sellers'
+        contentScrollRef={contentScrollRef}
+        isNavLink={true}
+      />
       <GridContentScroller
         contentScrollRef={contentScrollRef}
         data={easterEggServices.getEasterEggs()}

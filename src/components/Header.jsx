@@ -5,7 +5,7 @@ import '../styles/Header.css';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-const Header = ({ headerText, contentScrollRef, navLink }) => {
+const Header = ({ headerText, contentScrollRef, navLink, isNavLink }) => {
   const [moreRight, setMoreRight] = useState(true);
   const [moreLeft, setMoreLeft] = useState(false);
   let arrowClassRight = moreRight ? 'arrow' : 'disabled arrow';
@@ -59,11 +59,17 @@ const Header = ({ headerText, contentScrollRef, navLink }) => {
         >
           <KeyboardArrowRightIcon />
         </button>
-        <button className='see-all' aria-label={headerText} title={headerText}>
-          <span>
-            <Link to={navLink}>see all</Link>
-          </span>
-        </button>
+        {isNavLink && (
+          <button
+            className='see-all'
+            aria-label={headerText}
+            title={headerText}
+          >
+            <span>
+              <Link to={navLink}>see all</Link>
+            </span>
+          </button>
+        )}
       </div>
     </header>
   );
@@ -77,6 +83,7 @@ Header.propTypes = {
   contentScrollRef: PropTypes.object,
   navLink: PropTypes.string,
   isControls: PropTypes.bool,
+  isNavLink: PropTypes.bool,
 };
 
 export default Header;

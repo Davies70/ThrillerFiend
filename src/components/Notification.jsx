@@ -3,8 +3,8 @@ import '../styles/Notification.css';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Proptypes from 'prop-types';
 
-const Notification = ({ isAlert }) => {
-  if (!isAlert) {
+const Notification = ({ notification, clearNotification }) => {
+  if (notification.title === '') {
     return null;
   }
   return (
@@ -42,7 +42,7 @@ const Notification = ({ isAlert }) => {
           flexGrow: '1',
         }}
       >
-        This is a notification.
+        {notification.message}
       </span>
       <button
         style={{
@@ -55,6 +55,7 @@ const Notification = ({ isAlert }) => {
           justifyContent: 'center',
           padding: '0',
         }}
+        onClick={clearNotification}
         className='cancel-notification'
       >
         <CancelIcon />
@@ -64,7 +65,8 @@ const Notification = ({ isAlert }) => {
 };
 
 Notification.propTypes = {
-  isAlert: Proptypes.bool,
+  notification: Proptypes.object,
+  clearNotification: Proptypes.func,
 };
 
 export default Notification;

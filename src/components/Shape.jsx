@@ -40,7 +40,16 @@ const Shape = ({ name, photo, shape, authors, shapeId }) => {
       <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper square'>
-            <img src={photo} loading='lazy' alt={name} />
+            <img
+              src={photo}
+              loading='lazy'
+              alt={name}
+              style={{
+                objectFit: 'cover',
+
+                maxHeight: '100%',
+              }}
+            />
             <Link className='bg square' to={`/book/${shapeId}`}>
               <button
                 aria-label='Add to Collections'

@@ -1,45 +1,171 @@
-.authorContainer {
-  padding-top: 0;
-  color: #fff;
-  width: 100%;
-  height: auto;
-  box-sizing: border-box;
-  z-index: -5000;
+.author-page {
+  color: var(--primary-color);
+  background: black;
+  font-family: 'Ember', 'Helvetica', 'Arial', 'sans-serif';
 }
 
-.authorContainerChild {
-  inset-inline-start: 0;
-  position: absolute;
-  inset-inline-end: 0;
-  top: 0;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 16px;
 }
 
-.authorContainerBg {
-  background-repeat: repeat-y;
-  background-size: cover;
-  background-position: center top;
-  transition: background-image 1s ease-in;
-  transform: translateZ(0);
-  background-attachment: fixed;
-  position: fixed !important;
-  width: 100%;
-  /* height: 100vh; */
-  top: 0;
-  inset-inline-start: 0;
-  z-index: -1;
+.author-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
 }
 
-.altHeaderBg {
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.15),
-    #0a0b0b 100vh,
-    #25d1da
-  );
-  height: 100%;
-  max-height: 200vh;
-  position: sticky;
-  top: -100vh;
-  width: 100%;
-  z-index: -1;
+.author-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.author-image {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+}
+
+.author-name {
+  font-size: 1.875rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.author-title {
+  color: var(--light-gray-3);
+  margin: 4px 0;
+}
+
+.author-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.follow-button {
+  padding: 8px 8px;
+  font-size: 0.875rem;
+  background-color: var(--hover-blue);
+  color: black;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 120px;
+}
+
+.genre-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.genre-tag {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  background-color: var(--light-gray-2);
+  border-radius: 9999px;
+}
+
+.section {
+  margin-top: 48px;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.horizontal-scroll {
+  overflow-x: auto;
+}
+
+.scroll-content {
+  display: flex;
+  gap: 16px;
+  padding-bottom: 16px;
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .author-grid {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+/* Scrollbar styles */
+.horizontal-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.horizontal-scroll::-webkit-scrollbar-thumb {
+  background: var(--light-gray-1);
+  border-radius: 10px;
+}
+
+.horizontal-scroll::-webkit-scrollbar-track {
+  background: var(--gray-2);
+}
+
+/* Ensure text doesn't get selected unintentionally */
+.author-page {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Smooth transitions */
+.follow-button,
+.genre-tag {
+  transition: all 0.15s ease 0s;
+}
+.follow-button::after {
+  content: 'Follow Author'; /* Default text */
+}
+.unfollow-button.followed::after {
+  content: 'Following'; /* Text when followed */
+  font-weight: bold;
+}
+.unfollow-button.followed:hover::after {
+  content: 'Unfollow'; /* Text when followed and hovered */
+  font-weight: lighter;
+}
+
+.unfollow-button {
+  padding: 8px 8px;
+
+  font-size: 0.875rem;
+  background-color: var(--light-gray-3);
+  color: black;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 120px;
+}
+
+/* .unfollow-button:hover,
+.unfollow-button {
+  background-color: rgb(255, 81, 0);
+} */
+
+/* Hover effects */
+.follow-button:hover,
+.unfollow-button:hover,
+.unfollow-button {
+  background-color: var(--light-gray-3);
+}
+
+.genre-tag:hover {
+  background-color: var(--light-gray-3);
 }

@@ -24,6 +24,7 @@ const HotBooks = () => {
         contentScrollRef={contentScrollRef}
         headerText='Thrills of the Week'
         navLink={navLink}
+        isNavLink={true}
       />
       <ContentScroller
         contentScrollRef={contentScrollRef}
