@@ -20,7 +20,7 @@ const Nav = () => {
   const clearSearchQuery = (event) => {
     event.preventDefault();
     setSearchQuery('');
-    setShowSearchContainer(true);
+    setShowSearchContainer(false);
     setTimeout(() => {
       inputRef.current.focus();
     }, 0);

@@ -5,7 +5,7 @@ import {
   unfollowAuthor,
 } from '../services/authorServices.js';
 import { useParams } from 'react-router-dom';
-import ContenScroller from '../components/ContentScroller';
+import BookScroller from '../components/sections/BookScroller.jsx';
 
 import Notification from '../components/Notification';
 import '../styles/Author.css';
@@ -106,7 +106,6 @@ export default function Author() {
                   <div className='genre-tags'>
                     <span className='genre-tag'>Fiction</span>
                     <span className='genre-tag'>Mystery</span>
-                    
                   </div>
                 </div>
               </div>
@@ -116,7 +115,12 @@ export default function Author() {
             <p>{description}</p>
           </div>
         </div>
-        <ContenScroller />
+        {/* <BookScroller
+          shape='circle'
+          data={author.books}
+          headerText='Books by this author'
+          isNavLink={false}
+        /> */}
       </div>
     </div>
   );

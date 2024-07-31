@@ -11,7 +11,6 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       const hotBooks = await bookServices.getHotBooks();
-      console.log(hotBooks);
       setHotBooks(hotBooks);
       const authors = getHotAuthors();
       setHotAuthors(authors);

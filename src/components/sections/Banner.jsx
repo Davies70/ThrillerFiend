@@ -26,14 +26,14 @@ const Banner = () => {
             ry='8'
           />
           <text
-            x='28%'
+            x='29%'
             y='25%'
             fontFamily='Roboto, sans-serif'
             fontSize='30'
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'
-            
+            fontWeight={700}
           >
             Welcome,
           </text>
@@ -45,8 +45,9 @@ const Banner = () => {
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'
+            fontWeight={700}
           >
-            Thrill-Seekers
+            Thrillseekers
           </text>
           <text
             x='49%'
@@ -56,17 +57,19 @@ const Banner = () => {
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'
+            fontWeight={700}
           >
             Sign up to explore the dark and enigmatic depths of fiction
           </text>
           <text
-            x='33.5%'
-            y='80%'
+            x='33.2%'
+            y='81%'
             fontFamily='Roboto, sans-serif'
             fontSize='20'
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'
+            fontWeight={700}
           >
             Let
           </text>
@@ -78,17 +81,19 @@ const Banner = () => {
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'
+            fontWeight={700}
           >
             Thriller Fiend
           </text>
           <text
-            x='58.5%'
-            y='80%'
+            x='59%'
+            y='81%'
             fontFamily='Roboto, sans-serif'
             fontSize='20'
             fill='#000'
             textAnchor='middle'
             dominantBaseline='middle'
+            fontWeight={700}
           >
             be your guide
           </text>
