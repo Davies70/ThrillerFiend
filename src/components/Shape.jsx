@@ -4,9 +4,11 @@ import Proptypes from 'prop-types';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
-import Loader from './Loader';
+// import Loader from './Loader';
 
-const Shape = ({ name, photo, shape, authors, shapeId }) => {
+const Shape = ({ name, photo, shape, authors, isAuthorName, id }) => {
+  const authorName =
+    typeof authors === 'string' ? authors : authors?.join(', ');
   if (shape === 'circle') {
     return (
       <div className='card'>
@@ -21,14 +23,22 @@ const Shape = ({ name, photo, shape, authors, shapeId }) => {
                 height: 'auto',
               }}
             />
-            <Link className='bg cirlce' to={`/author/${shapeId}`}>
+            <Link className='bg cirlce' to={`/author/`}>
               <button className='right-button'>
                 <MoreHorizOutlinedIcon />
               </button>
             </Link>
           </div>
           <div className='tag'>
-            <Link className='taglink' to={`/author/${shapeId}`}>
+            <Link
+              className='taglink'
+              to={`/author/${id}`}
+              style={{
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
               {name}
             </Link>
           </div>
@@ -36,7 +46,7 @@ const Shape = ({ name, photo, shape, authors, shapeId }) => {
       </div>
     );
   } else {
-    return (
+    return photo ? (
       <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper square'>
@@ -46,11 +56,11 @@ const Shape = ({ name, photo, shape, authors, shapeId }) => {
               alt={name}
               style={{
                 objectFit: 'cover',
-
-                maxHeight: '100%',
+                maxWidth: '100%',
+                maxHeight: 'auto',
               }}
             />
-            <Link className='bg square' to={`/book/${shapeId}`}>
+            <Link className='bg square' to={`/book/}`}>
               <button
                 aria-label='Add to Collections'
                 title='Add to Collections'
@@ -66,16 +76,18 @@ const Shape = ({ name, photo, shape, authors, shapeId }) => {
             </Link>
           </div>
           <div className='primary-tag'>
-            <Link className='taglink' to={`/book/${shapeId}`} title={name}>
+            <Link className='taglink' to={`/book/`} title={name}>
               {name}
             </Link>
-            <div className='secondary-tag'>
-              <span>{authors}</span>
-            </div>
+            {isAuthorName && (
+              <div className='secondary-tag'>
+                <span>{authorName}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
-    );
+    ) : null;
   }
 };
 
@@ -84,7 +96,8 @@ Shape.propTypes = {
   photo: Proptypes.string,
   shape: Proptypes.string,
   authors: Proptypes.oneOfType([Proptypes.array, Proptypes.string]),
-  shapeId: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
+  isAuthorName: Proptypes.bool,
+  id: Proptypes.string,
 };
 
 export default Shape;

@@ -16,7 +16,7 @@ const Header = ({ headerText, contentScrollRef, navLink, isNavLink }) => {
       if (contentScrollRef.current) {
         const { scrollLeft, clientWidth, scrollWidth } =
           contentScrollRef.current;
-        setMoreRight(scrollLeft + clientWidth < scrollWidth);
+        setMoreRight(scrollLeft + clientWidth + 10 < scrollWidth);
         setMoreLeft(scrollLeft > 0);
       }
     };

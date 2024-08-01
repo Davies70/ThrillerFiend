@@ -33,6 +33,8 @@ const Home = () => {
         shape='square'
         headerText='Thrills of the Week'
         isNavLink={true}
+        navLink='/weeklythrills'
+        isAuthorName={true}
       />
       <BestSellers />
     </div>

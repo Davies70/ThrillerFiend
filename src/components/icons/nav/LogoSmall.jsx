@@ -6,6 +6,8 @@ const LogoSmall = (props) => (
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
     {...props}
+    height={130}
+    width={100}
   >
     {/* Background */}
 

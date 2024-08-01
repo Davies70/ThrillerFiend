@@ -8,6 +8,9 @@ const Layout = ({ children }) => {
       className='container'
       style={{
         position: 'relative',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '48px 16px',
       }}
     >
       <Nav />

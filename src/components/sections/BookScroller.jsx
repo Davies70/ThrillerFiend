@@ -4,7 +4,14 @@ import ContentScroller from '../ContentScroller';
 
 import PropTypes from 'prop-types';
 
-const BookScroller = ({ shape, data, navLink, headerText, isNavLink }) => {
+const BookScroller = ({
+  shape,
+  data,
+  navLink,
+  headerText,
+  isNavLink,
+  isAuthorName,
+}) => {
   const contentScrollRef = useRef();
 
   return (
@@ -19,6 +26,7 @@ const BookScroller = ({ shape, data, navLink, headerText, isNavLink }) => {
         contentScrollRef={contentScrollRef}
         shape={shape}
         data={data}
+        isAuthorName={isAuthorName}
       />
     </section>
   );
@@ -30,6 +38,7 @@ BookScroller.propTypes = {
   navLink: PropTypes.string,
   headerText: PropTypes.string,
   isNavLink: PropTypes.bool,
+  isAuthorName: PropTypes.bool,
 };
 
 export default BookScroller;

@@ -4,10 +4,7 @@ import '../styles/ContentScroller.css';
 import Shape from './Shape';
 import PropTypes from 'prop-types';
 
-
-
-const ContentScroller = ({ contentScrollRef, shape, data }) => {
-  
+const ContentScroller = ({ contentScrollRef, shape, data, isAuthorName }) => {
   return (
     <div className='wrapper'>
       <div className='content-scroll' ref={contentScrollRef}>
@@ -18,7 +15,7 @@ const ContentScroller = ({ contentScrollRef, shape, data }) => {
                 photo={author.coverPhoto}
                 key={i}
                 shape={shape}
-                shapeId={author.id}
+                id={author.id}
               />
             ))
           : data?.map((book, i) => (
@@ -28,7 +25,7 @@ const ContentScroller = ({ contentScrollRef, shape, data }) => {
                 key={i}
                 shape={shape}
                 authors={book.author}
-                shapeId={book.primary_isbn10}
+                isAuthorName={isAuthorName}
               />
             ))}
       </div>
@@ -43,6 +40,8 @@ ContentScroller.propTypes = {
   ]),
   shape: PropTypes.string,
   data: PropTypes.array,
+  isAuthorName: PropTypes.bool,
+  
 };
 
 export default ContentScroller;

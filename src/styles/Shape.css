@@ -43,7 +43,6 @@
   align-items: center;
   object-fit: cover;
   object-position: center;
-  
 }
 
 .rectangle-ImageWrapper img {
@@ -268,11 +267,16 @@
 
 .taglink {
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* text-overflow: ellipsis; */
+
+  /* white-space: nowrap; */
   padding-inline-end: 10px;
+  overflow-wrap: break-word;
   text-decoration: none;
   max-width: 100%;
+  text-align: center;
+  align-self: center;
+  text-transform: capitalize;
 }
 
 .taglink:hover {
@@ -300,8 +304,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding-inline-end: 10px;
+  padding-inline-end: 12px;
   line-height: 16px;
-  font-size: 13px;
+  font-size: 10px;
   max-width: 100%;
+  text-align: center;
+  align-self: center;
 }

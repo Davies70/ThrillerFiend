@@ -4,6 +4,7 @@ import {
   followAuthor,
   unfollowAuthor,
 } from '../services/authorServices.js';
+import bookServices from '../services/bookServices.js';
 import { useParams } from 'react-router-dom';
 import BookScroller from '../components/sections/BookScroller.jsx';
 
@@ -19,11 +20,17 @@ export default function Author() {
     message: '',
     type: '',
   });
+  const [booksByAuthor, setBooksByAuthor] = useState([]);
   useEffect(() => {
     window.scrollTo(0, 0);
     const author = getAuthorById(parseInt(id));
     setAuthor(author);
     setIsFollowing(author.isFollowing);
+    const fetchBooksByAuthor = async () => {
+      const books = await bookServices.getBooksByAuthor(author.authorName);
+      setBooksByAuthor(books);
+    };
+    fetchBooksByAuthor();
   }, [id]);
 
   const { authorName, description, nationality, coverPhoto } = author;
@@ -74,7 +81,6 @@ export default function Author() {
     }
   };
 
-  console.log('isfollowing', isFollowing, followClass);
   const chooseFollow = isFollowing ? unfollow : follow;
 
   const clearNotification = () => {
@@ -115,12 +121,13 @@ export default function Author() {
             <p>{description}</p>
           </div>
         </div>
-        {/* <BookScroller
-          shape='circle'
-          data={author.books}
+        <BookScroller
+          shape='square'
+          data={booksByAuthor}
           headerText='Books by this author'
           isNavLink={false}
-        /> */}
+          isAuthorName={false}
+        />
       </div>
     </div>
   );

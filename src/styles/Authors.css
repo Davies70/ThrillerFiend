@@ -1,7 +1,6 @@
 .authors {
-  margin: 0;
+  margin-top: 25px;
   box-sizing: content-box !important;
-  padding-top: 24px;
   overflow: hidden !important;
   height: 100% !important;
   position: relative;
@@ -14,6 +13,11 @@
 
 .authors .card {
   display: inline-block;
+}
+
+.header-text {
+  display: flex;
+  margin-top: 22px;
 }
 
 @media only screen and (min-width: 480px) {
