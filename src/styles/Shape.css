@@ -20,7 +20,6 @@
   overflow: hidden;
   position: relative;
   width: 100%;
-  padding-top: 100%;
 }
 
 .imageWrapper img,
@@ -42,7 +41,7 @@
   justify-content: center;
   align-items: center;
   object-fit: cover;
-  object-position: center;
+  /* object-position: center; */
 }
 
 .rectangle-ImageWrapper img {
@@ -51,10 +50,13 @@
 
 .circle {
   border-radius: 50%;
+  padding-top: 100%;
 }
 
 .square {
   border-radius: 8px;
+  padding-top: 150%;
+  object-fit: cover;
 }
 
 /* .imageWrapper img:hover {
@@ -269,14 +271,21 @@
   overflow: hidden;
   /* text-overflow: ellipsis; */
 
-  /* white-space: nowrap; */
+  white-space: break-spaces;
   padding-inline-end: 10px;
-  overflow-wrap: break-word;
+
   text-decoration: none;
   max-width: 100%;
   text-align: center;
   align-self: center;
   text-transform: capitalize;
+  display: -webkit-box; /* Use a flexbox-based layout model for the container */
+  -webkit-box-orient: vertical; /* Use vertical orientation */
+  overflow: hidden; /* Hide any overflow text */
+  -webkit-line-clamp: 4; /* Clamp the text after 4 lines */
+  line-clamp: 4; /* Fallback for modern browsers */
+  line-height: 1.5em; /* Adjust the line height if necessary */
+  max-height: 6em;
 }
 
 .taglink:hover {

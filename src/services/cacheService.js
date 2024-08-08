@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 // Function to fetch data from API and store in localStorage
-export async function fetchAndStoreData(options) {
+export async function fetchAndStoreData(config, key) {
   try {
-    const response = await axios.request(options);
-    const data = response.data.results.books;
-    setWithExpiry('apiData', data, 24 * 60 * 60 * 1000); // Store for 24 hours
+    const response = await axios.request(config);
+    const { data } = response;
+    setWithExpiry(key, data, 24 * 60 * 60 * 1000); // Store for 24 hours
     return data;
   } catch (error) {
     console.error('Error fetching data:', error.message);

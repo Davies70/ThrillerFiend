@@ -1,17 +1,12 @@
 .author-page {
   background: black;
   font-family: 'Ember', 'Helvetica', 'Arial', 'sans-serif';
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 48px 16px;
+  margin-top: 70px;
 }
 
 .author-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 2fr;
   gap: 32px;
 }
 
@@ -27,6 +22,12 @@
   border-radius: 50%;
 }
 
+.author-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .author-name {
   font-size: 1.875rem;
   font-weight: bold;
@@ -34,10 +35,11 @@
 }
 
 .author-bio {
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: var(--light-gray-3);
   margin: 16px 0;
-  line-height: 21px;
+  line-height: 31px;
+  text-align: center;
 }
 
 .author-title {
@@ -49,7 +51,6 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-top: 16px;
 }
 
 .follow-button {
@@ -76,18 +77,14 @@
   border-radius: 9999px;
 }
 
-.section {
+/* .section {
   margin-top: 48px;
-}
+} */
 
 .section-title {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 16px;
-}
-
-.horizontal-scroll {
-  overflow-x: auto;
 }
 
 .scroll-content {
@@ -96,15 +93,40 @@
   padding-bottom: 16px;
 }
 
-.books-grid {
+/* .books-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 24px;
-}
+} */
 
-@media (min-width: 768px) {
+@media (max-width: 767px) {
   .author-grid {
     grid-template-columns: 1fr 2fr;
+    gap: 8px;
+  }
+
+  .author-bio {
+    grid-row: 3;
+    grid-column: 1;
+    font-size: 0.875rem;
+    margin: 8px 0;
+    width: 100vw;
+    line-height: 21px;
+  }
+
+  .genre-tags {
+    gap: 4px;
+    align-self: start;
+  }
+
+  .genre-tag {
+    padding: 2px 4px;
+    font-size: 0.625rem;
+  }
+
+  .author-actions {
+    flex-direction: column;
+    gap: 8px;
   }
 }
 
@@ -135,6 +157,7 @@
 .follow-button,
 .genre-tag {
   transition: all 0.15s ease 0s;
+  align-self: flex-start;
 }
 .follow-button::after {
   content: 'Follow Author'; /* Default text */
@@ -150,7 +173,6 @@
 
 .unfollow-button {
   padding: 8px 8px;
-
   font-size: 0.875rem;
   background-color: var(--light-gray-3);
   color: black;
@@ -158,6 +180,7 @@
   border-radius: 4px;
   cursor: pointer;
   width: 120px;
+  align-self: flex-start;
 }
 
 /* .unfollow-button:hover,

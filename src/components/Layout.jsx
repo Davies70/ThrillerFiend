@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
         position: 'relative',
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '48px 16px',
+        overflow: 'hidden',
       }}
     >
       <Nav />

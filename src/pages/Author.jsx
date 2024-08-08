@@ -7,6 +7,7 @@ import {
 import bookServices from '../services/bookServices.js';
 import { useParams } from 'react-router-dom';
 import BookScroller from '../components/sections/BookScroller.jsx';
+// import Shape from '../components/Shape.jsx';
 
 import Notification from '../components/Notification';
 import '../styles/Author.css';
@@ -21,15 +22,24 @@ export default function Author() {
     type: '',
   });
   const [booksByAuthor, setBooksByAuthor] = useState([]);
+  // const [latestBook, setLatestBook] = useState({});
+
   useEffect(() => {
     window.scrollTo(0, 0);
     const author = getAuthorById(parseInt(id));
     setAuthor(author);
+
     setIsFollowing(author.isFollowing);
     const fetchBooksByAuthor = async () => {
+      console.log('author', author.authorName);
       const books = await bookServices.getBooksByAuthor(author.authorName);
       setBooksByAuthor(books);
     };
+    // const fetchLatestBook = async () => {
+    //   const book = await bookServices.getLatestBook(author.authorName);
+    //   setLatestBook(book);
+    // };
+    // Promise.all([fetchBooksByAuthor(), fetchLatestBook()]);
     fetchBooksByAuthor();
   }, [id]);
 
@@ -95,12 +105,12 @@ export default function Author() {
         notification={notification}
         clearNotification={clearNotification}
       />
-      <div className='container'>
+      <div>
         <div className='author-grid'>
           <div className='author-info'>
             <div className='author-header'>
               <img className='author-image' src={coverPhoto} alt='Author' />
-              <div>
+              <div className='author-right'>
                 <h1 className='author-name'>{authorName}</h1>
                 <p className='author-title'> {nationality} author</p>
                 <div className='author-actions'>
@@ -112,6 +122,7 @@ export default function Author() {
                   <div className='genre-tags'>
                     <span className='genre-tag'>Fiction</span>
                     <span className='genre-tag'>Mystery</span>
+                    <span className='genre-tag'>Thriller</span>
                   </div>
                 </div>
               </div>
@@ -121,10 +132,18 @@ export default function Author() {
             <p>{description}</p>
           </div>
         </div>
+        {/* 
+        <Shape
+          shape={'sqaure'}
+          isAuthorName={false}
+          name={latestBook.name}
+          photo={latestBook.book_image}
+        /> */}
+
         <BookScroller
           shape='square'
           data={booksByAuthor}
-          headerText='Books by this author'
+          headerText='Thrillers by this author'
           isNavLink={false}
           isAuthorName={false}
         />

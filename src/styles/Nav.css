@@ -14,8 +14,6 @@
   inset-inline-start: 0;
   inset-inline-end: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  max-width: 1600px;
-  min-width: 320px;
   flex: 1 1 0%;
   margin: 0 auto;
 }
@@ -431,6 +429,7 @@ input {
     height: 48.8px;
     justify-content: center;
     align-items: center;
+    padding-bottom: 5px;
   }
 
   .search-icon-small:hover {

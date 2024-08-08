@@ -26,7 +26,7 @@ const Authors = () => {
           name={author.authorName}
           photo={author.coverPhoto}
           shape={shape}
-          shapeId={author.id}
+          id={author.id}
           key={i}
         />
       ))}

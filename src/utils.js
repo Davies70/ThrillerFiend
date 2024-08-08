@@ -1,4 +1,3 @@
-
 // async function makeRequestWithRetry(options, maxRetries = 5) {
 //   for (let i = 0; i < maxRetries; i++) {
 //     try {
@@ -14,4 +13,14 @@
 //     }
 //   }
 // }
+
+export const setSome = (set, callback) => {
+  for (const value of set) {
+    if (callback(value)) {
+      return true;
+    }
+  }
+  return false;
+};
+
 

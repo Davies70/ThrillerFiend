@@ -20,7 +20,7 @@ const Nav = () => {
   const clearSearchQuery = (event) => {
     event.preventDefault();
     setSearchQuery('');
-    setShowSearchContainer(false);
+   
     setTimeout(() => {
       inputRef.current.focus();
     }, 0);
@@ -113,7 +113,7 @@ const Nav = () => {
             <span id='nav-icon'>
               <WhatshotIcon />
             </span>
-            <span className='nav-text'>New Thrills</span>
+            <span className='nav-text'>Free Thrills</span>
           </Link>
           <Link
             className={

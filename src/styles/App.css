@@ -1,8 +1,5 @@
 #content {
   display: block;
-
   unicode-bidi: isolate;
-  min-width: 320px;
-  max-width: 1600px;
-  margin: 0 auto;
+  margin-top: 75px;
 }

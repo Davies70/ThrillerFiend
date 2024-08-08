@@ -23,7 +23,7 @@ const Shape = ({ name, photo, shape, authors, isAuthorName, id }) => {
                 height: 'auto',
               }}
             />
-            <Link className='bg cirlce' to={`/author/`}>
+            <Link className='bg cirlce' to={`/author/${id}`}>
               <button className='right-button'>
                 <MoreHorizOutlinedIcon />
               </button>
@@ -55,9 +55,7 @@ const Shape = ({ name, photo, shape, authors, isAuthorName, id }) => {
               loading='lazy'
               alt={name}
               style={{
-                objectFit: 'cover',
-                maxWidth: '100%',
-                maxHeight: 'auto',
+                
               }}
             />
             <Link className='bg square' to={`/book/}`}>
@@ -97,7 +95,7 @@ Shape.propTypes = {
   shape: Proptypes.string,
   authors: Proptypes.oneOfType([Proptypes.array, Proptypes.string]),
   isAuthorName: Proptypes.bool,
-  id: Proptypes.string,
+  id: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
 };
 
 export default Shape;
