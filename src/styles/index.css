@@ -19,6 +19,8 @@
   --light-gray-3: rgba(255, 255, 255, 0.6);
   --gray-1: rgba(0, 0, 0, 0.3);
   --gray-2: rgba(0, 0, 0, 0.6);
+  --blue-text: rgb(37 208 218 / 1);
+  --white-text: rgb(255 255 255 / 1);
 }
 .hydrated {
   visibility: inherit;
@@ -129,4 +131,10 @@ button {
   padding: 0px 0px 12px;
   flex-direction: column;
   margin-top: 10px;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
 }

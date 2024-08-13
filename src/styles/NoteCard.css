@@ -1,0 +1,35 @@
+.note-card {
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0;
+  box-shadow: 0 0 #0000, var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+
+  --tw-bg-opacity: 1;
+  background-color: rgb(26 26 26 / var(--tw-bg-opacity));
+
+  --tw-border-opacity: 1;
+  border-style: solid;
+  border-color: rgb(37, 209, 218, 1);
+
+  border-width: 1px;
+  border-radius: 0.5rem;
+}
+
+.note-card-content {
+  padding: 1rem;
+}
+
+.note-card-text {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  margin-bottom: 1rem;
+  margin: 0;
+}
+
+.note-card-actions {
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+}

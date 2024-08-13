@@ -7,13 +7,14 @@
 .author-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 32px;
+  gap: 10px;
 }
 
 .author-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 24px;
+  margin-top: 40px;
 }
 
 .author-image {
@@ -93,22 +94,16 @@
   padding-bottom: 16px;
 }
 
-/* .books-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 24px;
-} */
-
 @media (max-width: 767px) {
   .author-grid {
     grid-template-columns: 1fr 2fr;
-    gap: 8px;
+    gap: 0px;
   }
 
   .author-bio {
     grid-row: 3;
     grid-column: 1;
-    font-size: 0.875rem;
+    font-size: 1rem;
     margin: 8px 0;
     width: 100vw;
     line-height: 21px;
@@ -116,7 +111,7 @@
 
   .genre-tags {
     gap: 4px;
-    align-self: start;
+    /* align-self: start; */
   }
 
   .genre-tag {
@@ -127,6 +122,26 @@
   .author-actions {
     flex-direction: column;
     gap: 8px;
+  }
+
+  .author-header {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .author-title {
+    text-align: center;
+  }
+
+  .author-image {
+    width: 96px;
+    height: 96px;
+  }
+  .follow-button {
+    width: 100px;
+    align-self: center;
   }
 }
 
@@ -154,7 +169,7 @@
 }
 
 /* Smooth transitions */
-.follow-button,
+
 .genre-tag {
   transition: all 0.15s ease 0s;
   align-self: flex-start;
@@ -171,8 +186,18 @@
   font-weight: lighter;
 }
 
+@media (hover: none) {
+  .unfollow-button.followed::after {
+    content: 'Following'; /* Text when followed */
+    font-weight: bold;
+  }
+  .unfollow-button.followed:hover::after {
+    content: 'Unfollow'; /* Text when followed and hovered */
+    font-weight: lighter;
+  }
+}
+
 .unfollow-button {
-  padding: 8px 8px;
   font-size: 0.875rem;
   background-color: var(--light-gray-3);
   color: black;
@@ -180,7 +205,8 @@
   border-radius: 4px;
   cursor: pointer;
   width: 120px;
-  align-self: flex-start;
+  display: flex;
+  justify-content: center;
 }
 
 /* .unfollow-button:hover,
@@ -198,3 +224,8 @@
 .genre-tag:hover {
   background-color: var(--light-gray-3);
 }
+
+/* .follow-button:active,
+.unfollow-button:active {
+  pointer-events: none;
+} */

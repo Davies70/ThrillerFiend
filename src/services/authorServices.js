@@ -8,8 +8,6 @@ const getAuthorById = (id) => hotAuthors.find((author) => author.id === id);
 
 const followAuthor = (id) => {
   const author = hotAuthors.find((author) => String(author.id) === id);
-
-  console.log(author, String(author.id));
   author.isFollowing = true;
 };
 
@@ -19,10 +17,39 @@ const unfollowAuthor = (id) => {
   author.isFollowing = false;
 };
 
-export {
+const getSimilarAuthors = () => {
+  const getRandomAuthors = (count) => {
+    const randomAuthors = [];
+    const shuffledAuthors = hotAuthors.sort(() => Math.random() - 0.5);
+    for (let i = 0; i < count; i++) {
+      randomAuthors.push(shuffledAuthors[i]);
+    }
+    return randomAuthors;
+  };
+
+  return getRandomAuthors(3);
+};
+
+const getAuthorGenres = (books) => {
+  const categories = [];
+  books.forEach((book) => {
+    book.categories &&
+      book.categories.forEach((category) => {
+        if (!categories.includes(category)) {
+          categories.push(category);
+        }
+      });
+  });
+
+  return categories;
+};
+
+export default {
   getHotAuthors,
   getAuthors,
   getAuthorById,
   followAuthor,
   unfollowAuthor,
+  getSimilarAuthors,
+  getAuthorGenres,
 };

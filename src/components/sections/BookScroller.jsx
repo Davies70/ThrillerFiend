@@ -11,6 +11,7 @@ const BookScroller = ({
   headerText,
   isNavLink,
   isAuthorName,
+  isControls,
 }) => {
   const contentScrollRef = useRef();
 
@@ -21,6 +22,7 @@ const BookScroller = ({
         headerText={headerText}
         navLink={navLink}
         isNavLink={isNavLink}
+        isControls={isControls}
       />
       <ContentScroller
         contentScrollRef={contentScrollRef}
@@ -39,6 +41,7 @@ BookScroller.propTypes = {
   headerText: PropTypes.string,
   isNavLink: PropTypes.bool,
   isAuthorName: PropTypes.bool,
+  isControls: PropTypes.bool,
 };
 
 export default BookScroller;

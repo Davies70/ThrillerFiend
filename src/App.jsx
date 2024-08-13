@@ -8,7 +8,7 @@ import NotFound from './pages/NotFound';
 import SignIn from './pages/SignIn';
 import Author from './pages/Author';
 import Book from './pages/Book';
-import Books from './pages/Books';
+import Books from './pages/Book';
 import Authors from './pages/Authors';
 
 import './styles/App.css';

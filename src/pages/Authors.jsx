@@ -1,10 +1,10 @@
 import React from 'react';
-import { getAuthors } from '../services/authorServices';
+import authorServices from '../services/authorServices';
 import Shape from '../components/Shape';
 import '../styles/Authors.css';
 
 const Authors = () => {
-  const authors = getAuthors();
+  const authors = authorServices.getAuthors();
   const shape = 'circle';
   return (
     <div

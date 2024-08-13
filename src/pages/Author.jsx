@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import {
-  getAuthorById,
-  followAuthor,
-  unfollowAuthor,
-} from '../services/authorServices.js';
+import authorServices from '../services/authorServices.js';
 import bookServices from '../services/bookServices.js';
 import { useParams } from 'react-router-dom';
 import BookScroller from '../components/sections/BookScroller.jsx';
-// import Shape from '../components/Shape.jsx';
-
 import Notification from '../components/Notification';
 import '../styles/Author.css';
 
@@ -22,26 +16,38 @@ export default function Author() {
     type: '',
   });
   const [booksByAuthor, setBooksByAuthor] = useState([]);
-  // const [latestBook, setLatestBook] = useState({});
+  const [similarAuthors, setSimilarAuthors] = useState([]);
+  const [isControls, setIsControls] = useState(true);
+  const [genres, setGenres] = useState([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const author = getAuthorById(parseInt(id));
-    setAuthor(author);
-
-    setIsFollowing(author.isFollowing);
-    const fetchBooksByAuthor = async () => {
-      console.log('author', author.authorName);
-      const books = await bookServices.getBooksByAuthor(author.authorName);
-      setBooksByAuthor(books);
+    const fetchAuthor = () => {
+      const author = authorServices.getAuthorById(parseInt(id));
+      setAuthor(author);
+      setIsFollowing(author.isFollowing);
     };
-    // const fetchLatestBook = async () => {
-    //   const book = await bookServices.getLatestBook(author.authorName);
-    //   setLatestBook(book);
-    // };
-    // Promise.all([fetchBooksByAuthor(), fetchLatestBook()]);
+    fetchAuthor();
+    const fetchSimilarAuthors = () => {
+      const foundAuthors = authorServices.getSimilarAuthors();
+      setSimilarAuthors(foundAuthors);
+    };
+    fetchSimilarAuthors();
+  }, [id, author]);
+
+  useEffect(() => {
+    const fetchBooksByAuthor = async () => {
+      if (author.authorName) {
+        const books = await bookServices.getBooksByAuthor(author.authorName);
+        const foundGenres = authorServices.getAuthorGenres(books);
+        setGenres(foundGenres);
+        setBooksByAuthor(books);
+        setIsControls(booksByAuthor.length > 7);
+      }
+    };
+
     fetchBooksByAuthor();
-  }, [id]);
+  }, [author.authorName, booksByAuthor.length]);
 
   const { authorName, description, nationality, coverPhoto } = author;
 
@@ -51,7 +57,7 @@ export default function Author() {
 
   const follow = () => {
     try {
-      followAuthor(id);
+      authorServices.followAuthor(id);
       setNotification({
         title: 'Success',
         message: `You are now following ${authorName}`,
@@ -72,7 +78,7 @@ export default function Author() {
 
   const unfollow = () => {
     try {
-      unfollowAuthor(id);
+      authorServices.unfollowAuthor(id);
       setNotification({
         title: 'Success',
         message: `You have unfollowed ${authorName}`,
@@ -120,9 +126,12 @@ export default function Author() {
                   ></button>
 
                   <div className='genre-tags'>
-                    <span className='genre-tag'>Fiction</span>
-                    <span className='genre-tag'>Mystery</span>
-                    <span className='genre-tag'>Thriller</span>
+                    {genres.length > 0 &&
+                      genres.map((genre, index) => (
+                        <span key={index} className='genre-tag'>
+                          {genre}
+                        </span>
+                      ))}
                   </div>
                 </div>
               </div>
@@ -132,13 +141,6 @@ export default function Author() {
             <p>{description}</p>
           </div>
         </div>
-        {/* 
-        <Shape
-          shape={'sqaure'}
-          isAuthorName={false}
-          name={latestBook.name}
-          photo={latestBook.book_image}
-        /> */}
 
         <BookScroller
           shape='square'
@@ -146,6 +148,15 @@ export default function Author() {
           headerText='Thrillers by this author'
           isNavLink={false}
           isAuthorName={false}
+          isControls={isControls}
+        />
+
+        <BookScroller
+          shape='circle'
+          data={similarAuthors}
+          headerText='Similar authors'
+          isNavLink={false}
+          isControls={false}
         />
       </div>
     </div>

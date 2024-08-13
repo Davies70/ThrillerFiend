@@ -71,12 +71,14 @@ const getBooksByAuthor = async (authorName) => {
   };
 
   data.items.forEach((book) => {
-    const title = book.volumeInfo.title.toLowerCase().replace(/&/g, 'and');
+    const title = book.volumeInfo.title
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/^the\s/i, '');
 
     let authorsName = '';
 
     authorsName = book.volumeInfo.authors?.join(' ').toLowerCase();
-    console.log('authorsName', authorsName);
 
     if (authorsName === undefined) {
       authorsName = '';
@@ -86,7 +88,8 @@ const getBooksByAuthor = async (authorName) => {
       !titles.has(title) &&
       isTitleUnique(title) &&
       !title.includes(authorsName) &&
-      authorsName.includes(authorName.toLowerCase())
+      authorsName.includes(authorName.toLowerCase()) &&
+      book.volumeInfo.language === 'en'
     ) {
       titles.add(title);
       uniqueBooks.push(book);
@@ -98,6 +101,8 @@ const getBooksByAuthor = async (authorName) => {
       book_image: book.volumeInfo.imageLinks?.thumbnail,
       author: book.volumeInfo?.authors,
       book_id: book.id,
+      volumeId: book.id,
+      categories: book.volumeInfo.categories,
     };
   });
 
@@ -191,9 +196,63 @@ const getLatestBook = async (author) => {
   };
 };
 
+const getBookbyISBN = async (isbn) => {
+  let data = getWithExpiry('bookByISBN-' + isbn);
+  if (data === null) {
+    console.log(
+      `Book by ISBN ${isbn} data not in localStorage or expired, fetching from API...`
+    );
+    const queryParam = {
+      q: `isbn:${isbn}`,
+      key: BOOKS_API_KEY,
+      maxResults: 1,
+      langRestrict: 'en',
+      country: 'US',
+      printType: 'books',
+    };
+    const params = new URLSearchParams(queryParam).toString();
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'GET',
+      url: `${BOOKS_BASEURL}${params}`,
+    };
+    data = await fetchAndStoreData(config, `bookByISBN-${isbn}`);
+  } else {
+    console.log(`Book by ISBN ${isbn} data retrieved from localStorage`);
+  }
+  return data.items[0];
+};
+
+const getBookByVolumeId = async (volumeId) => {
+  let data = getWithExpiry('bookByVolumeId-' + volumeId);
+  if (data === null) {
+    console.log(
+      `Book by VolumeId ${volumeId} data not in localStorage or expired, fetching from API...`
+    );
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'GET',
+      url: `https://www.googleapis.com/books/v1/volumes/${volumeId}`,
+      key: BOOKS_API_KEY,
+    };
+    data = await fetchAndStoreData(config, `bookByVolumeId-${volumeId}`);
+  } else {
+    console.log(
+      `Book by VolumeId ${volumeId} data retrieved from localStorage`
+    );
+  }
+  return data;
+};
+
 export default {
   getBooks,
   getHotBooks,
   getBooksByAuthor,
   getLatestBook,
+  getBookbyISBN,
+  getBookByVolumeId,
 };

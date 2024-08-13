@@ -5,7 +5,13 @@ import '../styles/Header.css';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-const Header = ({ headerText, contentScrollRef, navLink, isNavLink }) => {
+const Header = ({
+  headerText,
+  contentScrollRef,
+  navLink,
+  isNavLink,
+  isControls,
+}) => {
   const [moreRight, setMoreRight] = useState(true);
   const [moreLeft, setMoreLeft] = useState(false);
   let arrowClassRight = moreRight ? 'arrow' : 'disabled arrow';
@@ -46,31 +52,33 @@ const Header = ({ headerText, contentScrollRef, navLink, isNavLink }) => {
         <h2>{headerText}</h2>
       </div>
 
-      <div className='controls'>
-        <button
-          className={arrowClassLeft}
-          onClick={() => handleScrollerX('left')}
-        >
-          <KeyboardArrowLeftIcon />
-        </button>
-        <button
-          className={arrowClassRight}
-          onClick={() => handleScrollerX('right')}
-        >
-          <KeyboardArrowRightIcon />
-        </button>
-        {isNavLink && (
+      {isControls && (
+        <div className='controls'>
           <button
-            className='see-all'
-            aria-label={headerText}
-            title={headerText}
+            className={arrowClassLeft}
+            onClick={() => handleScrollerX('left')}
           >
-            <span>
-              <Link to={navLink}>see all</Link>
-            </span>
+            <KeyboardArrowLeftIcon />
           </button>
-        )}
-      </div>
+          <button
+            className={arrowClassRight}
+            onClick={() => handleScrollerX('right')}
+          >
+            <KeyboardArrowRightIcon />
+          </button>
+          {isNavLink && (
+            <button
+              className='see-all'
+              aria-label={headerText}
+              title={headerText}
+            >
+              <span>
+                <Link to={navLink}>see all</Link>
+              </span>
+            </button>
+          )}
+        </div>
+      )}
     </header>
   );
 };

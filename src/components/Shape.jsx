@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
 // import Loader from './Loader';
 
-const Shape = ({ name, photo, shape, authors, isAuthorName, id }) => {
+const Shape = ({ name, photo, shape, authors, isAuthorName, id, volumeId }) => {
   const authorName =
     typeof authors === 'string' ? authors : authors?.join(', ');
   if (shape === 'circle') {
@@ -46,18 +46,21 @@ const Shape = ({ name, photo, shape, authors, isAuthorName, id }) => {
       </div>
     );
   } else {
-    return photo ? (
+    return (
       <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper square'>
-            <img
-              src={photo}
-              loading='lazy'
-              alt={name}
-              style={{
-                
-              }}
-            />
+            {photo ? (
+              <img src={photo} loading='lazy' alt={name} style={{}} />
+            ) : (
+              <img
+                src={`https://lgimages.s3.amazonaws.com/nc-md.gif`}
+                loading='lazy'
+                alt={name}
+                style={{}}
+              />
+            )}
+
             <Link className='bg square' to={`/book/}`}>
               <button
                 aria-label='Add to Collections'
@@ -66,15 +69,15 @@ const Shape = ({ name, photo, shape, authors, isAuthorName, id }) => {
                 <AddIcon className='left-button' />
               </button>
               {/* <button className='center-button' tabIndex='-1'>
-                <ArrowCircleRightOutlinedIcon />
-              </button> */}
+              <ArrowCircleRightOutlinedIcon />
+            </button> */}
               <button className='right-button'>
                 <MoreHorizOutlinedIcon />
               </button>
             </Link>
           </div>
           <div className='primary-tag'>
-            <Link className='taglink' to={`/book/`} title={name}>
+            <Link className='taglink' to={`/book/${volumeId}`} title={name}>
               {name}
             </Link>
             {isAuthorName && (
@@ -85,7 +88,7 @@ const Shape = ({ name, photo, shape, authors, isAuthorName, id }) => {
           </div>
         </div>
       </div>
-    ) : null;
+    );
   }
 };
 
@@ -96,6 +99,7 @@ Shape.propTypes = {
   authors: Proptypes.oneOfType([Proptypes.array, Proptypes.string]),
   isAuthorName: Proptypes.bool,
   id: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
+  volumeId: Proptypes.string,
 };
 
 export default Shape;

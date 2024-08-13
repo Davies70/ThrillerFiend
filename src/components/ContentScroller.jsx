@@ -26,6 +26,7 @@ const ContentScroller = ({ contentScrollRef, shape, data, isAuthorName }) => {
                 shape={shape}
                 authors={book.author}
                 isAuthorName={isAuthorName}
+                volumeId={book.volumeId}
               />
             ))}
       </div>
@@ -41,7 +42,6 @@ ContentScroller.propTypes = {
   shape: PropTypes.string,
   data: PropTypes.array,
   isAuthorName: PropTypes.bool,
-  
 };
 
 export default ContentScroller;
