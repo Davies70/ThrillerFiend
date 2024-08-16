@@ -4,84 +4,81 @@
   height: 100%;
   width: 100%;
   box-sizing: border-box;
-  margin: 0px;
-  min-height: 1px;
+  margin: 0;
+  min-height: 0.0625rem; /* 1px / 16 */
   scrollbar-width: none;
   scroll-behavior: smooth;
 }
 
 @media (pointer: fine) and (min-width: 0) {
   .content-scroll {
-    width: calc(100% - 4px);
+    width: calc(100% - 0.25rem); /* 4px / 16 */
   }
 }
 @media (pointer: fine) and (min-width: 360px) {
   .content-scroll {
-    width: calc(100% - 4px);
+    width: calc(100% - 0.25rem); /* 4px / 16 */
   }
 }
 @media (pointer: fine) and (min-width: 640px) {
   .content-scroll {
-    width: calc(100% - 12px);
+    width: calc(100% - 0.75rem); /* 12px / 16 */
   }
 }
 @media (pointer: fine) and (min-width: 840px) {
   .content-scroll {
-    width: calc(100% - 12px);
+    width: calc(100% - 0.75rem); /* 12px / 16 */
   }
 }
 @media (pointer: fine) and (min-width: 1024px) {
   .content-scroll {
-    width: calc(100% - 12px);
+    width: calc(100% - 0.75rem); /* 12px / 16 */
   }
 }
-
 @media (pointer: fine) and (min-width: 1440px) {
   .content-scroll {
-    width: calc(100% - 20px);
+    width: calc(100% - 1.25rem); /* 20px / 16 */
   }
 }
 
 @media (min-width: 0) {
   .content-scroll {
-    padding-inline: 20px;
+    padding-inline: 1.25rem; /* 20px / 16 */
   }
 }
 @media (min-width: 360px) {
   .content-scroll {
-    padding-inline: 20px;
+    padding-inline: 1.25rem; /* 20px / 16 */
   }
 }
-
 @media (min-width: 480px) {
   .content-scroll {
-    padding-inline: 36px;
+    padding-inline: 2.25rem; /* 36px / 16 */
   }
 }
 @media (min-width: 640px) {
   .content-scroll {
-    padding-inline: 36px;
+    padding-inline: 2.25rem; /* 36px / 16 */
   }
 }
 @media (min-width: 840px) {
   .content-scroll {
-    padding-inline: 36px;
+    padding-inline: 2.25rem; /* 36px / 16 */
   }
 }
 @media (min-width: 1024px) {
   .content-scroll {
-    padding-inline: 36px;
+    padding-inline: 2.25rem; /* 36px / 16 */
   }
 }
-
 @media (min-width: 1280px) {
   .content-scroll {
-    padding-inline: 52px;
+    padding-inline: 3.25rem; /* 52px / 16 */
   }
 }
 @media (min-width: 1440px) {
   .content-scroll {
-    padding-inline: 52px;
+    padding-inline: 3.25rem; /* 52px / 16 */
   }
 }
 

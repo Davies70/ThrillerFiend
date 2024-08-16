@@ -1,6 +1,6 @@
 .card {
-  padding-top: 4px;
-  padding-bottom: 4px;
+  padding-top: 0.25rem; /* 4px / 16 */
+  padding-bottom: 0.25rem; /* 4px / 16 */
   display: flex;
   flex-direction: column;
   opacity: 1;
@@ -30,7 +30,7 @@
   height: 100%;
   transition: opacity 0.2s ease 0s;
   display: block;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0.625rem 1.25rem rgba(0, 0, 0, 0.6); /* 10px / 16 and 20px / 16 */
   overflow: hidden;
   position: absolute;
   top: 0;
@@ -45,7 +45,7 @@
 }
 
 .rectangle-ImageWrapper img {
-  border-radius: 4px;
+  border-radius: 0.25rem; /* 4px / 16 */
 }
 
 .circle {
@@ -54,7 +54,7 @@
 }
 
 .square {
-  border-radius: 8px;
+  border-radius: 0.5rem; /* 8px / 16 */
   padding-top: 150%;
   object-fit: cover;
 }
@@ -77,8 +77,8 @@
   opacity: 0;
   background-color: transparent;
   position: absolute;
-  inset-inline-start: 0px;
-  top: 0px;
+  inset-inline-start: 0;
+  top: 0;
   height: 100%;
   width: 100%;
   transition: opacity 0.2s ease 0s;
@@ -93,16 +93,16 @@
 
 .bg .left-button {
   color: white;
-  border: 0px;
+  border: 0;
   box-shadow: none;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.625rem); /* 10px / 16 */
   display: inline-flex;
-  inset-inline-start: 0px;
+  inset-inline-start: 0;
   position: absolute;
   background-color: transparent;
   font-weight: bold;
   top: 45%;
-  left: 15px;
+  left: 0.9375rem; /* 15px / 16 */
 }
 
 .bg .left-button:hover {
@@ -110,14 +110,14 @@
   cursor: pointer;
 }
 .bg .center-button {
-  padding: 14px;
+  padding: 0.875rem; /* 14px / 16 */
   position: absolute;
-  padding-inline-start: 16px;
+  padding-inline-start: 1rem; /* 16px / 16 */
   background-color: var(--light-gray-2);
   color: white;
-  border: 2px solid transparent;
+  border: 0.125rem solid transparent; /* 2px / 16 */
   box-shadow: none;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.625rem); /* 10px / 16 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -133,13 +133,13 @@
 
 .bg .right-button {
   color: white;
-  border: 0px;
+  border: 0;
   box-shadow: none;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.625rem); /* 10px / 16 */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  inset-inline-end: 0px;
+  inset-inline-end: 0;
   white-space: nowrap;
   position: absolute;
   background-color: transparent;
@@ -153,14 +153,14 @@
 
 @media (pointer: fine) {
   .bg .center-button {
-    font-size: 16px;
-    line-height: 20px;
+    font-size: 1rem; /* 16px / 16 */
+    line-height: 1.25rem; /* 20px / 16 */
   }
 }
 
 .bg .right-button {
   position: absolute;
-  right: 10px;
+  right: 0.625rem; /* 10px / 16 */
 }
 
 .bg .right-button:hover {
@@ -169,102 +169,110 @@
 
 @media (min-width: 0) {
   .card {
-    -webkit-padding-end: 16px;
-    padding-inline-end: 16px;
-    -ms-flex: 0 0 calc((100% - 16px + 4px) / 2);
-    flex: 0 0 calc((100% - 16px + 4px) / 2);
-    width: calc((100% - 16px + 4px) / 2);
-    max-width: calc((100% - 16px + 4px) / 2);
+    -webkit-padding-end: 1rem; /* 16px / 16 */
+    padding-inline-end: 1rem; /* 16px / 16 */
+    -ms-flex: 0 0 calc((100% - 1rem + 0.25rem) / 2); /* 16px / 16 and 4px / 16 */
+    flex: 0 0 calc((100% - 1rem + 0.25rem) / 2); /* 16px / 16 and 4px / 16 */
+    width: calc((100% - 1rem + 0.25rem) / 2); /* 16px / 16 and 4px / 16 */
+    max-width: calc((100% - 1rem + 0.25rem) / 2); /* 16px / 16 and 4px / 16 */
   }
 }
 
 @media (min-width: 360px) {
   .card {
-    -webkit-padding-end: 16px;
-    padding-inline-end: 16px;
-    -ms-flex: 0 0 calc((100% - 16px + 4px) / 2);
-    flex: 0 0 calc((100% - 16px + 4px) / 2);
-    width: calc((100% - 16px + 4px) / 2);
-    max-width: calc((100% - 16px + 4px) / 2);
+    -webkit-padding-end: 1rem; /* 16px / 16 */
+    padding-inline-end: 1rem; /* 16px / 16 */
+    -ms-flex: 0 0 calc((100% - 1rem + 0.25rem) / 2); /* 16px / 16 and 4px / 16 */
+    flex: 0 0 calc((100% - 1rem + 0.25rem) / 2); /* 16px / 16 and 4px / 16 */
+    width: calc((100% - 1rem + 0.25rem) / 2); /* 16px / 16 and 4px / 16 */
+    max-width: calc((100% - 1rem + 0.25rem) / 2); /* 16px / 16 and 4px / 16 */
   }
 }
 
 @media (min-width: 480px) {
   .card {
-    -webkit-padding-end: 24px;
-    padding-inline-end: 24px;
-    -ms-flex: 0 0 calc((100% - 24px + 12px) / 2);
-    flex: 0 0 calc((100% - 24px + 12px) / 2);
-    width: calc((100% - 24px + 12px) / 2);
-    max-width: calc((100% - 24px + 12px) / 2);
+    -webkit-padding-end: 1.5rem; /* 24px / 16 */
+    padding-inline-end: 1.5rem; /* 24px / 16 */
+    -ms-flex: 0 0 calc((100% - 1.5rem + 0.75rem) / 2); /* 24px / 16 and 12px / 16 */
+    flex: 0 0 calc((100% - 1.5rem + 0.75rem) / 2); /* 24px / 16 and 12px / 16 */
+    width: calc((100% - 1.5rem + 0.75rem) / 2); /* 24px / 16 and 12px / 16 */
+    max-width: calc(
+      (100% - 1.5rem + 0.75rem) / 2
+    ); /* 24px / 16 and 12px / 16 */
   }
 }
 
 @media (min-width: 640px) {
   .card {
-    -webkit-padding-end: 24px;
-    padding-inline-end: 24px;
-    -ms-flex: 0 0 calc((100% - 24px + 12px) / 3);
-    flex: 0 0 calc((100% - 24px + 12px) / 3);
-    width: calc((100% - 24px + 12px) / 3);
-    max-width: calc((100% - 24px + 12px) / 3);
+    -webkit-padding-end: 1.5rem; /* 24px / 16 */
+    padding-inline-end: 1.5rem; /* 24px / 16 */
+    -ms-flex: 0 0 calc((100% - 1.5rem + 0.75rem) / 3); /* 24px / 16 and 12px / 16 */
+    flex: 0 0 calc((100% - 1.5rem + 0.75rem) / 3); /* 24px / 16 and 12px / 16 */
+    width: calc((100% - 1.5rem + 0.75rem) / 3); /* 24px / 16 and 12px / 16 */
+    max-width: calc(
+      (100% - 1.5rem + 0.75rem) / 3
+    ); /* 24px / 16 and 12px / 16 */
   }
 }
 
 @media (min-width: 840px) {
   .card {
-    -webkit-padding-end: 24px;
-    padding-inline-end: 24px;
-    -ms-flex: 0 0 calc((100% - 24px + 12px) / 5);
-    flex: 0 0 calc((100% - 24px + 12px) / 5);
-    width: calc((100% - 24px + 12px) / 5);
-    max-width: calc((100% - 24px + 12px) / 5);
+    -webkit-padding-end: 1.5rem; /* 24px / 16 */
+    padding-inline-end: 1.5rem; /* 24px / 16 */
+    -ms-flex: 0 0 calc((100% - 1.5rem + 0.75rem) / 5); /* 24px / 16 and 12px / 16 */
+    flex: 0 0 calc((100% - 1.5rem + 0.75rem) / 5); /* 24px / 16 and 12px / 16 */
+    width: calc((100% - 1.5rem + 0.75rem) / 5); /* 24px / 16 and 12px / 16 */
+    max-width: calc(
+      (100% - 1.5rem + 0.75rem) / 5
+    ); /* 24px / 16 and 12px / 16 */
   }
 }
 
 @media (min-width: 1024px) {
   .card {
-    -webkit-padding-end: 24px;
-    padding-inline-end: 24px;
-    -ms-flex: 0 0 calc((100% - 24px + 12px) / 5);
-    flex: 0 0 calc((100% - 24px + 12px) / 5);
-    width: calc((100% - 24px + 12px) / 5);
-    max-width: calc((100% - 24px + 12px) / 5);
+    -webkit-padding-end: 1.5rem; /* 24px / 16 */
+    padding-inline-end: 1.5rem; /* 24px / 16 */
+    -ms-flex: 0 0 calc((100% - 1.5rem + 0.75rem) / 5); /* 24px / 16 and 12px / 16 */
+    flex: 0 0 calc((100% - 1.5rem + 0.75rem) / 5); /* 24px / 16 and 12px / 16 */
+    width: calc((100% - 1.5rem + 0.75rem) / 5); /* 24px / 16 and 12px / 16 */
+    max-width: calc(
+      (100% - 1.5rem + 0.75rem) / 5
+    ); /* 24px / 16 and 12px / 16 */
   }
 }
 
 @media (min-width: 1280px) {
   .card {
-    -webkit-padding-end: 32px;
-    padding-inline-end: 32px;
-    -ms-flex: 0 0 calc((100% - 32px + 20px) / 6);
-    flex: 0 0 calc((100% - 32px + 20px) / 6);
-    width: calc((100% - 32px + 20px) / 6);
-    max-width: calc((100% - 32px + 20px) / 6);
+    -webkit-padding-end: 2rem; /* 32px / 16 */
+    padding-inline-end: 2rem; /* 32px / 16 */
+    -ms-flex: 0 0 calc((100% - 2rem + 1.25rem) / 6); /* 32px / 16 and 20px / 16 */
+    flex: 0 0 calc((100% - 2rem + 1.25rem) / 6); /* 32px / 16 and 20px / 16 */
+    width: calc((100% - 2rem + 1.25rem) / 6); /* 32px / 16 and 20px / 16 */
+    max-width: calc((100% - 2rem + 1.25rem) / 6); /* 32px / 16 and 20px / 16 */
   }
 }
 
 @media (min-width: 1440px) {
   .card {
-    -webkit-padding-end: 32px;
-    padding-inline-end: 32px;
-    -ms-flex: 0 0 calc((100% - 32px + 20px) / 7);
-    flex: 0 0 calc((100% - 32px + 20px) / 7);
-    width: calc((100% - 32px + 20px) / 7);
-    max-width: calc((100% - 32px + 20px) / 7);
+    -webkit-padding-end: 2rem; /* 32px / 16 */
+    padding-inline-end: 2rem; /* 32px / 16 */
+    -ms-flex: 0 0 calc((100% - 2rem + 1.25rem) / 7); /* 32px / 16 and 20px / 16 */
+    flex: 0 0 calc((100% - 2rem + 1.25rem) / 7); /* 32px / 16 and 20px / 16 */
+    width: calc((100% - 2rem + 1.25rem) / 7); /* 32px / 16 and 20px / 16 */
+    max-width: calc((100% - 2rem + 1.25rem) / 7); /* 32px / 16 and 20px / 16 */
   }
 }
 
 .tag {
-  line-height: 26px;
+  line-height: 1.625rem; /* 26px / 16 */
   display: flex;
   justify-content: center;
   flex-direction: row;
   align-items: flex-end;
   contain: content;
   overflow: hidden;
-  margin-top: 8px;
-  font-size: 15px;
+  margin-top: 0.5rem; /* 8px / 16 */
+  font-size: 0.9375rem; /* 15px / 16 */
 }
 
 .taglink {
@@ -272,7 +280,7 @@
   /* text-overflow: ellipsis; */
 
   white-space: break-spaces;
-  padding-inline-end: 10px;
+  padding-inline-end: 0.625rem; /* 10px / 16 */
 
   text-decoration: none;
   max-width: 100%;
@@ -299,23 +307,23 @@
   align-items: flex-start;
   contain: content;
   overflow: hidden;
-  margin-top: 8px;
-  font-size: 15px;
+  margin-top: 0.5rem; /* 8px / 16 */
+  font-size: 0.9375rem; /* 15px / 16 */
 }
 
 .primary-tag:first-child {
-  line-height: 26px;
+  line-height: 1.625rem; /* 26px / 16 */
 }
 
 .secondary-tag {
-  margin-top: 2px;
+  margin-top: 0.125rem; /* 2px / 16 */
   color: rgba(255, 255, 255, 0.6);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding-inline-end: 12px;
-  line-height: 16px;
-  font-size: 10px;
+  padding-inline-end: 0.75rem; /* 12px / 16 */
+  line-height: 1rem; /* 16px / 16 */
+  font-size: 0.625rem; /* 10px / 16 */
   max-width: 100%;
   text-align: center;
   align-self: center;

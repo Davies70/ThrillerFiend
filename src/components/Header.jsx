@@ -47,7 +47,7 @@ const Header = ({
     [contentScrollRef]
   );
   return (
-    <header>
+    <header className='header'>
       <div className='header-text'>
         <h2>{headerText}</h2>
       </div>

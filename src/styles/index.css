@@ -22,6 +22,26 @@
   --blue-text: rgb(37 208 218 / 1);
   --white-text: rgb(255 255 255 / 1);
 }
+
+@media screen and (max-width: 1024px) {
+  :root {
+    font-size: 15px; /* 1rem = 15px */
+  }
+}
+
+/* Adjust rem size for small screens */
+@media screen and (max-width: 768px) {
+  :root {
+    font-size: 14px; /* 1rem = 14px */
+  }
+}
+
+/* Adjust rem size for very small screens */
+@media screen and (max-width: 480px) {
+  :root {
+    font-size: 13px; /* 1rem = 13px */
+  }
+}
 .hydrated {
   visibility: inherit;
 }

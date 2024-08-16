@@ -1,5 +1,5 @@
 .authors {
-  margin-top: 25px;
+  margin-top: 1.5625rem; /* 25px / 16 */
   box-sizing: content-box !important;
   overflow: hidden !important;
   height: 100% !important;
@@ -7,8 +7,8 @@
 }
 
 .authors {
-  padding-inline-start: 20px;
-  padding-inline-end: 20px;
+  padding-inline-start: 1.25rem; /* 20px / 16 */
+  padding-inline-end: 1.25rem; /* 20px / 16 */
 }
 
 .authors .card {
@@ -17,19 +17,19 @@
 
 .header-text {
   display: flex;
-  margin-top: 22px;
+  margin-top: 1.375rem; /* 22px / 16 */
 }
 
 @media only screen and (min-width: 480px) {
   .authors {
-    padding-inline-start: 36px;
-    padding-inline-end: 36px;
+    padding-inline-start: 2.25rem; /* 36px / 16 */
+    padding-inline-end: 2.25rem; /* 36px / 16 */
   }
 }
 
 @media only screen and (min-width: 1289px) {
   .authors {
-    padding-inline-start: 52px;
-    padding-inline-end: 52px;
+    padding-inline-start: 3.25rem; /* 52px / 16 */
+    padding-inline-end: 3.25rem; /* 52px / 16 */
   }
 }

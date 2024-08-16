@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import BookScroller from '../components/sections/BookScroller.jsx';
 import Notification from '../components/Notification';
 import '../styles/Author.css';
+import OutsideClickHandler from '../components/OutsideClickHandler.jsx';
 
 export default function Author() {
   const { id } = useParams();
@@ -19,6 +20,7 @@ export default function Author() {
   const [similarAuthors, setSimilarAuthors] = useState([]);
   const [isControls, setIsControls] = useState(true);
   const [genres, setGenres] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -76,7 +78,7 @@ export default function Author() {
     }
   };
 
-  const unfollow = () => {
+  const unfollowAfterModal = () => {
     try {
       authorServices.unfollowAuthor(id);
       setNotification({
@@ -85,6 +87,7 @@ export default function Author() {
         type: 'success',
       });
       setIsFollowing(false);
+      setIsModalOpen(false);
       clearNotification();
     } catch (error) {
       setNotification({
@@ -95,6 +98,10 @@ export default function Author() {
       console.error(error.message);
       clearNotification();
     }
+  };
+
+  const unfollow = () => {
+    setIsModalOpen(true);
   };
 
   const chooseFollow = isFollowing ? unfollow : follow;
@@ -111,6 +118,30 @@ export default function Author() {
         notification={notification}
         clearNotification={clearNotification}
       />
+      {isModalOpen && (
+        <OutsideClickHandler
+          onOutsideClick={() => setIsModalOpen(false)}
+          className='unfollow-modal'
+        >
+          <div className='unfollow-modal-content'>
+            <p>
+              Are you sure you want to unfollow {authorName}? Their books will
+              no longer appear in Collections
+            </p>
+            <div className='unfollow-actions'>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className='unfollow-no'
+              >
+                Cancel
+              </button>
+              <button className='unfollow-yes' onClick={unfollowAfterModal}>
+                Unfollow
+              </button>
+            </div>
+          </div>
+        </OutsideClickHandler>
+      )}
       <div>
         <div className='author-grid'>
           <div className='author-info'>
