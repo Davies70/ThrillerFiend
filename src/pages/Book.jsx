@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import bookServices from '../services/bookServices';
 import NoteCard from '../components/NoteCard';
 import '../styles/Book.css';
@@ -14,28 +14,52 @@ import ShareIcon from '@mui/icons-material/Share';
 import { Rating } from '@mui/material';
 
 const Book = () => {
-  const { id } = useParams();
+  // const { id } = useParams();
 
   const [book, setBook] = useState({});
-  const [rating, setRating] = useState(0);
+  // const [rating, setRating] = useState(0);
+  const location = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const fetchBook = async () => {
-      const book = await bookServices.getBookByVolumeId(id);
-
-      setBook(book);
-      setRating(book.volumeInfo.averageRating || 0);
-    };
-    fetchBook();
-  }, [id]);
+    const data = location.state.data || {};
+    
+    if (data.isDataAvailable) {
+      setBook(data);
+    } else {
+      const fetchBook = async () => {
+        const fetchedBook = await bookServices.getBookByAuthorAndTitle(
+          data.authors,
+          data.title
+        );
+        setBook(fetchedBook);
+      };
+      fetchBook();
+    }
+  }, []);
 
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
-  console.log(rating);
+  const {
+    title,
+    rating,
+    subtitle,
+    book_image,
+    description,
+    publishedDate,
+    publisher,
+    isbn,
+    pageCount,
+    language,
+    saleInfo,
+    price,
+    currencyCode,
+  } = book;
+
+  console.log('book', book);
 
   return (
     <div className='book-page'>
@@ -43,10 +67,8 @@ const Book = () => {
         <div className='book-left'>
           <div className='book-bio'>
             <div className='book-info'>
-              <h1>{book.volumeInfo?.title}</h1>
-              {book.volumeInfo?.subtitle && (
-                <p className='muted-foreground'>{book.volumeInfo?.subtitle}</p>
-              )}
+              <h1>{title}</h1>
+              {subtitle && <p className='muted-foreground'>{subtitle}</p>}
 
               <p className='book-author-name'>
                 {book.volumeInfo?.authors.join(', ')}
@@ -111,23 +133,29 @@ const Book = () => {
         </div>
         <div className='book-right'>
           <div className='book-image-container'>
-            <img
-              src={book.volumeInfo?.imageLinks?.thumbnail}
-              alt={book.volumeInfo?.title}
-            />
+            {book_image ? (
+              <img src={book_image} loading='lazy' alt={title} style={{}} />
+            ) : (
+              <img
+                src={`https://lgimages.s3.amazonaws.com/nc-md.gif`}
+                loading='lazy'
+                alt={title}
+                style={{}}
+              />
+            )}
           </div>
         </div>
       </div>
 
       <p
         className='book-description'
-        dangerouslySetInnerHTML={{ __html: book.volumeInfo?.description }}
+        dangerouslySetInnerHTML={{ __html: description }}
       ></p>
 
       <div className='book-rating'>
         <span className='rating'>
           {' '}
-          {book.volumeInfo?.averageRating && (
+          {rating && (
             <div className={'rating'}>
               <span>Average rating:</span>
               <Rating name='read-only' value={rating} readOnly />
@@ -141,27 +169,23 @@ const Book = () => {
         <ul className='text-base'>
           <li>
             <strong> Publisher: </strong>
-            {book.volumeInfo?.publisher}{' '}
+            {publisher}{' '}
           </li>
           <li>
-            <strong>Published: </strong> {book.volumeInfo?.publishedDate}
+            <strong>Published: </strong> {publishedDate}
           </li>
           <li>
-            <strong>ISBN:</strong>{' '}
-            {book.volumeInfo?.industryIdentifiers
-              .map((isbn) => isbn.identifier)
-              .join(', ')}
+            <strong>ISBN: {isbn}</strong>
           </li>
           <li>
-            <strong>Language:</strong> {book.volumeInfo?.language}
+            <strong>Language:</strong> {language}
           </li>
           <li>
-            <strong>Pages:</strong> {book.volumeInfo?.pageCount}
+            <strong>Pages:</strong> {pageCount}
           </li>
-          {book.saleInfo === 'FOR_SALE' ? (
+          {saleInfo === 'FOR_SALE' ? (
             <li>
-              <strong>Price:</strong> {book.saleInfo?.listPrice?.amount}{' '}
-              {book.saleInfo?.listPrice?.currencyCode}
+              <strong>Price:</strong> {price} {currencyCode}
             </li>
           ) : null}
         </ul>

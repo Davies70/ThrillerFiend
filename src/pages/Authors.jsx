@@ -28,6 +28,7 @@ const Authors = () => {
           shape={shape}
           id={author.id}
           key={i}
+         
         />
       ))}
     </div>

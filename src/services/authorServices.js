@@ -17,10 +17,12 @@ const unfollowAuthor = (id) => {
   author.isFollowing = false;
 };
 
-const getSimilarAuthors = () => {
+const getSimilarAuthors = (id) => {
   const getRandomAuthors = (count) => {
     const randomAuthors = [];
-    const shuffledAuthors = hotAuthors.sort(() => Math.random() - 0.5);
+    const shuffledAuthors = hotAuthors
+      .filter((hotAuthor) => hotAuthor.id != id)
+      .sort(() => Math.random() - 0.5);
     for (let i = 0; i < count; i++) {
       randomAuthors.push(shuffledAuthors[i]);
     }

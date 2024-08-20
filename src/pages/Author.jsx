@@ -31,7 +31,7 @@ export default function Author() {
     };
     fetchAuthor();
     const fetchSimilarAuthors = () => {
-      const foundAuthors = authorServices.getSimilarAuthors();
+      const foundAuthors = authorServices.getSimilarAuthors(author.id);
       setSimilarAuthors(foundAuthors);
     };
     fetchSimilarAuthors();
@@ -180,6 +180,7 @@ export default function Author() {
           isNavLink={false}
           isAuthorName={false}
           isControls={isControls}
+          isDataAvailable={true}
         />
 
         <BookScroller

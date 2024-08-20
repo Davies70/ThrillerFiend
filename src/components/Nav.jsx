@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import '../styles/Nav.css';
 import Logo from './icons/nav/Logo';
 import LogoSmall from './icons/nav/LogoSmall';
@@ -9,26 +9,62 @@ import SearchIcon from '@mui/icons-material/Search';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link, useLocation } from 'react-router-dom';
+import Suggestions from './Suggestions';
+import { debounce } from 'lodash';
+import bookServices from '../services/bookServices';
+
+// const suggestions = [
+//   {
+//     icon: <HomeIcon />,
+//     text: 'Home',
+//   },
+//   {
+//     icon: <WhatshotIcon />,
+//     text: 'Free Thrills',
+//   },
+//   {
+//     icon: <LibraryBooksIcon />,
+//     text: 'Collections',
+//   },
+// ];
 
 const Nav = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchContainer, setShowSearchContainer] = useState(false);
+  const [controller, setController] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
 
   const inputRef = useRef(null);
   const location = useLocation();
 
-  const clearSearchQuery = (event) => {
-    event.preventDefault();
-    setSearchQuery('');
-   
-    setTimeout(() => {
-      inputRef.current.focus();
-    }, 0);
-  };
+  // console.log('suggestions', suggestions);
+
+  const debouncedFetchSuggestions = useCallback(
+    debounce(async (q) => {
+      if (controller) controller.abort(); // Abort previous request
+
+      const newController = new AbortController();
+      console.log('newController', newController);
+      setController(newController);
+
+      const data = await bookServices.getBooksSuggestions(
+        q,
+        newController.signal
+      );
+      console.log('data', data);
+      if (data) {
+        setSuggestions(data);
+      }
+    }, 300),
+    [controller, searchQuery]
+  );
 
   const handleSearchQueryInput = (event) => {
     event.preventDefault();
     setSearchQuery(event.target.value);
+    if (searchQuery.length >= 3) {
+      debouncedFetchSuggestions(searchQuery);
+    }
   };
 
   const handleSearchIconClick = (event) => {
@@ -47,6 +83,15 @@ const Nav = () => {
     }
   };
 
+  const clearSearchQuery = (event) => {
+    event.preventDefault();
+    setSearchQuery('');
+
+    setTimeout(() => {
+      inputRef.current.focus();
+    }, 0);
+  };
+
   const searchContainer = () => {
     return (
       <div className='show-search-container'>
@@ -57,7 +102,7 @@ const Nav = () => {
             type='search'
             id='search'
             value={searchQuery}
-            placeholder='Search'
+            placeholder='Search Books...'
             onBlur={handleBlur}
             onChange={handleSearchQueryInput}
           />
@@ -74,6 +119,9 @@ const Nav = () => {
             cancel
           </button>
         </form>
+        {suggestions.length > 0 ? (
+          <Suggestions suggestions={suggestions} />
+        ) : null}
       </div>
     );
   };
@@ -139,7 +187,7 @@ const Nav = () => {
                 aria-label='Search'
                 type='search'
                 id='search'
-                placeholder='Search'
+                placeholder='Search Books...'
                 value={searchQuery}
                 onChange={handleSearchQueryInput}
                 ref={inputRef}
@@ -159,6 +207,10 @@ const Nav = () => {
                 </button>
               ) : null}
             </form>
+            {/* {suggestions.length > 0 ? (
+              <Suggestions suggestions={suggestions} />
+            ) : null} */}
+            
           </div>
           <li className='sign-in-wrapper'>
             <button className='sign-in'>

@@ -5,6 +5,7 @@ const NYT_API_KEY = import.meta.env.VITE_BOOK_NYT_API_KEY;
 const BOOKS_BASEURL = `https://www.googleapis.com/books/v1/volumes?`;
 const BOOKS_API_KEY = import.meta.env.VITE_BOOKS_API_KEY;
 import { setSome } from '../utils';
+import axios from 'axios';
 
 const nytConfig = {
   headers: {
@@ -29,7 +30,17 @@ async function getHotBooks() {
     console.log('HotBooks Data retrieved from localStorage');
   }
 
-  return data.results.books.slice(0, 12);
+  const hotBooks = data.results.books.slice(0, 12).map((book) => {
+    return {
+      title: book.title,
+      book_image: book.book_image,
+      authors: book.author,
+      book_id: book.id,
+      volumeId: book.primary_isbn13,
+    };
+  });
+
+  return hotBooks;
 }
 
 // const getBookById = (id) => {
@@ -99,10 +110,23 @@ const getBooksByAuthor = async (authorName) => {
     return {
       title: book.volumeInfo?.title,
       book_image: book.volumeInfo.imageLinks?.thumbnail,
-      author: book.volumeInfo?.authors,
+      authors: book.volumeInfo?.authors,
       book_id: book.id,
       volumeId: book.id,
       categories: book.volumeInfo.categories,
+      rating: book.volumeInfo.averageRating,
+      subtitle: book.volumeInfo.subtitle,
+      description: book.volumeInfo.description,
+      publisher: book.volumeInfo.publisher,
+      publishedDate: book.volumeInfo.publishedDate,
+      isbn: book.volumeInfo.industryIdentifiers
+        ?.map((isbn) => isbn.identifier)
+        .join(', '),
+      saleInfo: book.saleInfo,
+      pageCount: book.volumeInfo.pageCount,
+      price: book.saleInfo?.listPrice?.amount,
+      currencyCode: book.saleInfo?.listPrice?.currencyCode,
+      language: book.volumeInfo.language,
     };
   });
 
@@ -196,35 +220,6 @@ const getLatestBook = async (author) => {
   };
 };
 
-const getBookbyISBN = async (isbn) => {
-  let data = getWithExpiry('bookByISBN-' + isbn);
-  if (data === null) {
-    console.log(
-      `Book by ISBN ${isbn} data not in localStorage or expired, fetching from API...`
-    );
-    const queryParam = {
-      q: `isbn:${isbn}`,
-      key: BOOKS_API_KEY,
-      maxResults: 1,
-      langRestrict: 'en',
-      country: 'US',
-      printType: 'books',
-    };
-    const params = new URLSearchParams(queryParam).toString();
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'GET',
-      url: `${BOOKS_BASEURL}${params}`,
-    };
-    data = await fetchAndStoreData(config, `bookByISBN-${isbn}`);
-  } else {
-    console.log(`Book by ISBN ${isbn} data retrieved from localStorage`);
-  }
-  return data.items[0];
-};
-
 const getBookByVolumeId = async (volumeId) => {
   let data = getWithExpiry('bookByVolumeId-' + volumeId);
   if (data === null) {
@@ -248,11 +243,96 @@ const getBookByVolumeId = async (volumeId) => {
   return data;
 };
 
+const getBooksSuggestions = async (searchQuery, signal) => {
+  const queryParam = {
+    q: searchQuery,
+    key: BOOKS_API_KEY,
+    maxResults: 5,
+    langRestrict: 'en',
+    country: 'US',
+    printType: 'books',
+  };
+  const params = new URLSearchParams(queryParam).toString();
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+    url: `${BOOKS_BASEURL}${params}`,
+  };
+  try {
+    const response = await axios.request(config, { signal });
+    console.log('response', response);
+    return response.data.items;
+  } catch (error) {
+    if (axios.isCancel(error)) {
+      console.log('Request cancelled:', error.message);
+    } else {
+      console.error('Fetch error:', error);
+    }
+  }
+};
+
+const getBookByAuthorAndTitle = async (author, title) => {
+  const queryParam = {
+    q: `inauthor:${author}+intitle:${title}`,
+    key: BOOKS_API_KEY,
+    maxResults: 10,
+    langRestrict: 'en',
+    country: 'US',
+    orderBy: 'relevance',
+    printType: 'books',
+  };
+  const params = new URLSearchParams(queryParam).toString();
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+    url: `${BOOKS_BASEURL}${params}`,
+  };
+  const fetchedBook = await fetchAndStoreData(
+    config,
+    `booksByAuthorAndTitle-${author}`
+  );
+
+  console.log('fetchedBook', fetchedBook.items);
+
+  const data = fetchedBook.items.find((book) => {
+    return book.volumeInfo.imageLinks?.thumbnail && book.volumeInfo.description;
+  });
+
+  console.log('data', data);
+
+  return {
+    title: data.volumeInfo?.title,
+    book_image: data.volumeInfo.imageLinks?.thumbnail,
+    authors: data.volumeInfo?.authors,
+    book_id: data.id,
+    volumeId: data.id,
+    categories: data.volumeInfo.categories,
+    rating: data.volumeInfo.averageRating,
+    subtitle: data.volumeInfo.subtitle,
+    description: data.volumeInfo.description,
+    publisher: data.volumeInfo.publisher,
+    publishedDate: data.volumeInfo.publishedDate,
+    isbn: data.volumeInfo.industryIdentifiers
+      ?.map((isbn) => isbn.identifier)
+      .join(', '),
+    saleInfo: data.saleInfo?.saleability,
+    pageCount: data.volumeInfo.pageCount,
+    price: data.saleInfo?.listPrice?.amount,
+    currencyCode: data.saleInfo?.listPrice?.currencyCode,
+    language: data.volumeInfo.language,
+  };
+};
+
 export default {
   getBooks,
   getHotBooks,
   getBooksByAuthor,
   getLatestBook,
-  getBookbyISBN,
   getBookByVolumeId,
+  getBooksSuggestions,
+  getBookByAuthorAndTitle,
 };

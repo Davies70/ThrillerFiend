@@ -27,6 +27,7 @@ const Home = () => {
         isNavLink={true}
         navLink='/authors'
         isControls={true}
+        isDataAvailable={true}
       />
       <Banner />
       <BookScroller
@@ -37,6 +38,7 @@ const Home = () => {
         navLink='/weeklythrills'
         isAuthorName={true}
         isControls={true}
+        isDataAvailable={false}
       />
       <BestSellers />
     </div>

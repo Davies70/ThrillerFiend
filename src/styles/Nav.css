@@ -150,6 +150,7 @@
   margin-right: 0.0625rem; /* 1% of 16px / 16px per rem */
   flex-shrink: 1;
   cursor: default;
+  position: relative;
 }
 
 /* Search Container and Bar Styles */
@@ -436,7 +437,7 @@ input {
 }
 
 /* Media Queries for Medium Screens */
-@media only screen and (min-width: 30rem) /* 480px / 16px per rem */ {
+@media only screen and (min-width: 480px) /* 480px / 16px per rem */ {
   .nav-list {
     padding-inline-start: 1.5rem; /* 24px / 16px per rem */
     justify-content: space-around;
@@ -465,7 +466,7 @@ input {
 }
 
 /* Media Queries for Large Screens */
-@media only screen and (min-width: 40.0625rem) /* 641px / 16px per rem */ {
+@media only screen and (min-width: 641px) /* 641px / 16px per rem */ {
   .nav-list {
     padding-inline-end: 0;
     padding-inline-start: 1rem; /* 16px / 16px per rem */
@@ -503,7 +504,7 @@ input {
 }
 
 /* Media Queries for Extra Large Screens */
-@media only screen and (min-width: 52.5rem) /* 840px / 16px per rem */ {
+@media only screen and (min-width: 840px) /* 840px / 16px per rem */ {
   .nav-list {
     padding-inline-end: 0;
   }
@@ -530,7 +531,7 @@ input {
 }
 
 /* Media Queries for Extra Extra Large Screens */
-@media only screen and (min-width: 80rem) /* 1280px / 16px per rem */ {
+@media only screen and (min-width: 1280px) /* 1280px / 16px per rem */ {
   .nav-list {
     padding-inline-end: 0;
   }

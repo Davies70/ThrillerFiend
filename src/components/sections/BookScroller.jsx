@@ -12,6 +12,7 @@ const BookScroller = ({
   isNavLink,
   isAuthorName,
   isControls,
+  isDataAvailable,
 }) => {
   const contentScrollRef = useRef();
 
@@ -29,6 +30,7 @@ const BookScroller = ({
         shape={shape}
         data={data}
         isAuthorName={isAuthorName}
+        isDataAvailable={isDataAvailable}
       />
     </section>
   );
@@ -42,6 +44,7 @@ BookScroller.propTypes = {
   isNavLink: PropTypes.bool,
   isAuthorName: PropTypes.bool,
   isControls: PropTypes.bool,
+  isDataAvailable: PropTypes.bool,
 };
 
 export default BookScroller;

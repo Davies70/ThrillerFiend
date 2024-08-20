@@ -6,18 +6,17 @@ import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
 // import Loader from './Loader';
 
-const Shape = ({ name, photo, shape, authors, isAuthorName, id, volumeId }) => {
-  const authorName =
-    typeof authors === 'string' ? authors : authors?.join(', ');
+const Shape = ({ shape, isAuthorName, book, author, isDataAvailable }) => {
   if (shape === 'circle') {
+    const { authorName, coverPhoto, id } = author;
     return (
       <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper circle'>
             <img
-              src={photo}
+              src={coverPhoto}
               loading='lazy'
-              alt={name}
+              alt={authorName}
               style={{
                 maxWidth: '100%',
                 height: 'auto',
@@ -39,24 +38,31 @@ const Shape = ({ name, photo, shape, authors, isAuthorName, id, volumeId }) => {
                 textOverflow: 'ellipsis',
               }}
             >
-              {name}
+              {authorName}
             </Link>
           </div>
         </div>
       </div>
     );
   } else {
+    const { title, book_image, authors, volumeId } = book;
+    const authorName =
+      typeof authors === 'string' ? authors : authors?.join(', ');
+    const data = {
+      ...book,
+      isDataAvailable,
+    };
     return (
       <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper square'>
-            {photo ? (
-              <img src={photo} loading='lazy' alt={name} style={{}} />
+            {book_image ? (
+              <img src={book_image} loading='lazy' alt={title} style={{}} />
             ) : (
               <img
                 src={`https://lgimages.s3.amazonaws.com/nc-md.gif`}
                 loading='lazy'
-                alt={name}
+                alt={title}
                 style={{}}
               />
             )}
@@ -77,8 +83,13 @@ const Shape = ({ name, photo, shape, authors, isAuthorName, id, volumeId }) => {
             </Link>
           </div>
           <div className='primary-tag'>
-            <Link className='taglink' to={`/book/${volumeId}`} title={name}>
-              {name}
+            <Link
+              className='taglink'
+              to={`/book/${volumeId}`}
+              title={title}
+              state={{ data }}
+            >
+              {title}
             </Link>
             {isAuthorName && (
               <div className='secondary-tag'>
@@ -100,6 +111,9 @@ Shape.propTypes = {
   isAuthorName: Proptypes.bool,
   id: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
   volumeId: Proptypes.string,
+  book: Proptypes.object,
+  author: Proptypes.object,
+  isDataAvailable: Proptypes.bool,
 };
 
 export default Shape;
