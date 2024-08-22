@@ -273,58 +273,79 @@ const getBooksSuggestions = async (searchQuery, signal) => {
   }
 };
 
-const getBookByAuthorAndTitle = async (author, title) => {
-  const queryParam = {
-    q: `inauthor:${author}+intitle:${title}`,
-    key: BOOKS_API_KEY,
-    maxResults: 10,
-    langRestrict: 'en',
-    country: 'US',
-    orderBy: 'relevance',
-    printType: 'books',
-  };
-  const params = new URLSearchParams(queryParam).toString();
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    method: 'GET',
-    url: `${BOOKS_BASEURL}${params}`,
-  };
-  const fetchedBook = await fetchAndStoreData(
-    config,
-    `booksByAuthorAndTitle-${author}`
-  );
+const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
+  let data = getWithExpiry(`booksByAuthorAndTitle-${authorNameAndTitle}`);
+  if (data === null) {
+    console.log(
+      `Books by ${authorNameAndTitle} data not in localStorage or expired, fetching from API...`
+    );
+    const queryParam = {
+      q: authorNameAndTitle,
+      key: BOOKS_API_KEY,
+      maxResults: 20,
+      langRestrict: 'en',
+      country: 'US',
+      orderBy: 'relevance',
+      printType: 'all',
+    };
+    const params = new URLSearchParams(queryParam).toString();
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'GET',
+      url: `${BOOKS_BASEURL}${params}`,
+      transformResponse: [
+        ...axios.defaults.transformResponse,
+        (response) => {
+          // Explicitly parse the response
+          console.log('data', response);
+          if (!response.items || !Array.isArray(response.items)) {
+            throw new Error('Invalid API response: no items found');
+          }
+          return response.items.find((book) => {
+            return (
+              book.volumeInfo.imageLinks?.thumbnail &&
+              book.volumeInfo.description &&
+              book.volumeInfo.pageCount > 0
+            );
+          });
+        },
+      ],
+    };
+    data = await fetchAndStoreData(
+      config,
+      `booksByAuthorAndTitle-${authorNameAndTitle}`
+    );
+  } else {
+    console.log(
+      `Books by ${authorNameAndTitle} data retrieved from localStorage`
+    );
+  }
 
-  console.log('fetchedBook', fetchedBook.items);
-
-  const data = fetchedBook.items.find((book) => {
-    return book.volumeInfo.imageLinks?.thumbnail && book.volumeInfo.description;
-  });
-
-  console.log('data', data);
-
-  return {
-    title: data.volumeInfo?.title,
-    book_image: data.volumeInfo.imageLinks?.thumbnail,
-    authors: data.volumeInfo?.authors,
-    book_id: data.id,
-    volumeId: data.id,
-    categories: data.volumeInfo.categories,
-    rating: data.volumeInfo.averageRating,
-    subtitle: data.volumeInfo.subtitle,
-    description: data.volumeInfo.description,
-    publisher: data.volumeInfo.publisher,
-    publishedDate: data.volumeInfo.publishedDate,
-    isbn: data.volumeInfo.industryIdentifiers
-      ?.map((isbn) => isbn.identifier)
-      .join(', '),
-    saleInfo: data.saleInfo?.saleability,
-    pageCount: data.volumeInfo.pageCount,
-    price: data.saleInfo?.listPrice?.amount,
-    currencyCode: data.saleInfo?.listPrice?.currencyCode,
-    language: data.volumeInfo.language,
-  };
+  return data
+    ? {
+        title: data.volumeInfo?.title,
+        book_image: data.volumeInfo.imageLinks?.thumbnail,
+        authors: data.volumeInfo?.authors,
+        book_id: data.id,
+        volumeId: data.id,
+        categories: data.volumeInfo.categories,
+        rating: data.volumeInfo.averageRating,
+        subtitle: data.volumeInfo.subtitle,
+        description: data.volumeInfo.description,
+        publisher: data.volumeInfo.publisher,
+        publishedDate: data.volumeInfo.publishedDate,
+        isbn: data.volumeInfo.industryIdentifiers
+          ?.map((isbn) => isbn.identifier)
+          .join(', '),
+        saleInfo: data.saleInfo?.saleability,
+        pageCount: data.volumeInfo.pageCount,
+        price: data.saleInfo?.listPrice?.amount,
+        currencyCode: data.saleInfo?.listPrice?.currencyCode,
+        language: data.volumeInfo.language,
+      }
+    : {};
 };
 
 export default {

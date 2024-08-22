@@ -22,14 +22,7 @@ const Authors = () => {
         </div>
       </header>
       {authors.map((author, i) => (
-        <Shape
-          name={author.authorName}
-          photo={author.coverPhoto}
-          shape={shape}
-          id={author.id}
-          key={i}
-         
-        />
+        <Shape author={author} shape={shape} id={author.id} key={i} />
       ))}
     </div>
   );

@@ -45,13 +45,11 @@ const Shape = ({ shape, isAuthorName, book, author, isDataAvailable }) => {
       </div>
     );
   } else {
-    const { title, book_image, authors, volumeId } = book;
+    const { title, book_image, authors } = book;
     const authorName =
       typeof authors === 'string' ? authors : authors?.join(', ');
-    const data = {
-      ...book,
-      isDataAvailable,
-    };
+    const data = isDataAvailable ? book : null;
+
     return (
       <div className='card'>
         <div className='card-content'>
@@ -74,9 +72,6 @@ const Shape = ({ shape, isAuthorName, book, author, isDataAvailable }) => {
               >
                 <AddIcon className='left-button' />
               </button>
-              {/* <button className='center-button' tabIndex='-1'>
-              <ArrowCircleRightOutlinedIcon />
-            </button> */}
               <button className='right-button'>
                 <MoreHorizOutlinedIcon />
               </button>
@@ -85,7 +80,7 @@ const Shape = ({ shape, isAuthorName, book, author, isDataAvailable }) => {
           <div className='primary-tag'>
             <Link
               className='taglink'
-              to={`/book/${volumeId}`}
+              to={`/book/inauthor:${authorName}+intitle:${title}`}
               title={title}
               state={{ data }}
             >

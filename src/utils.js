@@ -46,3 +46,34 @@ export function timeAgo(timeStamp) {
   }
   return `${Math.floor(secondsPast / 604800)} weeks ago`;
 }
+
+export const getLanguage = (language) => {
+  switch (language) {
+    case 'en':
+      return 'English';
+    case 'es':
+      return 'Spanish';
+    case 'fr':
+      return 'French';
+    case 'de':
+      return 'German';
+    case 'it':
+      return 'Italian';
+    case 'pt':
+      return 'Portuguese';
+    case 'nl':
+      return 'Dutch';
+    case 'ru':
+      return 'Russian';
+    case 'ja':
+      return 'Japanese';
+    case 'ko':
+      return 'Korean';
+    case 'ar':
+      return 'Arabic';
+    case 'zh':
+      return 'Chinese';
+    default:
+      return language;
+  }
+};

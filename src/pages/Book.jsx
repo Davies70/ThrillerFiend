@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import bookServices from '../services/bookServices';
 import NoteCard from '../components/NoteCard';
 import '../styles/Book.css';
@@ -12,36 +12,52 @@ import OutsideClickHandler from '../components/OutsideClickHandler';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import { Rating } from '@mui/material';
+import { getLanguage } from '../utils';
+import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
+import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
+import Button from '@mui/material/Button';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const Book = () => {
-  // const { id } = useParams();
+  const { id } = useParams();
 
   const [book, setBook] = useState({});
   // const [rating, setRating] = useState(0);
+  const [isTextExpanded, setIsTextExpanded] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const data = location.state.data || {};
-    
-    if (data.isDataAvailable) {
+    const data = location.state?.data || null;
+
+    if (data) {
       setBook(data);
     } else {
       const fetchBook = async () => {
-        const fetchedBook = await bookServices.getBookByAuthorAndTitle(
-          data.authors,
-          data.title
-        );
+        const fetchedBook = await bookServices.getBookByAuthorAndTitle(id);
+        console.log('fetchedBook', fetchedBook);
         setBook(fetchedBook);
       };
       fetchBook();
     }
-  }, []);
+  }, [id, location.state]);
 
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
+
+  const handleTextExpand = () => {
+    setIsTextExpanded(!isTextExpanded);
+  };
+
+  const expandedTextClass = isTextExpanded ? 'expanded' : 'collapsed';
+
+  console.log('book', book);
+
+  if (Object.keys(book).length === 0) {
+    return <div>Loading...</div>;
+  }
 
   const {
     title,
@@ -57,9 +73,8 @@ const Book = () => {
     saleInfo,
     price,
     currencyCode,
+    categories,
   } = book;
-
-  console.log('book', book);
 
   return (
     <div className='book-page'>
@@ -76,58 +91,103 @@ const Book = () => {
             </div>
             <div className='book-btn-actions'>
               <div className='btn-actions-up'>
-                <button className='book-btn-1 book-btn' onClick={openModal}>
-                  <AddIcon />
-                </button>
+                <Button
+                  variant='contained'
+                  onClick={openModal}
+                  startIcon={<AddIcon />}
+                  color='blue'
+                  size='small'
+                >
+                  Add to Collection
+                </Button>
 
-                <button className='book-btn-2 book-btn'>
-                  <span className='btn-svg'>
-                    {' '}
-                    <StarRateIcon />
-                  </span>
-
-                  <span>Rate</span>
-                </button>
+                <Button
+                  variant='outlined'
+                  startIcon={<StarRateIcon />}
+                  color='blue'
+                  size='small'
+                >
+                  Rate
+                </Button>
               </div>
 
-              <div className='btn-actions-up'>
-                <button className='book-btn-1 book-btn'>Buy now</button>
-                <button className='book-btn-3 book-btn'>
-                  <span className='btn-svg'>
-                    <ShareIcon />
-                  </span>
-                  <span> Share</span>
-                </button>
-              </div>
+              <Button
+                variant='contained'
+                endIcon={<ShoppingCartIcon />}
+                color='blue'
+                size='small'
+              >
+                Buy now
+              </Button>
+
+              <Button
+                variant='outlined'
+                startIcon={<ShareIcon />}
+                color='blue'
+                size='small'
+              >
+                Share
+              </Button>
             </div>
           </div>
 
           {isOpen && (
             <OutsideClickHandler onOutsideClick={closeModal} className='modal'>
-              <button className='modal-btn'>
-                <span>Have Read</span>
-                <span className='modal-btn-icon'>
-                  <CheckBoxIcon />
-                </span>
-              </button>
-              <button className='modal-btn'>
+              <Button
+                variant='contained'
+                endIcon={<CheckBoxIcon />}
+                color='white'
+                size='small'
+                disableElevation
+              >
+                Have Read
+              </Button>
+              {/* <button className='modal-btn'>
                 <span>Read Later</span>
                 <span className='modal-btn-icon'>
                   <TurnedInIcon />
                 </span>
-              </button>
-              <button className='modal-btn'>
+              </button> */}
+              <Button
+                variant='contained'
+                endIcon={<TurnedInIcon />}
+                color='white'
+                size='small'
+                disableElevation
+              >
+                Read Later
+              </Button>
+              {/* <button className='modal-btn'>
                 <span> Add to Favorites</span>
                 <span className='modal-btn-icon'>
                   <FavoriteIcon />
                 </span>
-              </button>
-              <button className='modal-btn'>
+              </button> */}
+              <Button
+                variant='contained'
+                endIcon={<FavoriteIcon />}
+                color='white'
+                size='small'
+                disableElevation
+              >
+                Add to Favorites
+              </Button>
+              {/* <button className='modal-btn'>
                 <span>Remove from Library</span>
                 <span className='modal-btn-icon'>
                   <DeleteIcon />
                 </span>
-              </button>
+              </button> */}
+              <Button
+                variant='contained'
+                endIcon={<DeleteIcon />}
+                color='white'
+                size='small'
+                disableElevation
+                title='Remove from Library'
+              >
+                Remove from Library
+              </Button>
             </OutsideClickHandler>
           )}
         </div>
@@ -146,11 +206,26 @@ const Book = () => {
           </div>
         </div>
       </div>
-
-      <p
-        className='book-description'
-        dangerouslySetInnerHTML={{ __html: description }}
-      ></p>
+      <div className={`book-description ${expandedTextClass}`}>
+        <p dangerouslySetInnerHTML={{ __html: description }}></p>
+      </div>
+      <div className='show-hide-btn-container'>
+        <Button
+          variant='contained'
+          startIcon={
+            isTextExpanded ? (
+              <ExpandLessOutlinedIcon />
+            ) : (
+              <ExpandMoreOutlinedIcon />
+            )
+          }
+          color={isTextExpanded ? 'blue' : 'white'}
+          size='small'
+          onClick={handleTextExpand}
+        >
+          {isTextExpanded ? 'Show less' : 'Show more'}
+        </Button>
+      </div>
 
       <div className='book-rating'>
         <span className='rating'>
@@ -168,30 +243,33 @@ const Book = () => {
         <h2>About this edition</h2>
         <ul className='text-base'>
           <li>
-            <strong> Publisher: </strong>
-            {publisher}{' '}
+            <strong> Publisher: </strong> <span>{publisher} </span>
           </li>
           <li>
-            <strong>Published: </strong> {publishedDate}
+            <strong>Published: </strong> <span>{publishedDate}</span>
           </li>
           <li>
-            <strong>ISBN: {isbn}</strong>
+            <strong>ISBN: </strong>
+            {isbn}
           </li>
           <li>
-            <strong>Language:</strong> {language}
+            <strong>Language:</strong> <span>{getLanguage(language)}</span>
           </li>
           <li>
-            <strong>Pages:</strong> {pageCount}
+            <strong>Pages:</strong> <span>{pageCount}</span>
           </li>
           {saleInfo === 'FOR_SALE' ? (
             <li>
-              <strong>Price:</strong> {price} {currencyCode}
+              <strong>Price: </strong>
+              <span>
+                {price} {currencyCode}
+              </span>
             </li>
           ) : null}
         </ul>
       </div>
       <span className='book-genre-tags'>
-        {book.volumeInfo?.categories.map((category, key) => (
+        {categories.map((category, key) => (
           <span className='book-genre-tag' key={key}>
             {category}
           </span>
