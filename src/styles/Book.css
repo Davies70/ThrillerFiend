@@ -106,8 +106,8 @@
 
 /* Container for book edition details */
 .book-edition-details {
-  padding: 1.5rem;
-  background-color: rgb(38 38 38 /1);
+  /* padding: 1.5rem; */
+  /* background-color: rgb(38 38 38 /1); */
   border-radius: 0.5rem;
   margin-bottom: 2rem;
   max-width: 50%;
@@ -190,8 +190,8 @@
 
 /* Container for notes section */
 .notes {
-  padding: 1.5rem;
-  background-color: rgb(38 38 38 /1);
+  /* padding: 1.5rem; */
+  /* background-color: rgb(38 38 38 /1); */
   border-radius: 0.5rem;
   margin-top: 2rem;
 }
@@ -343,6 +343,7 @@
 .show-hide-btn-container {
   display: flex;
   justify-content: center;
+  margin-bottom: 1rem;
 }
 
 @media screen and (max-width: 768px) {

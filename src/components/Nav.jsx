@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import '../styles/Nav.css';
 import Logo from './icons/nav/Logo';
 import LogoSmall from './icons/nav/LogoSmall';
@@ -13,21 +13,6 @@ import Suggestions from './Suggestions';
 import { debounce } from 'lodash';
 import bookServices from '../services/bookServices';
 
-// const suggestions = [
-//   {
-//     icon: <HomeIcon />,
-//     text: 'Home',
-//   },
-//   {
-//     icon: <WhatshotIcon />,
-//     text: 'Free Thrills',
-//   },
-//   {
-//     icon: <LibraryBooksIcon />,
-//     text: 'Collections',
-//   },
-// ];
-
 const Nav = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchContainer, setShowSearchContainer] = useState(false);
@@ -37,21 +22,18 @@ const Nav = () => {
   const inputRef = useRef(null);
   const location = useLocation();
 
-  // console.log('suggestions', suggestions);
-
   const debouncedFetchSuggestions = useCallback(
     debounce(async (q) => {
       if (controller) controller.abort(); // Abort previous request
 
       const newController = new AbortController();
-      console.log('newController', newController);
       setController(newController);
 
       const data = await bookServices.getBooksSuggestions(
         q,
         newController.signal
       );
-      console.log('data', data);
+
       if (data) {
         setSuggestions(data);
       }
@@ -80,12 +62,14 @@ const Nav = () => {
     event.preventDefault();
     if (!inputRef.current.contains(event.relatedTarget)) {
       setShowSearchContainer(false);
+      setSuggestions([]);
     }
   };
 
   const clearSearchQuery = (event) => {
     event.preventDefault();
     setSearchQuery('');
+    setSuggestions([]);
 
     setTimeout(() => {
       inputRef.current.focus();
@@ -120,7 +104,10 @@ const Nav = () => {
           </button>
         </form>
         {suggestions.length > 0 ? (
-          <Suggestions suggestions={suggestions} />
+          <Suggestions
+            suggestions={suggestions}
+            setSuggestions={setSuggestions}
+          />
         ) : null}
       </div>
     );
@@ -207,10 +194,12 @@ const Nav = () => {
                 </button>
               ) : null}
             </form>
-            {/* {suggestions.length > 0 ? (
-              <Suggestions suggestions={suggestions} />
-            ) : null} */}
-            
+            {suggestions.length > 0 ? (
+              <Suggestions
+                suggestions={suggestions}
+                setSuggestions={setSuggestions}
+              />
+            ) : null}
           </div>
           <li className='sign-in-wrapper'>
             <button className='sign-in'>

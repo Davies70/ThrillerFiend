@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import bookServices from '../services/bookServices';
 import NoteCard from '../components/NoteCard';
@@ -23,8 +23,28 @@ const Book = () => {
 
   const [book, setBook] = useState({});
   // const [rating, setRating] = useState(0);
+  const [showButton, setShowButton] = useState(false);
   const [isTextExpanded, setIsTextExpanded] = useState(false);
   const location = useLocation();
+
+  const descriptionRef = useRef(null);
+
+  const {
+    title,
+    rating,
+    subtitle,
+    book_image,
+    description,
+    publishedDate,
+    publisher,
+    isbn,
+    pageCount,
+    language,
+    saleInfo,
+    price,
+    currencyCode,
+    categories,
+  } = book || {};
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,6 +62,40 @@ const Book = () => {
     }
   }, [id, location.state]);
 
+  useEffect(() => {
+    const checkIfOverflowing = () => {
+      const descriptionElement = descriptionRef.current;
+      console.log('descriptionElement', descriptionElement);
+      if (descriptionElement) {
+        const maxLines = 5;
+        const lineHeight = parseInt(
+          window.getComputedStyle(descriptionElement).lineHeight,
+          10
+        );
+
+        console.log('lineHeight', lineHeight);
+        console.log(
+          'descriptionElement.scrollHeight',
+          descriptionElement.scrollHeight
+        );
+        const maxHeight = lineHeight * maxLines;
+
+        if (descriptionElement.scrollHeight > maxHeight) {
+          setShowButton(true);
+        } else {
+          setShowButton(false);
+        }
+      }
+    };
+
+    checkIfOverflowing();
+    window.addEventListener('resize', checkIfOverflowing);
+
+    return () => {
+      window.removeEventListener('resize', checkIfOverflowing);
+    };
+  }, [description, isTextExpanded]);
+
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => setIsOpen(true);
@@ -58,23 +112,6 @@ const Book = () => {
   if (Object.keys(book).length === 0) {
     return <div>Loading...</div>;
   }
-
-  const {
-    title,
-    rating,
-    subtitle,
-    book_image,
-    description,
-    publishedDate,
-    publisher,
-    isbn,
-    pageCount,
-    language,
-    saleInfo,
-    price,
-    currencyCode,
-    categories,
-  } = book;
 
   return (
     <div className='book-page'>
@@ -142,12 +179,7 @@ const Book = () => {
               >
                 Have Read
               </Button>
-              {/* <button className='modal-btn'>
-                <span>Read Later</span>
-                <span className='modal-btn-icon'>
-                  <TurnedInIcon />
-                </span>
-              </button> */}
+
               <Button
                 variant='contained'
                 endIcon={<TurnedInIcon />}
@@ -157,12 +189,7 @@ const Book = () => {
               >
                 Read Later
               </Button>
-              {/* <button className='modal-btn'>
-                <span> Add to Favorites</span>
-                <span className='modal-btn-icon'>
-                  <FavoriteIcon />
-                </span>
-              </button> */}
+
               <Button
                 variant='contained'
                 endIcon={<FavoriteIcon />}
@@ -172,12 +199,7 @@ const Book = () => {
               >
                 Add to Favorites
               </Button>
-              {/* <button className='modal-btn'>
-                <span>Remove from Library</span>
-                <span className='modal-btn-icon'>
-                  <DeleteIcon />
-                </span>
-              </button> */}
+
               <Button
                 variant='contained'
                 endIcon={<DeleteIcon />}
@@ -207,24 +229,29 @@ const Book = () => {
         </div>
       </div>
       <div className={`book-description ${expandedTextClass}`}>
-        <p dangerouslySetInnerHTML={{ __html: description }}></p>
+        <p
+          dangerouslySetInnerHTML={{ __html: description }}
+          ref={descriptionRef}
+        ></p>
       </div>
       <div className='show-hide-btn-container'>
-        <Button
-          variant='contained'
-          startIcon={
-            isTextExpanded ? (
-              <ExpandLessOutlinedIcon />
-            ) : (
-              <ExpandMoreOutlinedIcon />
-            )
-          }
-          color={isTextExpanded ? 'blue' : 'white'}
-          size='small'
-          onClick={handleTextExpand}
-        >
-          {isTextExpanded ? 'Show less' : 'Show more'}
-        </Button>
+        {showButton && (
+          <Button
+            variant='contained'
+            startIcon={
+              isTextExpanded ? (
+                <ExpandLessOutlinedIcon />
+              ) : (
+                <ExpandMoreOutlinedIcon />
+              )
+            }
+            color={isTextExpanded ? 'blue' : 'white'}
+            size='small'
+            onClick={handleTextExpand}
+          >
+            {isTextExpanded ? 'Show less' : 'Show more'}
+          </Button>
+        )}
       </div>
 
       <div className='book-rating'>
@@ -286,7 +313,10 @@ const Book = () => {
               rows={4}
               cols={50}
             />
-            <button className='book-btn book-btn-1'>Add</button>
+            {/* <button className='book-btn book-btn-1'>Add</button> */}
+            <Button variant='contained' color='blue' size='small'>
+              Add
+            </Button>
           </div>
           <div className='notecard-container'>
             <NoteCard />

@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Collections = () => {
-  return <div></div>;
+  return <div>COllection</div>;
 };
 
 export default Collections;

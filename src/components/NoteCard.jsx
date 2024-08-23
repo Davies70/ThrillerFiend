@@ -2,6 +2,7 @@ import React from 'react';
 import '../styles/NoteCard.css';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 
 const NoteCard = () => {
   return (
@@ -16,12 +17,12 @@ const NoteCard = () => {
           </div>
           <div className='note-card-btns'>
             {' '}
-            <button className='note-card-btn'>
+            <IconButton color='blue'>
               <EditNoteIcon />
-            </button>
-            <button className='note-card-btn'>
+            </IconButton>
+            <IconButton color='blue'>
               <DeleteIcon />
-            </button>
+            </IconButton>
           </div>
         </div>
       </div>

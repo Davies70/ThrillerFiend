@@ -245,12 +245,12 @@ const getBookByVolumeId = async (volumeId) => {
 
 const getBooksSuggestions = async (searchQuery, signal) => {
   const queryParam = {
-    q: searchQuery,
+    q: searchQuery + '+subject:fiction',
     key: BOOKS_API_KEY,
-    maxResults: 5,
+    maxResults: 4,
     langRestrict: 'en',
     country: 'US',
-    printType: 'books',
+    printType: 'all',
   };
   const params = new URLSearchParams(queryParam).toString();
   const config = {
@@ -262,8 +262,29 @@ const getBooksSuggestions = async (searchQuery, signal) => {
   };
   try {
     const response = await axios.request(config, { signal });
-    console.log('response', response);
-    return response.data.items;
+    return response.data.items.map((book) => {
+      return {
+        title: book.volumeInfo.title,
+        book_image: book.volumeInfo.imageLinks?.thumbnail,
+        authors: book.volumeInfo.authors,
+        book_id: book.id,
+        volumeId: book.id,
+        categories: book.volumeInfo.categories,
+        rating: book.volumeInfo.averageRating,
+        subtitle: book.volumeInfo.subtitle,
+        description: book.volumeInfo.description,
+        publisher: book.volumeInfo.publisher,
+        publishedDate: book.volumeInfo.publishedDate,
+        isbn: book.volumeInfo.industryIdentifiers
+          ?.map((isbn) => isbn.identifier)
+          .join(', '),
+        saleInfo: book.saleInfo,
+        pageCount: book.volumeInfo.pageCount,
+        price: book.saleInfo?.listPrice?.amount,
+        currencyCode: book.saleInfo?.listPrice?.currencyCode,
+        language: book.volumeInfo.language,
+      };
+    });
   } catch (error) {
     if (axios.isCancel(error)) {
       console.log('Request cancelled:', error.message);
@@ -348,6 +369,76 @@ const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
     : {};
 };
 
+const getSimilarBooks = async (title) => {
+  let data = getWithExpiry(`similarBooks,-${title}`);
+  if (data === null) {
+    console.log(
+      `Similar books like ${title} data not in localStorage or expired, fetching from API...`
+    );
+    const queryParam = {
+      q: `subject:fiction -intitle:${title}`,
+      key: BOOKS_API_KEY,
+      maxResults: 20,
+      langRestrict: 'en',
+      country: 'US',
+      orderBy: 'relevance',
+      printType: 'all',
+    };
+    const params = new URLSearchParams(queryParam).toString();
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'GET',
+      url: `${BOOKS_BASEURL}${params}`,
+      transformResponse: [
+        ...axios.defaults.transformResponse,
+        (response) => {
+          // Explicitly parse the response
+          console.log('data', response);
+          if (!response.items || !Array.isArray(response.items)) {
+            throw new Error('Invalid API response: no items found');
+          }
+          return response.items.find((book) => {
+            return (
+              book.volumeInfo.imageLinks?.thumbnail &&
+              book.volumeInfo.description &&
+              book.volumeInfo.pageCount > 0
+            );
+          });
+        },
+      ],
+    };
+    data = await fetchAndStoreData(config, `similarBooks-${title}`);
+  } else {
+    console.log(`Similar books by ${title} data retrieved from localStorage`);
+  }
+
+  return data
+    ? {
+        title: data.volumeInfo?.title,
+        book_image: data.volumeInfo.imageLinks?.thumbnail,
+        authors: data.volumeInfo?.authors,
+        book_id: data.id,
+        volumeId: data.id,
+        categories: data.volumeInfo.categories,
+        rating: data.volumeInfo.averageRating,
+        subtitle: data.volumeInfo.subtitle,
+        description: data.volumeInfo.description,
+        publisher: data.volumeInfo.publisher,
+        publishedDate: data.volumeInfo.publishedDate,
+        isbn: data.volumeInfo.industryIdentifiers
+          ?.map((isbn) => isbn.identifier)
+          .join(', '),
+        saleInfo: data.saleInfo?.saleability,
+        pageCount: data.volumeInfo.pageCount,
+        price: data.saleInfo?.listPrice?.amount,
+        currencyCode: data.saleInfo?.listPrice?.currencyCode,
+        language: data.volumeInfo.language,
+      }
+    : {};
+};
+
 export default {
   getBooks,
   getHotBooks,
@@ -356,4 +447,5 @@ export default {
   getBookByVolumeId,
   getBooksSuggestions,
   getBookByAuthorAndTitle,
+  getSimilarBooks,
 };

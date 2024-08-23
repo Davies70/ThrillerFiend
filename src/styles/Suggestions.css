@@ -1,3 +1,9 @@
+@media (max-width: 0) {
+  .suggestions-container {
+    top: 50%;
+  }
+}
+
 .suggestions-container {
   display: flex;
   flex-direction: column;
@@ -16,7 +22,7 @@
   background-color: #202020;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
   z-index: 10;
- 
+  margin: 0;
 }
 
 .suggestion-item {
@@ -39,4 +45,35 @@
 /* Hidden class for hiding suggestion panel */
 .hidden {
   display: none;
+}
+
+.suggestion-art img {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.25rem;
+}
+
+.suggestion-title {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.suggestion-author {
+  font-size: 0.875rem;
+  color: #b3b3b3;
+}
+
+.suggestion-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.search-history {
+  display: flex;
+  justify-content: space-between;
+  background-color: green;
+  align-items: center;
+  padding: 0.625rem;
+  font-style: italic;
 }
