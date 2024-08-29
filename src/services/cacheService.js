@@ -5,8 +5,11 @@ export async function fetchAndStoreData(config, key) {
   try {
     const response = await axios.request(config);
     const { data } = response;
-    setWithExpiry(key, data, 24 * 60 * 60 * 1000); // Store for 24 hours
-    return data;
+    console.log('data', data);
+    if (data) {
+      setWithExpiry(key, data, 24 * 60 * 60 * 1000); // Store for 24 hours
+      return data;
+    }
   } catch (error) {
     console.error('Error fetching data:', error.message);
     return null;

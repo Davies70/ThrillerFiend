@@ -4,7 +4,11 @@ const getHotAuthors = () => hotAuthors.slice(0, 12);
 
 const getAuthors = () => hotAuthors;
 
-const getAuthorById = (id) => hotAuthors.find((author) => author.id === id);
+const getAuthorById = (id) => {
+  const author = hotAuthors.find((author) => author.id === id);
+  const similarAuthors = getSimilarAuthors(id);
+  return { ...author, similarAuthors };
+};
 
 const followAuthor = (id) => {
   const author = hotAuthors.find((author) => String(author.id) === id);
@@ -32,20 +36,6 @@ const getSimilarAuthors = (id) => {
   return getRandomAuthors(3);
 };
 
-const getAuthorGenres = (books) => {
-  const categories = [];
-  books.forEach((book) => {
-    book.categories &&
-      book.categories.forEach((category) => {
-        if (!categories.includes(category)) {
-          categories.push(category);
-        }
-      });
-  });
-
-  return categories;
-};
-
 export default {
   getHotAuthors,
   getAuthors,
@@ -53,5 +43,4 @@ export default {
   followAuthor,
   unfollowAuthor,
   getSimilarAuthors,
-  getAuthorGenres,
 };

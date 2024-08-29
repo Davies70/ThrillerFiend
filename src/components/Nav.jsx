@@ -60,10 +60,12 @@ const Nav = () => {
 
   const handleBlur = (event) => {
     event.preventDefault();
-    if (!inputRef.current.contains(event.relatedTarget)) {
-      setShowSearchContainer(false);
-      setSuggestions([]);
-    }
+    setTimeout(() => {
+      if (!inputRef.current.contains(event.relatedTarget)) {
+        setShowSearchContainer(false);
+        setSuggestions([]);
+      }
+    }, 200);
   };
 
   const clearSearchQuery = (event) => {
@@ -103,12 +105,15 @@ const Nav = () => {
             cancel
           </button>
         </form>
-        {suggestions.length > 0 ? (
+        {
           <Suggestions
             suggestions={suggestions}
-            setSuggestions={setSuggestions}
+            onSuggestionClick={() => {
+              setShowSearchContainer(false);
+              setSuggestions([]);
+            }}
           />
-        ) : null}
+        }
       </div>
     );
   };
@@ -197,7 +202,10 @@ const Nav = () => {
             {suggestions.length > 0 ? (
               <Suggestions
                 suggestions={suggestions}
-                setSuggestions={setSuggestions}
+                onSuggestionClick={() => {
+                  setShowSearchContainer(false);
+                  setSuggestions([]);
+                }}
               />
             ) : null}
           </div>

@@ -6,6 +6,7 @@ const BOOKS_BASEURL = `https://www.googleapis.com/books/v1/volumes?`;
 const BOOKS_API_KEY = import.meta.env.VITE_BOOKS_API_KEY;
 import { setSome } from '../utils';
 import axios from 'axios';
+import authorServices from './authorServices';
 
 const nytConfig = {
   headers: {
@@ -43,11 +44,9 @@ async function getHotBooks() {
   return hotBooks;
 }
 
-// const getBookById = (id) => {
-//   return books.find((book) => book.id === id);
-// };
-
-const getBooksByAuthor = async (authorName) => {
+const getBooksByAuthor = async (id) => {
+  const author = authorServices.getAuthorById(id);
+  const authorName = author.authorName;
   let data = getWithExpiry('booksByAuthor-' + authorName);
   if (data === null) {
     console.log(
@@ -130,94 +129,19 @@ const getBooksByAuthor = async (authorName) => {
     };
   });
 
-  return booksByAuthor.length > 12 ? booksByAuthor.slice(0, 12) : booksByAuthor;
-};
-
-const getLatestBook = async (author) => {
-  let data = getWithExpiry('latestBookByAuthor-' + author);
-  if (data === null) {
-    console.log(
-      `Latest book by ${author} data not in localStorage or expired, fetching from API...`
-    );
-    const queryParam = {
-      q: `inauthor:"${author}"+subject:fiction`,
-      orderBy: 'newest',
-      key: BOOKS_API_KEY,
-      maxResults: 40,
-      langRestrict: 'en',
-      country: 'US',
-      printType: 'books',
-    };
-    const params = new URLSearchParams(queryParam).toString();
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'GET',
-      url: `${BOOKS_BASEURL}${params}`,
-    };
-    data = await fetchAndStoreData(config, `latestBookByAuthor-${author}`);
-  } else {
-    console.log(`Latest book by ${author} data retrieved from localStorage`);
-  }
-  // data.items.forEach((book) => {
-  //   console.log('book', book.volumeInfo.authors);
-  // });
-
-  // return {
-  //   title: 'No books found',
-  //   book_image: '',
-  //   author: 'not found',
-  // };
-  // const latestBookFromList = data.items.((book) =>
-  //   book.volumeInfo.authors?.includes(author)
-  // );
-
-  // if (!latestBookFromList) {
-  //   return {
-  //     title: 'No books found',
-  //     book_image: '',
-  //     author: 'not found',
-  //   };
-  // }
-
-  // const latestBook = {
-  //   title: latestBookFromList.volumeInfo.title,
-  //   book_image: latestBookFromList.volumeInfo.imageLinks.thumbnail,
-  //   author: latestBookFromList.volumeInfo.authors,
-  // };
-  // return latestBook;
-  const authorBooks = data.items.filter(
-    (book) =>
-      book.volumeInfo.authors &&
-      book.volumeInfo.authors.some(
-        (bookAuthor) => bookAuthor.toLowerCase() === author.toLowerCase()
-      )
+  const toLowerCaseNotableWorks = author.notableWorks.map((notableWork) =>
+    notableWork.toLowerCase()
   );
-  console.log('authorbooks', authorBooks);
 
-  if (authorBooks.length === 0) {
-    return {
-      title: 'No books found',
-      book_image: '',
-      author: 'not found',
-    };
-  }
-
-  // Sort the filtered books by publication date (newest first)
-  authorBooks.sort((a, b) => {
-    const dateA = new Date(a.volumeInfo.publishedDate || 0);
-    const dateB = new Date(b.volumeInfo.publishedDate || 0);
-    return dateB - dateA;
+  const books = booksByAuthor.filter((book) => {
+    if (!toLowerCaseNotableWorks.includes(book.title.toLowerCase())) {
+      return book;
+    }
   });
 
-  const latestBook = authorBooks[0];
+  console.log({ books });
 
-  return {
-    title: latestBook.volumeInfo.title,
-    book_image: latestBook.volumeInfo.imageLinks?.thumbnail || '',
-    author: latestBook.volumeInfo.authors[0],
-  };
+  return books.length > 12 ? books.slice(0, 12) : books;
 };
 
 const getBookByVolumeId = async (volumeId) => {
@@ -245,7 +169,7 @@ const getBookByVolumeId = async (volumeId) => {
 
 const getBooksSuggestions = async (searchQuery, signal) => {
   const queryParam = {
-    q: searchQuery + '+subject:fiction',
+    q: searchQuery + 'subject:fiction',
     key: BOOKS_API_KEY,
     maxResults: 4,
     langRestrict: 'en',
@@ -259,10 +183,28 @@ const getBooksSuggestions = async (searchQuery, signal) => {
     },
     method: 'GET',
     url: `${BOOKS_BASEURL}${params}`,
+    transformResponse: [
+      ...axios.defaults.transformResponse,
+      (response) => {
+        // Explicitly parse the response
+        console.log('data', response);
+        if (!response.items || !Array.isArray(response.items)) {
+          throw new Error('Invalid API response: no items found');
+        }
+        return response.items.filter((book) => {
+          return (
+            book.volumeInfo.imageLinks?.thumbnail &&
+            book.volumeInfo.description &&
+            book.volumeInfo.pageCount > 0
+          );
+        });
+      },
+    ],
   };
   try {
     const response = await axios.request(config, { signal });
-    return response.data.items.map((book) => {
+    console.log('response', response);
+    return response.data.map((book) => {
       return {
         title: book.volumeInfo.title,
         book_image: book.volumeInfo.imageLinks?.thumbnail,
@@ -291,6 +233,7 @@ const getBooksSuggestions = async (searchQuery, signal) => {
     } else {
       console.error('Fetch error:', error);
     }
+    return [];
   }
 };
 
@@ -439,13 +382,91 @@ const getSimilarBooks = async (title) => {
     : {};
 };
 
+const getBestSellers = async () => {
+  let data = getWithExpiry('bestsellers');
+  console.log('data', data);
+  if (data === null) {
+    console.log(
+      'Bestsellers Data not in localStorage or expired, fetching from API...'
+    );
+
+    const queryParam = {
+      q: 'subject:thriller',
+      key: BOOKS_API_KEY,
+      maxResults: 18,
+      langRestrict: 'en',
+      country: 'US',
+      orderBy: 'relevance',
+      printType: 'all',
+    };
+
+    const params = new URLSearchParams(queryParam).toString();
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'GET',
+      url: `${BOOKS_BASEURL}${params}`,
+      transformResponse: [
+        ...axios.defaults.transformResponse,
+        (response) => {
+          // Explicitly parse the response
+          console.log('data', response);
+          if (!response.items || !Array.isArray(response.items)) {
+            throw new Error('Invalid API response: no items found');
+          }
+          return response.items.filter((book) => {
+            return (
+              book.volumeInfo.imageLinks?.thumbnail &&
+              book.volumeInfo.description &&
+              book.volumeInfo.pageCount > 0
+            );
+          });
+        },
+      ],
+    };
+    data = await fetchAndStoreData(config, 'bestsellers');
+    console.log('response', data);
+  } else {
+    console.log('Bestsellers Data retrieved from localStorage');
+  }
+  return Array.from(
+    new Set(data.map((book) => book.volumeInfo.title.toLowerCase()))
+  ).map((title) => {
+    const book = data.find(
+      (book) => book.volumeInfo.title.toLowerCase() === title
+    );
+    return {
+      title: book.volumeInfo.title,
+      book_image: book.volumeInfo.imageLinks?.thumbnail,
+      authors: book.volumeInfo.authors,
+      book_id: book.id,
+      volumeId: book.id,
+      categories: book.volumeInfo.categories,
+      rating: book.volumeInfo.averageRating,
+      subtitle: book.volumeInfo.subtitle,
+      description: book.volumeInfo.description,
+      publisher: book.volumeInfo.publisher,
+      publishedDate: book.volumeInfo.publishedDate,
+      isbn: book.volumeInfo.industryIdentifiers
+        ?.map((isbn) => isbn.identifier)
+        .join(', '),
+      saleInfo: book.saleInfo,
+      pageCount: book.volumeInfo.pageCount,
+      price: book.saleInfo?.listPrice?.amount,
+      currencyCode: book.saleInfo?.listPrice?.currencyCode,
+      language: book.volumeInfo.language,
+    };
+  });
+};
+
 export default {
   getBooks,
   getHotBooks,
   getBooksByAuthor,
-  getLatestBook,
   getBookByVolumeId,
   getBooksSuggestions,
   getBookByAuthorAndTitle,
   getSimilarBooks,
+  getBestSellers,
 };

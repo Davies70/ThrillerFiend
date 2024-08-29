@@ -1,5 +1,5 @@
 /* HTML: <div class="loader"></div> */
-.loader {
+/* .loader {
   width: 50px;
   padding: 8px;
   aspect-ratio: 1;
@@ -18,25 +18,28 @@
   }
 }
 
-.full-image {
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-}
+.loader {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-fill-mode: forwards;
+} */
 
-.full-image.loaded {
-  opacity: 1;
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid transparent;
+  border-right-color: #25b09b;
+  animation: l2 1s infinite linear;
+  position: fixed;
+  top: 50%;
+  left: 50%;
 }
-
-image-wrapper {
-  position: relative;
-  padding-bottom: 66.67%; /* 3:2 aspect ratio */
-}
-
-.placeholder,
-.full-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+@keyframes l2 {
+  to {
+    transform: rotate(1turn);
+  }
 }

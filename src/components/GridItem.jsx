@@ -5,12 +5,13 @@ import OutboundIcon from '@mui/icons-material/Outbound';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import AddIcon from '@mui/icons-material/Add';
 
-const GridItem = ({ name, photo, authors }) => {
+const GridItem = ({ book }) => {
+  const { title, book_image, authors } = book;
   return (
     <div className='gridItem'>
       <div className='gridItem-content'>
         <div className='grid-left'>
-          <img src={photo} loading='lazy' alt={name} />
+          <img src={book_image} loading='lazy' alt={title} />
           <button tabIndex='-1' className='visitButton'>
             <OutboundIcon className='visit' />
           </button>
@@ -24,7 +25,7 @@ const GridItem = ({ name, photo, authors }) => {
         </div>
         <div className='grid-center'>
           <div className='grid-center-title'>
-            <a>{name}</a>
+            <a>{title}</a>
           </div>
           <span className='grid-center-author'>
             <a>{authors.join(', ')}</a>
@@ -44,9 +45,7 @@ const GridItem = ({ name, photo, authors }) => {
 };
 
 GridItem.propTypes = {
-  name: Proptypes.string,
-  photo: Proptypes.string,
-  authors: Proptypes.array,
+  book: Proptypes.object.isRequired,
 };
 
 export default GridItem;

@@ -7,17 +7,9 @@ const GridContentScroller = ({ contentScrollRef, data }) => {
   return (
     <div className='grid-wrapper'>
       <div className='content-scroll-grid' ref={contentScrollRef}>
-        {data.map(
-          (book, i) =>
-            book.volumeInfo?.imageLinks?.thumbnail && (
-              <GridItem
-                name={book.volumeInfo.title}
-                photo={book.volumeInfo?.imageLinks?.thumbnail}
-                key={i}
-                authors={book.volumeInfo.authors}
-              />
-            )
-        )}
+        {data.map((book, i) => (
+          <GridItem key={i} book={book} />
+        ))}
       </div>
     </div>
   );

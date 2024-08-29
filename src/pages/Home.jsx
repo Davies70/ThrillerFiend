@@ -1,27 +1,46 @@
-import React, { useEffect, useState } from 'react';
 import Banner from '../components/sections/Banner';
-import BestSellers from '../components/sections/BestSellers';
+import GridScroller from '../components/sections/GridScroller';
 import BookScroller from '../components/sections/BookScroller';
 import bookServices from '../services/bookServices';
 import authorServices from '../services/authorServices';
+import { useQueries } from '@tanstack/react-query';
+import Loader from '../components/Loader';
 
 const Home = () => {
-  const [hotbooks, setHotBooks] = useState([]);
-  const [hotAuthors, setHotAuthors] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      const hotBooks = await bookServices.getHotBooks();
-      setHotBooks(hotBooks);
-      const authors = authorServices.getHotAuthors();
-      setHotAuthors(authors);
-    };
-    fetchData();
-  }, []);
+  const [hotBooksQuery, bestSellerQuery] = useQueries({
+    queries: [
+      {
+        queryKey: ['hotbooks'],
+        queryFn: bookServices.getHotBooks,
+      },
+      {
+        queryKey: ['bestsellers'],
+        queryFn: bookServices.getBestSellers,
+      },
+    ],
+  });
+
+  if (hotBooksQuery.isLoading || bestSellerQuery.isLoading) {
+    return <Loader />;
+  }
+
+  if (hotBooksQuery.isError || bestSellerQuery.isError) {
+    return (
+      <div>
+        Something went wrong
+        {hotBooksQuery.error.message}
+        {bestSellerQuery.error.message}
+      </div>
+    );
+  }
+
+  const hotbooks = hotBooksQuery.data;
+  const bestSellers = bestSellerQuery.data;
 
   return (
     <div>
       <BookScroller
-        data={hotAuthors}
+        data={authorServices.getHotAuthors()}
         shape='circle'
         headerText='Hot Authors'
         isNavLink={true}
@@ -40,7 +59,11 @@ const Home = () => {
         isControls={true}
         isDataAvailable={false}
       />
-      <BestSellers />
+      <GridScroller
+        data={bestSellers}
+        isControls={true}
+        headerText='All-Time bestsellers'
+      />
     </div>
   );
 };

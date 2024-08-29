@@ -216,6 +216,7 @@
   padding-bottom: 0.5rem;
   padding-right: 1rem;
   padding-left: 1rem;
+  scroll-padding-block: 1rem;
 }
 
 .note-actions textarea:focus {
@@ -246,7 +247,7 @@
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
 /* Responsive styles */

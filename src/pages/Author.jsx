@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import authorServices from '../services/authorServices.js';
 import bookServices from '../services/bookServices.js';
 import { useParams } from 'react-router-dom';
@@ -6,52 +6,90 @@ import BookScroller from '../components/sections/BookScroller.jsx';
 import Notification from '../components/Notification';
 import '../styles/Author.css';
 import OutsideClickHandler from '../components/OutsideClickHandler.jsx';
+import { useQuery, useQueries } from '@tanstack/react-query';
+import Loader from '../components/Loader.jsx';
 
 export default function Author() {
   const { id } = useParams();
-  const [author, setAuthor] = useState({});
   const [isFollowing, setIsFollowing] = useState(false);
   const [notification, setNotification] = useState({
     title: '',
     message: '',
     type: '',
   });
-  const [booksByAuthor, setBooksByAuthor] = useState([]);
-  const [similarAuthors, setSimilarAuthors] = useState([]);
-  const [isControls, setIsControls] = useState(true);
-  const [genres, setGenres] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    const fetchAuthor = () => {
-      const author = authorServices.getAuthorById(parseInt(id));
-      setAuthor(author);
-      setIsFollowing(author.isFollowing);
-    };
-    fetchAuthor();
-    const fetchSimilarAuthors = () => {
-      const foundAuthors = authorServices.getSimilarAuthors(author.id);
-      setSimilarAuthors(foundAuthors);
-    };
-    fetchSimilarAuthors();
-  }, [id, author]);
+  const authorId = parseInt(id);
 
-  useEffect(() => {
-    const fetchBooksByAuthor = async () => {
-      if (author.authorName) {
-        const books = await bookServices.getBooksByAuthor(author.authorName);
-        const foundGenres = authorServices.getAuthorGenres(books);
-        setGenres(foundGenres);
-        setBooksByAuthor(books);
-        setIsControls(booksByAuthor.length > 7);
-      }
-    };
+  const {
+    data: author,
+    isLoading: authorIsLoading,
+    isError: authorIsError,
+  } = useQuery({
+    queryKey: ['author', id],
+    queryFn: () => authorServices.getAuthorById(authorId),
+  });
 
-    fetchBooksByAuthor();
-  }, [author.authorName, booksByAuthor.length]);
+  const {
+    data: booksByAuthor,
+    isLoading: booksByAuthorIsLoading,
+    isError: booksByAuthorIsError,
+  } = useQuery({
+    queryKey: ['booksByAuthor', id],
+    queryFn: () => bookServices.getBooksByAuthor(authorId),
+  });
 
-  const { authorName, description, nationality, coverPhoto } = author;
+  console.log({ author });
+  console.log({ booksByAuthor });
+
+  const notableWorks = author?.notableWorks || [];
+
+  console.log({ notableWorks });
+
+  const notableWorksQueries = useQueries({
+    queries:
+      notableWorks.length > 0
+        ? author.notableWorks.map((notableWork) => ({
+            queryKey: ['notableThrills', notableWork],
+            queryFn: () =>
+              bookServices.getBookByAuthorAndTitle(
+                `intitle:${notableWork}+inauthor:${author.authorName}`
+              ),
+          }))
+        : [],
+  });
+
+  const notableWorksIsLoading = notableWorksQueries.some(
+    (query) => query.isLoading
+  );
+
+  const notableThrills = notableWorksQueries.map((query) => query.data);
+  console.log({ notableThrills });
+
+  if (authorIsLoading || booksByAuthorIsLoading || notableWorksIsLoading) {
+    return <Loader />;
+  }
+
+  if (
+    authorIsError ||
+    booksByAuthorIsError ||
+    notableWorksQueries.some((query) => query.isError)
+  ) {
+    return <div>Something went wrong</div>;
+  }
+
+  console.log('author', author);
+  console.log('booksByAuthor', booksByAuthor);
+  console.log('notableWorks', notableWorks);
+
+  const {
+    authorName,
+    description,
+    nationality,
+    coverPhoto,
+    genres,
+    similarAuthors,
+  } = author;
 
   const followClass = isFollowing
     ? 'unfollow-button followed'
@@ -111,7 +149,6 @@ export default function Author() {
       setNotification({ title: '', message: '', type: '' });
     }, 3000);
   };
-
   return (
     <div className='author-page'>
       <Notification
@@ -175,11 +212,17 @@ export default function Author() {
 
         <BookScroller
           shape='square'
+          headerText='Notable thrills'
+          data={notableThrills}
+        />
+
+        <BookScroller
+          shape='square'
           data={booksByAuthor}
-          headerText='Thrillers by this author'
+          headerText='Other thrills by this author'
           isNavLink={false}
           isAuthorName={false}
-          isControls={isControls}
+          isControls={booksByAuthor.length > 7}
           isDataAvailable={true}
         />
 
