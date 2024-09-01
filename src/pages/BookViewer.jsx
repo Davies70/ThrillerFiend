@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 
 const BookViewer = ({ ISBN_num }) => {
   // Obtain ISBN number of user's current book
@@ -34,7 +35,7 @@ const BookViewer = ({ ISBN_num }) => {
         });
       }
     }
-  }, [loaded]);
+  }, [ISBN_num, loaded]);
   return (
     <div>
       {loaded ? (
@@ -47,3 +48,9 @@ const BookViewer = ({ ISBN_num }) => {
     </div>
   );
 };
+
+BookViewer.propTypes = {
+  ISBN_num: PropTypes.string,
+};
+
+export default BookViewer;

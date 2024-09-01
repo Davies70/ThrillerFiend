@@ -4,6 +4,10 @@
   }
 }
 
+.suggestions.wrapper {
+  position: relative;
+}
+
 .suggestions-container {
   display: flex;
   flex-direction: column;
@@ -32,6 +36,10 @@
   font-size: 1rem;
   display: flex;
   gap: 1rem;
+}
+
+.suggestions-container li {
+  list-style-type: none;
 }
 
 .suggestion-item:last-child {

@@ -65,7 +65,10 @@ const Shape = ({ shape, isAuthorName, book, author, isDataAvailable }) => {
               />
             )}
 
-            <Link className='bg square' to={`/book/}`}>
+            <Link
+              className='bg square'
+              to={`/book/inauthor:${authorName}+intitle:${title}`}
+            >
               <button
                 aria-label='Add to Collections'
                 title='Add to Collections'

@@ -71,10 +71,11 @@
 
 /* Styling for the book author name */
 .book-author-name {
-  font-size: 1.125rem;
+  font-size: 1.3rem;
   font-weight: 500;
   margin-top: 1rem;
   color: var(--blue-text);
+  padding-bottom: 1rem;
 }
 
 /* Container for the book description */
@@ -157,36 +158,7 @@
 }
 
 /* Container for modal elements */
-.modal {
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  padding-right: 0.1rem;
-  padding-left: 0.1rem;
-  position: fixed;
-  z-index: 50;
-  right: 5rem;
-  top: 55%;
-  right: 50%;
-  transform: translate(50%, -50%);
-  border-radius: 1rem;
-  gap: 0.5rem;
-  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
-  align-items: center;
-  justify-content: center;
-  line-height: 1.5rem;
-  width: 20%;
-  max-height: 100%;
-  max-width: 37.5rem;
-  margin-left: auto;
-  margin-right: auto;
-  flex-basis: auto;
-  flex-shrink: 0;
-}
+
 
 /* Container for notes section */
 .notes {

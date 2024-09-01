@@ -1,15 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import bookServices from '../services/bookServices';
 import NoteCard from '../components/NoteCard';
 import '../styles/Book.css';
 import AddIcon from '@mui/icons-material/Add';
 import StarRateIcon from '@mui/icons-material/StarRate';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import TurnedInIcon from '@mui/icons-material/TurnedIn';
-import OutsideClickHandler from '../components/OutsideClickHandler';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import { Rating } from '@mui/material';
 import { getLanguage } from '../utils';
@@ -17,17 +12,28 @@ import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import Button from '@mui/material/Button';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import useCheckIfOverflowing from '../hooks/useCheckIfOverflowing';
+import { useQuery } from '@tanstack/react-query';
+import Loader from '../components/Loader';
+import LibraryModal from '../components/modal/LibraryModal';
 
 const Book = () => {
   const { id } = useParams();
 
-  const [book, setBook] = useState({});
-  // const [rating, setRating] = useState(0);
-  const [showButton, setShowButton] = useState(false);
   const [isTextExpanded, setIsTextExpanded] = useState(false);
   const location = useLocation();
 
   const descriptionRef = useRef(null);
+
+  const {
+    data: book,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['book', id],
+    queryFn: () =>
+      location.state?.data || bookServices.getBookByAuthorAndTitle(id),
+  });
 
   const {
     title,
@@ -44,57 +50,14 @@ const Book = () => {
     price,
     currencyCode,
     categories,
+    authors,
   } = book || {};
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    const data = location.state?.data || null;
-
-    if (data) {
-      setBook(data);
-    } else {
-      const fetchBook = async () => {
-        const fetchedBook = await bookServices.getBookByAuthorAndTitle(id);
-        console.log('fetchedBook', fetchedBook);
-        setBook(fetchedBook);
-      };
-      fetchBook();
-    }
-  }, [id, location.state]);
-
-  useEffect(() => {
-    const checkIfOverflowing = () => {
-      const descriptionElement = descriptionRef.current;
-      console.log('descriptionElement', descriptionElement);
-      if (descriptionElement) {
-        const maxLines = 5;
-        const lineHeight = parseInt(
-          window.getComputedStyle(descriptionElement).lineHeight,
-          10
-        );
-
-        console.log('lineHeight', lineHeight);
-        console.log(
-          'descriptionElement.scrollHeight',
-          descriptionElement.scrollHeight
-        );
-        const maxHeight = lineHeight * maxLines;
-
-        if (descriptionElement.scrollHeight > maxHeight) {
-          setShowButton(true);
-        } else {
-          setShowButton(false);
-        }
-      }
-    };
-
-    checkIfOverflowing();
-    window.addEventListener('resize', checkIfOverflowing);
-
-    return () => {
-      window.removeEventListener('resize', checkIfOverflowing);
-    };
-  }, [description, isTextExpanded]);
+  const showButton = useCheckIfOverflowing(
+    descriptionRef,
+    isTextExpanded,
+    description
+  );
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -107,10 +70,12 @@ const Book = () => {
 
   const expandedTextClass = isTextExpanded ? 'expanded' : 'collapsed';
 
-  console.log('book', book);
+  if (isLoading) {
+    return <Loader />;
+  }
 
-  if (Object.keys(book).length === 0) {
-    return <div>Loading...</div>;
+  if (isError) {
+    return <div>Error fetching book data</div>;
   }
 
   return (
@@ -122,9 +87,7 @@ const Book = () => {
               <h1>{title}</h1>
               {subtitle && <p className='muted-foreground'>{subtitle}</p>}
 
-              <p className='book-author-name'>
-                {book.volumeInfo?.authors.join(', ')}
-              </p>
+              <p className='book-author-name'> {authors}</p>
             </div>
             <div className='book-btn-actions'>
               <div className='btn-actions-up'>
@@ -168,50 +131,7 @@ const Book = () => {
             </div>
           </div>
 
-          {isOpen && (
-            <OutsideClickHandler onOutsideClick={closeModal} className='modal'>
-              <Button
-                variant='contained'
-                endIcon={<CheckBoxIcon />}
-                color='white'
-                size='small'
-                disableElevation
-              >
-                Have Read
-              </Button>
-
-              <Button
-                variant='contained'
-                endIcon={<TurnedInIcon />}
-                color='white'
-                size='small'
-                disableElevation
-              >
-                Read Later
-              </Button>
-
-              <Button
-                variant='contained'
-                endIcon={<FavoriteIcon />}
-                color='white'
-                size='small'
-                disableElevation
-              >
-                Add to Favorites
-              </Button>
-
-              <Button
-                variant='contained'
-                endIcon={<DeleteIcon />}
-                color='white'
-                size='small'
-                disableElevation
-                title='Remove from Library'
-              >
-                Remove from Library
-              </Button>
-            </OutsideClickHandler>
-          )}
+          {isOpen && <LibraryModal closeModal={closeModal} />}
         </div>
         <div className='book-right'>
           <div className='book-image-container'>

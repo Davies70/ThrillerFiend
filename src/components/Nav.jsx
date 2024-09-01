@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import '../styles/Nav.css';
 import Logo from './icons/nav/Logo';
 import LogoSmall from './icons/nav/LogoSmall';
@@ -10,49 +10,19 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link, useLocation } from 'react-router-dom';
 import Suggestions from './Suggestions';
-import { debounce } from 'lodash';
 import bookServices from '../services/bookServices';
 
 const Nav = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchContainer, setShowSearchContainer] = useState(false);
-  const [controller, setController] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
 
   const inputRef = useRef(null);
   const location = useLocation();
 
-  const debouncedFetchSuggestions = useCallback(
-    debounce(async (q) => {
-      if (controller) controller.abort(); // Abort previous request
-
-      const newController = new AbortController();
-      setController(newController);
-
-      const data = await bookServices.getBooksSuggestions(
-        q,
-        newController.signal
-      );
-
-      if (data) {
-        setSuggestions(data);
-      }
-    }, 300),
-    [controller, searchQuery]
-  );
-
-  const handleSearchQueryInput = (event) => {
-    event.preventDefault();
-    setSearchQuery(event.target.value);
-    if (searchQuery.length >= 3) {
-      debouncedFetchSuggestions(searchQuery);
-    }
-  };
-
   const handleSearchIconClick = (event) => {
     event.preventDefault();
     setShowSearchContainer(true);
-    console.log(showSearchContainer);
     setTimeout(() => {
       inputRef.current.focus();
     }, 0);
@@ -71,11 +41,31 @@ const Nav = () => {
   const clearSearchQuery = (event) => {
     event.preventDefault();
     setSearchQuery('');
-    setSuggestions([]);
-
+    console.log({ showSearchContainer });
     setTimeout(() => {
       inputRef.current.focus();
     }, 0);
+  };
+
+  const fetchSuggestions = async (q) => {
+    try {
+      setSuggestions([]);
+
+      const data = await bookServices.getBooksSuggestions(q);
+      if (data.length > 0) {
+        setSuggestions(data);
+      }
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+      setSuggestions(['Error fetching suggestions']);
+    }
+  };
+
+  const handleSearchQuery = (event) => {
+    event.preventDefault();
+    if (searchQuery) {
+      fetchSuggestions(searchQuery);
+    }
   };
 
   const searchContainer = () => {
@@ -89,8 +79,12 @@ const Nav = () => {
             id='search'
             value={searchQuery}
             placeholder='Search Books...'
-            onBlur={handleBlur}
-            onChange={handleSearchQueryInput}
+            onChange={({ target }) => setSearchQuery(target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                handleSearchQuery(event);
+              }
+            }}
           />
           {searchQuery ? (
             <button
@@ -181,14 +175,12 @@ const Nav = () => {
                 id='search'
                 placeholder='Search Books...'
                 value={searchQuery}
-                onChange={handleSearchQueryInput}
                 ref={inputRef}
+                onChange={({ target }) => setSearchQuery(target.value)}
               />
               <button
                 className='search-icon-button'
-                onClick={(event) => {
-                  event.preventDefault();
-                }}
+                onClick={handleSearchQuery}
               >
                 <SearchIcon />
               </button>

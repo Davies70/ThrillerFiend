@@ -139,8 +139,6 @@ const getBooksByAuthor = async (id) => {
     }
   });
 
-  console.log({ books });
-
   return books.length > 12 ? books.slice(0, 12) : books;
 };
 
@@ -168,13 +166,18 @@ const getBookByVolumeId = async (volumeId) => {
 };
 
 const getBooksSuggestions = async (searchQuery, signal) => {
+  if (!searchQuery) {
+    console.warn('No search query provided');
+    return [];
+  }
   const queryParam = {
-    q: searchQuery + 'subject:fiction',
+    q: `${searchQuery}` + 'subject:fiction',
     key: BOOKS_API_KEY,
-    maxResults: 4,
+    maxResults: 10,
     langRestrict: 'en',
     country: 'US',
     printType: 'all',
+    orderBy: 'relevance',
   };
   const params = new URLSearchParams(queryParam).toString();
   const config = {
@@ -183,50 +186,47 @@ const getBooksSuggestions = async (searchQuery, signal) => {
     },
     method: 'GET',
     url: `${BOOKS_BASEURL}${params}`,
-    transformResponse: [
-      ...axios.defaults.transformResponse,
-      (response) => {
-        // Explicitly parse the response
-        console.log('data', response);
-        if (!response.items || !Array.isArray(response.items)) {
-          throw new Error('Invalid API response: no items found');
-        }
-        return response.items.filter((book) => {
-          return (
-            book.volumeInfo.imageLinks?.thumbnail &&
-            book.volumeInfo.description &&
-            book.volumeInfo.pageCount > 0
-          );
-        });
-      },
-    ],
   };
   try {
     const response = await axios.request(config, { signal });
     console.log('response', response);
-    return response.data.map((book) => {
-      return {
-        title: book.volumeInfo.title,
-        book_image: book.volumeInfo.imageLinks?.thumbnail,
-        authors: book.volumeInfo.authors,
-        book_id: book.id,
-        volumeId: book.id,
-        categories: book.volumeInfo.categories,
-        rating: book.volumeInfo.averageRating,
-        subtitle: book.volumeInfo.subtitle,
-        description: book.volumeInfo.description,
-        publisher: book.volumeInfo.publisher,
-        publishedDate: book.volumeInfo.publishedDate,
-        isbn: book.volumeInfo.industryIdentifiers
-          ?.map((isbn) => isbn.identifier)
-          .join(', '),
-        saleInfo: book.saleInfo,
-        pageCount: book.volumeInfo.pageCount,
-        price: book.saleInfo?.listPrice?.amount,
-        currencyCode: book.saleInfo?.listPrice?.currencyCode,
-        language: book.volumeInfo.language,
-      };
+    if (response.data.totalItems === 0) {
+      return [];
+    }
+    const suggestions = response.data.items.filter((book) => {
+      const { volumeInfo } = book;
+      return (
+        volumeInfo.imageLinks?.thumbnail &&
+        volumeInfo.description &&
+        volumeInfo.pageCount > 0
+      );
     });
+
+    console.log({ suggestions });
+    return suggestions
+      .map((book) => {
+        return {
+          title: book.volumeInfo.title,
+          book_image: book.volumeInfo.imageLinks?.thumbnail,
+          authors: book.volumeInfo.authors,
+          book_id: book.id,
+          categories: book.volumeInfo.categories,
+          rating: book.volumeInfo.averageRating,
+          subtitle: book.volumeInfo.subtitle,
+          description: book.volumeInfo.description,
+          publisher: book.volumeInfo.publisher,
+          publishedDate: book.volumeInfo.publishedDate,
+          isbn: book.volumeInfo.industryIdentifiers
+            ?.map((isbn) => isbn.identifier)
+            .join(', '),
+          saleInfo: book.saleInfo,
+          pageCount: book.volumeInfo.pageCount,
+          price: book.saleInfo?.listPrice?.amount,
+          currencyCode: book.saleInfo?.listPrice?.currencyCode,
+          language: book.volumeInfo.language,
+        };
+      })
+      .slice(0, 5);
   } catch (error) {
     if (axios.isCancel(error)) {
       console.log('Request cancelled:', error.message);

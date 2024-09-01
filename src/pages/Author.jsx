@@ -44,8 +44,6 @@ export default function Author() {
 
   const notableWorks = author?.notableWorks || [];
 
-  console.log({ notableWorks });
-
   const notableWorksQueries = useQueries({
     queries:
       notableWorks.length > 0
@@ -214,6 +212,8 @@ export default function Author() {
           shape='square'
           headerText='Notable thrills'
           data={notableThrills}
+          isControls={false}
+          isDataAvailable={true}
         />
 
         <BookScroller
