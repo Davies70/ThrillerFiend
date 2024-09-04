@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import '../styles/Nav.css';
 import Logo from './icons/nav/Logo';
 import LogoSmall from './icons/nav/LogoSmall';
@@ -11,10 +11,14 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link, useLocation } from 'react-router-dom';
 import Suggestions from './Suggestions';
 import bookServices from '../services/bookServices';
+import { useQuery } from '@tanstack/react-query';
 
 const Nav = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchContainer, setShowSearchContainer] = useState(false);
+  // const [suggestions, setSuggestions] = useState([]);
+  const [triggerSearch, setTriggerSearch] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
 
   const inputRef = useRef(null);
@@ -41,7 +45,7 @@ const Nav = () => {
   const clearSearchQuery = (event) => {
     event.preventDefault();
     setSearchQuery('');
-    console.log({ showSearchContainer });
+    setSuggestions([]);
     setTimeout(() => {
       inputRef.current.focus();
     }, 0);
@@ -49,23 +53,40 @@ const Nav = () => {
 
   const fetchSuggestions = async (q) => {
     try {
-      setSuggestions([]);
-
       const data = await bookServices.getBooksSuggestions(q);
-      if (data.length > 0) {
-        setSuggestions(data);
+      if (data && data.length > 0) {
+        return data;
+      } else {
+        return [{ title: 'No results found', authors: 'Try another search' }];
       }
     } catch (error) {
       console.error('Error fetching suggestions:', error);
-      setSuggestions(['Error fetching suggestions']);
     }
   };
 
   const handleSearchQuery = (event) => {
     event.preventDefault();
     if (searchQuery) {
-      fetchSuggestions(searchQuery);
+      setShowSuggestions(true);
+      setTriggerSearch(true);
     }
+  };
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['search', searchQuery],
+    queryFn: () => fetchSuggestions(searchQuery),
+    enabled: triggerSearch,
+  });
+
+  useEffect(() => {
+    if (data) {
+      setSuggestions(data);
+      setTriggerSearch(false);
+    }
+  }, [data]);
+
+  const closeSugesstions = () => {
+    setShowSuggestions(false);
   };
 
   const searchContainer = () => {
@@ -99,15 +120,17 @@ const Nav = () => {
             cancel
           </button>
         </form>
-        {
+        {showSuggestions && (
           <Suggestions
-            suggestions={suggestions}
             onSuggestionClick={() => {
               setShowSearchContainer(false);
-              setSuggestions([]);
             }}
+            suggestions={suggestions}
+            isError={isError}
+            isLoading={isLoading}
+            closeSuggestions={closeSugesstions}
           />
-        }
+        )}
       </div>
     );
   };
@@ -191,15 +214,18 @@ const Nav = () => {
                 </button>
               ) : null}
             </form>
-            {suggestions.length > 0 ? (
+
+            {showSuggestions && (
               <Suggestions
                 suggestions={suggestions}
+                isError={isError}
+                isLoading={isLoading}
                 onSuggestionClick={() => {
                   setShowSearchContainer(false);
-                  setSuggestions([]);
                 }}
+                closeSuggestions={closeSugesstions}
               />
-            ) : null}
+            )}
           </div>
           <li className='sign-in-wrapper'>
             <button className='sign-in'>

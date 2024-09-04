@@ -39,9 +39,6 @@ export default function Author() {
     queryFn: () => bookServices.getBooksByAuthor(authorId),
   });
 
-  console.log({ author });
-  console.log({ booksByAuthor });
-
   const notableWorks = author?.notableWorks || [];
 
   const notableWorksQueries = useQueries({
@@ -62,7 +59,6 @@ export default function Author() {
   );
 
   const notableThrills = notableWorksQueries.map((query) => query.data);
-  console.log({ notableThrills });
 
   if (authorIsLoading || booksByAuthorIsLoading || notableWorksIsLoading) {
     return <Loader />;
@@ -75,10 +71,6 @@ export default function Author() {
   ) {
     return <div>Something went wrong</div>;
   }
-
-  console.log('author', author);
-  console.log('booksByAuthor', booksByAuthor);
-  console.log('notableWorks', notableWorks);
 
   const {
     authorName,
@@ -145,13 +137,19 @@ export default function Author() {
   const clearNotification = () => {
     setTimeout(() => {
       setNotification({ title: '', message: '', type: '' });
-    }, 3000);
+    }, 1500);
   };
+
+  const closeNotification = (event) => {
+    event.preventDefault();
+    setNotification({ title: '', message: '', type: '' });
+  };
+
   return (
     <div className='author-page'>
       <Notification
         notification={notification}
-        clearNotification={clearNotification}
+        closeNotification={closeNotification}
       />
       {isModalOpen && (
         <OutsideClickHandler

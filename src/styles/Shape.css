@@ -91,7 +91,7 @@
   opacity: 1;
 }
 
-.bg .left-button {
+.bg .top-left {
   color: white;
   border: 0;
   box-shadow: none;
@@ -101,11 +101,11 @@
   position: absolute;
   background-color: transparent;
   font-weight: bold;
-  top: 45%;
-  left: 0.9375rem; /* 15px / 16 */
+  top: 5%;
+  left: 2%; /* 15px / 16 */
 }
 
-.bg .left-button:hover {
+.bg .top-left:hover {
   color: var(--hover-blue);
   cursor: pointer;
 }

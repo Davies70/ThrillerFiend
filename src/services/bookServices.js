@@ -121,11 +121,12 @@ const getBooksByAuthor = async (id) => {
       isbn: book.volumeInfo.industryIdentifiers
         ?.map((isbn) => isbn.identifier)
         .join(', '),
-      saleInfo: book.saleInfo,
+      saleInfo: book.saleInfo || {},
       pageCount: book.volumeInfo.pageCount,
       price: book.saleInfo?.listPrice?.amount,
       currencyCode: book.saleInfo?.listPrice?.currencyCode,
       language: book.volumeInfo.language,
+      ratingCount: book.volumeInfo.ratingsCount,
     };
   });
 
@@ -219,11 +220,12 @@ const getBooksSuggestions = async (searchQuery, signal) => {
           isbn: book.volumeInfo.industryIdentifiers
             ?.map((isbn) => isbn.identifier)
             .join(', '),
-          saleInfo: book.saleInfo,
+          saleInfo: book.saleInfo || {},
           pageCount: book.volumeInfo.pageCount,
           price: book.saleInfo?.listPrice?.amount,
           currencyCode: book.saleInfo?.listPrice?.currencyCode,
           language: book.volumeInfo.language,
+          ratingCount: book.volumeInfo.ratingsCount,
         };
       })
       .slice(0, 5);
@@ -303,11 +305,12 @@ const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
         isbn: data.volumeInfo.industryIdentifiers
           ?.map((isbn) => isbn.identifier)
           .join(', '),
-        saleInfo: data.saleInfo?.saleability,
+        saleInfo: data.saleInfo || {},
         pageCount: data.volumeInfo.pageCount,
         price: data.saleInfo?.listPrice?.amount,
         currencyCode: data.saleInfo?.listPrice?.currencyCode,
         language: data.volumeInfo.language,
+        ratingCount: data.volumeInfo.ratingsCount,
       }
     : {};
 };
@@ -373,11 +376,12 @@ const getSimilarBooks = async (title) => {
         isbn: data.volumeInfo.industryIdentifiers
           ?.map((isbn) => isbn.identifier)
           .join(', '),
-        saleInfo: data.saleInfo?.saleability,
+        saleInfo: data.saleInfo || {},
         pageCount: data.volumeInfo.pageCount,
         price: data.saleInfo?.listPrice?.amount,
         currencyCode: data.saleInfo?.listPrice?.currencyCode,
         language: data.volumeInfo.language,
+        ratingCount: data.volumeInfo.ratingsCount,
       }
     : {};
 };
@@ -456,6 +460,7 @@ const getBestSellers = async () => {
       price: book.saleInfo?.listPrice?.amount,
       currencyCode: book.saleInfo?.listPrice?.currencyCode,
       language: book.volumeInfo.language,
+      ratingCount: book.volumeInfo.ratingsCount,
     };
   });
 };

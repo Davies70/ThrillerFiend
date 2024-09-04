@@ -17,7 +17,6 @@ const followAuthor = (id) => {
 
 const unfollowAuthor = (id) => {
   const author = hotAuthors.find((author) => String(author.id) === id);
-  console.log(author);
   author.isFollowing = false;
 };
 

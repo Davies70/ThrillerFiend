@@ -1,78 +1,86 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import PropType from 'prop-types';
 import '../styles/Suggestions.css';
 import { Link } from 'react-router-dom';
 import SuggestionLoader from './SuggestionLoader';
+import OutsideClickHandler from './OutsideClickHandler';
 
-const Suggestions = ({ onSuggestionClick, suggestions }) => {
-  const suggestionRef = useRef(null);
+const Suggestions = ({
+  onSuggestionClick,
+  isError,
+  suggestions,
+  isLoading,
+  closeSuggestions,
+}) => {
+  isError && console.error('Error fetching suggestions:', isError);
 
-  const [showSuggestions, setShowSuggestions] = useState(false);
-
-  const handleOutsideClick = (event) => {
-    if (
-      suggestionRef.current &&
-      !suggestionRef.current.contains(event.target)
-    ) {
-      setShowSuggestions(false);
-    }
-  };
-
-  useEffect(() => {
-    // Set loading to true while fetching
-
-    setShowSuggestions(suggestions.length > 0);
-
-    document.addEventListener('mousedown', handleOutsideClick);
-
-    // Cleanup event listener on component unmount
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [suggestions]);
+  if (isLoading) {
+    return (
+      <div className='suggestions-wrapper'>
+        <div className='suggestions-container'>
+          <SuggestionLoader />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className='suggestions-wrapper'>
-      <ul
-        className='suggestions-container'
-        style={{
-          display: showSuggestions ? 'flex' : 'none',
-        }}
-        onClick={handleOutsideClick}
-        ref={suggestionRef}
-      >
-        {suggestions.length === 0 && <SuggestionLoader />}
+    <OutsideClickHandler
+      onOutsideClick={closeSuggestions}
+      className='suggestions-wrapper'
+    >
+      <ul className='suggestions-container'>
         {suggestions.map((suggestion, index) => (
           <li key={index}>
-            <Link
-              to={`/book/inauthor:${suggestion.authors}+intitle:${suggestion.title}`}
-              key={index}
-              state={{ suggestions: suggestion }}
-              className='suggestion-item'
-              onClick={onSuggestionClick}
-            >
-              <div className='suggestion-art'>
-                <img
-                  src={suggestion.book_image}
-                  alt={suggestion.title}
-                  loading='lazy'
-                />
+            {suggestion.title === 'No results found' ? (
+              <div
+                className='no-results'
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                }}
+              >
+                <span>{suggestion.title}</span>
+                <span>{suggestion.authors}</span>
               </div>
-              <div className='suggestion-text'>
-                <span className='suggestion-title'>{suggestion.title}</span>
-                <span className='suggestion-author'>{suggestion.authors}</span>
-              </div>
-            </Link>
+            ) : (
+              <Link
+                to={`/book/inauthor:${suggestion.authors}+intitle:${suggestion.title}`}
+                key={index}
+                state={{ suggestions: suggestion }}
+                className='suggestion-item'
+                onClick={onSuggestionClick}
+              >
+                <div className='suggestion-art'>
+                  <img
+                    src={suggestion.book_image}
+                    alt={suggestion.title}
+                    loading='lazy'
+                  />
+                </div>
+                <div className='suggestion-text'>
+                  <span className='suggestion-title'>{suggestion.title}</span>
+                  <span className='suggestion-author'>
+                    {suggestion.authors}
+                  </span>
+                </div>
+              </Link>
+            )}
           </li>
         ))}
       </ul>
-    </div>
+    </OutsideClickHandler>
   );
 };
 
 Suggestions.propTypes = {
-  suggestions: PropType.array.isRequired,
   onSuggestionClick: PropType.func.isRequired,
+  isError: PropType.bool.isRequired,
+  suggestions: PropType.array,
+  isLoading: PropType.bool.isRequired,
+  closeSuggestions: PropType.func,
 };
 
 export default Suggestions;

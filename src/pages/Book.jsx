@@ -4,7 +4,6 @@ import bookServices from '../services/bookServices';
 import NoteCard from '../components/NoteCard';
 import '../styles/Book.css';
 import AddIcon from '@mui/icons-material/Add';
-import StarRateIcon from '@mui/icons-material/StarRate';
 import ShareIcon from '@mui/icons-material/Share';
 import { Rating } from '@mui/material';
 import { getLanguage } from '../utils';
@@ -16,6 +15,9 @@ import useCheckIfOverflowing from '../hooks/useCheckIfOverflowing';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '../components/Loader';
 import LibraryModal from '../components/modal/LibraryModal';
+import ShareModal from '../components/modal/ShareModal';
+import { Link } from 'react-router-dom';
+import Notification from '../components/Notification';
 
 const Book = () => {
   const { id } = useParams();
@@ -59,16 +61,32 @@ const Book = () => {
     description
   );
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isLibraryModalOpen, setIsLibraryModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  const [notification, setNotification] = useState({
+    title: '',
+    message: '',
+  });
+
+  const [previousRating, setPreviousRating] = useState(0); // Track previous rating
+  const [currentRating, setCurrentRating] = useState(0); // Track current rating
+
+  const openLibraryModal = () => setIsLibraryModalOpen(true);
+  const closeLibraryModal = () => setIsLibraryModalOpen(false);
+
+  const openShareModal = () => setIsShareModalOpen(true);
+  const closeShareModal = () => setIsShareModalOpen(false);
 
   const handleTextExpand = () => {
     setIsTextExpanded(!isTextExpanded);
   };
 
-  const expandedTextClass = isTextExpanded ? 'expanded' : 'collapsed';
+  let expandedTextClass = '';
+
+  if (showButton) {
+    expandedTextClass = isTextExpanded ? 'expanded' : 'collapsed';
+  }
 
   if (isLoading) {
     return <Loader />;
@@ -77,6 +95,45 @@ const Book = () => {
   if (isError) {
     return <div>Error fetching book data</div>;
   }
+
+  const handleRating = (event, newValue) => {
+    setCurrentRating(newValue);
+    setPreviousRating(currentRating);
+    const ratingValue = newValue;
+    const starOrStars = ratingValue === 1 ? 'star' : 'stars';
+    if (newValue === null) {
+      setNotification({
+        title: 'Success',
+        message: 'Rating removed',
+      });
+      clearNotification();
+    } else {
+      if (previousRating) {
+        setNotification({
+          title: 'Success',
+          message: `Rating updated to ${newValue} ${starOrStars}`,
+        });
+        clearNotification();
+      } else {
+        setNotification({
+          title: 'Success',
+          message: `${newValue} ${starOrStars} rating saved.`,
+        });
+        clearNotification();
+      }
+    }
+  };
+
+  const clearNotification = () => {
+    setTimeout(() => {
+      setNotification({ title: '', message: '', type: '' });
+    }, 1500);
+  };
+
+  const closeNotification = (event) => {
+    event.preventDefault();
+    setNotification({ title: '', message: '', type: '' });
+  };
 
   return (
     <div className='book-page'>
@@ -93,50 +150,80 @@ const Book = () => {
               <div className='btn-actions-up'>
                 <Button
                   variant='contained'
-                  onClick={openModal}
+                  onClick={openLibraryModal}
                   startIcon={<AddIcon />}
                   color='blue'
-                  size='small'
+                  size='large'
                 >
                   Add to Collection
                 </Button>
 
+                {saleInfo.buyLink && (
+                  <Link
+                    to={saleInfo.buyLink}
+                    target='_blank'
+                    className='buy-link'
+                    style={{ textDecoration: 'none' }} // Remove any default link styles like underline
+                  >
+                    <Button
+                      variant='contained'
+                      endIcon={<ShoppingCartIcon />}
+                      color='blue'
+                      size='large'
+                      fullWidth
+                    >
+                      Buy Now
+                    </Button>
+                  </Link>
+                )}
+
                 <Button
                   variant='outlined'
-                  startIcon={<StarRateIcon />}
+                  startIcon={<ShareIcon />}
                   color='blue'
-                  size='small'
+                  size='large'
+                  onClick={openShareModal}
                 >
-                  Rate
+                  Share
                 </Button>
               </div>
-
-              <Button
-                variant='contained'
-                endIcon={<ShoppingCartIcon />}
-                color='blue'
-                size='small'
-              >
-                Buy now
-              </Button>
-
-              <Button
-                variant='outlined'
-                startIcon={<ShareIcon />}
-                color='blue'
-                size='small'
-              >
-                Share
-              </Button>
+              <div className='btn-actions-down'>
+                <Rating
+                  size='large'
+                  precision={0.5}
+                  onChange={handleRating}
+                  value={currentRating}
+                  color='white'
+                />
+              </div>
+              <div className='rating-tag'>
+                <span>
+                  {' '}
+                  {currentRating === 0 ? 'Rate this book' : `Saved.`}
+                </span>
+                {currentRating > 0 && (
+                  <span className='writeNote'>
+                    <a href='#write-note'>Write a note</a>
+                  </span>
+                )}
+              </div>
             </div>
           </div>
+          <Notification
+            closeNotification={closeNotification}
+            notification={notification}
+          />
 
-          {isOpen && <LibraryModal closeModal={closeModal} />}
+          {isLibraryModalOpen && (
+            <LibraryModal closeModal={closeLibraryModal} />
+          )}
+
+          {isShareModalOpen && <ShareModal closeModal={closeShareModal} />}
         </div>
         <div className='book-right'>
           <div className='book-image-container'>
             {book_image ? (
-              <img src={book_image} loading='lazy' alt={title} style={{}} />
+              <img src={book_image} loading='lazy' alt={title} />
             ) : (
               <img
                 src={`https://lgimages.s3.amazonaws.com/nc-md.gif`}
@@ -175,18 +262,15 @@ const Book = () => {
       </div>
 
       <div className='book-rating'>
-        <span className='rating'>
-          {' '}
-          {rating && (
-            <div className={'rating'}>
-              <span>Average rating:</span>
-              <Rating name='read-only' value={rating} readOnly />
-            </div>
-          )}
-        </span>
+        {rating && (
+          <div className={'rating'}>
+            <span>Average readers&rsquo; rating:</span>
+            <Rating name='read-only' value={rating} readOnly />
+          </div>
+        )}
       </div>
 
-      <div className='book-edition-details'>
+      <div className='book-edition-details' id='write-note'>
         <h2>About this edition</h2>
         <ul className='text-base'>
           <li>
@@ -205,7 +289,7 @@ const Book = () => {
           <li>
             <strong>Pages:</strong> <span>{pageCount}</span>
           </li>
-          {saleInfo === 'FOR_SALE' ? (
+          {saleInfo.saleability === 'FOR_SALE' ? (
             <li>
               <strong>Price: </strong>
               <span>
@@ -224,7 +308,6 @@ const Book = () => {
       </span>
 
       <div className='notes'>
-        <h2>Your Notes</h2>
         <div>
           <div className='note-actions'>
             <textarea
@@ -237,6 +320,9 @@ const Book = () => {
             <Button variant='contained' color='blue' size='small'>
               Add
             </Button>
+          </div>
+          <div className='notecard-header'>
+            <h2>Your Notes</h2>
           </div>
           <div className='notecard-container'>
             <NoteCard />

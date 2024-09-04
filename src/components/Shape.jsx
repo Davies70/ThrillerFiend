@@ -2,9 +2,10 @@ import React from 'react';
 import '../styles/Shape.css';
 import Proptypes from 'prop-types';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
 // import Loader from './Loader';
+import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
+import IconButton from '@mui/material/IconButton';
 
 const Shape = ({ shape, isAuthorName, book, author, isDataAvailable }) => {
   if (shape === 'circle') {
@@ -69,12 +70,14 @@ const Shape = ({ shape, isAuthorName, book, author, isDataAvailable }) => {
               className='bg square'
               to={`/book/inauthor:${authorName}+intitle:${title}`}
             >
-              <button
-                aria-label='Add to Collections'
-                title='Add to Collections'
+              <IconButton
+                className='top-left'
+                title='Add to Read Later'
+                aria-label='Add to Read Later'
               >
-                <AddIcon className='left-button' />
-              </button>
+                <BookmarkAddOutlinedIcon />
+              </IconButton>
+
               <button className='right-button'>
                 <MoreHorizOutlinedIcon />
               </button>

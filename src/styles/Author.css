@@ -12,15 +12,14 @@
 /* Author Grid Layout */
 .author-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 0.625rem;
+  grid-template-columns: 1fr 1.5fr;
 }
 
 /* Author Header Section */
 .author-header {
   display: flex;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: 2rem;
   margin-top: 2.5rem;
 }
 
@@ -64,8 +63,8 @@
 /* Author Actions (Follow button, etc.) */
 .author-actions {
   display: flex;
-  align-items: center;
   gap: 1rem;
+  flex-direction: column;
 }
 
 /* Follow Button */
@@ -226,6 +225,13 @@
   }
 
   .follow-button {
+    align-self: center;
+  }
+
+  .author-name {
+    text-align: center;
+  }
+  .unfollow-button {
     align-self: center;
   }
 }

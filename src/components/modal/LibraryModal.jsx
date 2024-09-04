@@ -19,6 +19,8 @@ const LibraryModal = ({ closeModal }) => {
           color='white'
           size='small'
           disableElevation
+          fullWidth
+          style={{ justifyContent: 'flex-start' }}
         >
           Have Read
         </Button>
@@ -29,6 +31,8 @@ const LibraryModal = ({ closeModal }) => {
           color='white'
           size='small'
           disableElevation
+          fullWidth
+          style={{ justifyContent: 'flex-start' }}
         >
           Read Later
         </Button>
@@ -39,6 +43,8 @@ const LibraryModal = ({ closeModal }) => {
           color='white'
           size='small'
           disableElevation
+          fullWidth
+          style={{ justifyContent: 'flex-start' }}
         >
           Add to Favorites
         </Button>
@@ -50,6 +56,8 @@ const LibraryModal = ({ closeModal }) => {
           size='small'
           disableElevation
           title='Remove from Library'
+          fullWidth
+          style={{ justifyContent: 'flex-start' }}
         >
           Remove from Library
         </Button>
