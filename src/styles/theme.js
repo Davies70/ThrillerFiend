@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 
-export  const theme = createTheme({
+export const theme = createTheme({
   palette: {
     ochre: {
       main: '#E3D026',
@@ -20,5 +20,13 @@ export  const theme = createTheme({
       dark: '#cccccc',
       contrastText: '#000000',
     },
+
+    red: {
+      main: '#ff0000',
+      light: '#ff5f5f',
+      dark: '#cc0000',
+      contrastText: '#ffffff',
+    },
+    
   },
 });

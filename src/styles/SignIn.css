@@ -1,0 +1,83 @@
+.signIn-Container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.signIn-Form {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 1rem;
+  gap: 1.5rem;
+  min-width: 40%;
+}
+
+.signIn-Form h1 {
+  margin: 0;
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.signIn-prompt {
+  margin: 0;
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+  color: #6b7280;
+}
+
+.signUp-prompt {
+  margin: 0;
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.input-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.input-group input {
+  padding: 1rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+}
+
+.input-group input:focus {
+  outline: none;
+  border: 2px solid #96c477;
+}
+
+.signIn-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.divider {
+  height: 1px;
+  background-color: #d1d5db;
+  margin: 1rem 0;
+}
+
+.signUp-prompt button {
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 1rem;
+}
