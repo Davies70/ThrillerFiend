@@ -1,4 +1,4 @@
-import React from 'react';
+
 import OutsideClickHandler from '../OutsideClickHandler';
 import Button from '@mui/material/Button';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';

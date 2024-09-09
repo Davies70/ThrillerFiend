@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import Header from '../Header';
 import GridContentScroller from '../GridContentScroller';
 import PropType from 'prop-types';

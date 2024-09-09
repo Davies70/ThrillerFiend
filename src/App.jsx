@@ -1,5 +1,4 @@
 import Layout from './components/Layout';
-import React from 'react';
 import Home from './pages/Home';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import NewThrills from './pages/NewThrills';
@@ -14,7 +13,6 @@ import Authors from './pages/Authors';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './styles/theme';
-
 
 import './styles/App.css';
 

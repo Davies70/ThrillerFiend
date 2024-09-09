@@ -1,4 +1,4 @@
-import React from 'react';
+
 import '../styles/GridContentScroller.css';
 import PropTypes from 'prop-types';
 import GridItem from './GridItem';

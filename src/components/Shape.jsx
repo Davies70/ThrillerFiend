@@ -1,4 +1,3 @@
-import React from 'react';
 import '../styles/Shape.css';
 import Proptypes from 'prop-types';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';

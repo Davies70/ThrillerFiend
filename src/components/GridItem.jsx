@@ -1,4 +1,4 @@
-import React from 'react';
+
 import Proptypes from 'prop-types';
 import '../styles/GridItem.css';
 import OutboundIcon from '@mui/icons-material/Outbound';

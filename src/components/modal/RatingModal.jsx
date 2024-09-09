@@ -1,4 +1,4 @@
-import React from 'react';
+
 import OutsideClickHandler from '../OutsideClickHandler';
 import Rating from '@mui/material/Rating';
 import '../../styles/Modal.css';

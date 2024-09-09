@@ -1,4 +1,3 @@
-import React from 'react';
 import '../styles/NoteCard.css';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DeleteIcon from '@mui/icons-material/Delete';

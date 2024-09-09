@@ -1,4 +1,4 @@
-import React from 'react';
+
 import PropType from 'prop-types';
 import '../styles/Suggestions.css';
 import { Link } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import '../styles/Notification.css';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Proptypes from 'prop-types';

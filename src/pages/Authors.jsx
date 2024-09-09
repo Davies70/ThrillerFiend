@@ -1,4 +1,4 @@
-import React from 'react';
+
 import authorServices from '../services/authorServices';
 import Shape from '../components/Shape';
 import '../styles/Authors.css';
