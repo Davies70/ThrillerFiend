@@ -1,5 +1,8 @@
-import books from '../../../api/books';
-import { getWithExpiry, fetchAndStoreData } from './cacheService';
+import {
+  getWithExpiry,
+  fetchAndStoreData,
+  setWithExpiry,
+} from './cacheService';
 const NYT_BASEURL = 'https://api.nytimes.com/svc/books/v3/';
 const NYT_API_KEY = import.meta.env.VITE_BOOK_NYT_API_KEY;
 const BOOKS_BASEURL = `https://www.googleapis.com/books/v1/volumes?`;
@@ -7,6 +10,8 @@ const BOOKS_API_KEY = import.meta.env.VITE_BOOKS_API_KEY;
 import { setSome } from '../utils';
 import axios from 'axios';
 import authorServices from './authorServices';
+
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
 const nytConfig = {
   headers: {
@@ -16,32 +21,58 @@ const nytConfig = {
   url: `${NYT_BASEURL}lists/current/hardcover-fiction.json?api-key=${NYT_API_KEY}`,
 };
 
-const getBooks = () => {
-  return books;
-};
+async function fetch(config) {
+  try {
+    const response = await axios.request(config);
+    const { data } = response;
+    if (data) {
+      return data;
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
+    return null;
+  }
+}
 
 async function getHotBooks() {
   let data = getWithExpiry('hotBooks');
+
   if (data === null) {
     console.log(
       'HotBooks Data not in localStorage or expired, fetching from API...'
     );
-    data = await fetchAndStoreData(nytConfig, 'hotBooks');
+
+    const books = await fetch(nytConfig);
+
+    if (books && books.results) {
+      const NYTbooks = books.results.books.map((book) => {
+        return {
+          title: book.title,
+          authorName: book.author,
+        };
+      });
+
+      const hotBooks = await Promise.all(
+        NYTbooks.map(async (book) => {
+          const { title, authorName } = book;
+          const bookData = await getBookByAuthorAndTitle(
+            `inauthor:${authorName}+intitle:${title}`
+          );
+          if (bookData && bookData.title) {
+            return bookData;
+          }
+          // Return undefined when bookData doesn't exist
+          return undefined;
+        })
+      );
+
+      data = hotBooks.filter((book) => book !== undefined).slice(0, 12);
+      if (data.length > 0) setWithExpiry('hotBooks', data, CACHE_TTL);
+    }
   } else {
     console.log('HotBooks Data retrieved from localStorage');
   }
-
-  const hotBooks = data.results.books.slice(0, 12).map((book) => {
-    return {
-      title: book.title,
-      book_image: book.book_image,
-      authors: book.author,
-      book_id: book.id,
-      volumeId: book.primary_isbn13,
-    };
-  });
-
-  return hotBooks;
+  return data;
 }
 
 const getBooksByAuthor = async (id) => {
@@ -157,7 +188,30 @@ const getBookByVolumeId = async (volumeId) => {
       url: `https://www.googleapis.com/books/v1/volumes/${volumeId}`,
       key: BOOKS_API_KEY,
     };
-    data = await fetchAndStoreData(config, `bookByVolumeId-${volumeId}`);
+    const book = await fetch(config);
+    data = {
+      title: book.volumeInfo?.title,
+      book_image: book.volumeInfo.imageLinks?.thumbnail,
+      authors: book.volumeInfo?.authors,
+      book_id: book.id,
+      volumeId: book.id,
+      categories: book.volumeInfo.categories,
+      rating: book.volumeInfo.averageRating,
+      subtitle: book.volumeInfo.subtitle,
+      description: book.volumeInfo.description,
+      publisher: book.volumeInfo.publisher,
+      publishedDate: book.volumeInfo.publishedDate,
+      isbn: book.volumeInfo.industryIdentifiers
+        ?.map((isbn) => isbn.identifier)
+        .join(', '),
+      saleInfo: book.saleInfo || {},
+      pageCount: book.volumeInfo.pageCount,
+      price: book.saleInfo?.listPrice?.amount,
+      currencyCode: book.saleInfo?.listPrice?.currencyCode,
+      language: book.volumeInfo.language,
+      ratingCount: book.volumeInfo.ratingsCount,
+    };
+    setWithExpiry('bookByVolumeId-' + volumeId, data, CACHE_TTL);
   } else {
     console.log(
       `Book by VolumeId ${volumeId} data retrieved from localStorage`
@@ -166,19 +220,89 @@ const getBookByVolumeId = async (volumeId) => {
   return data;
 };
 
-const getBooksSuggestions = async (searchQuery, signal) => {
-  if (!searchQuery) {
-    console.warn('No search query provided');
-    return [];
-  }
+// const getBooksSuggestions = async (searchQuery, signal) => {
+//   if (!searchQuery) {
+//     console.warn('No search query provided');
+//     return [];
+//   }
+//   let data;
+//   data = getWithExpiry('suggestions' + searchQuery);
+//   if (data) {
+//     console.log(`Suggestions for ${searchQuery} retrieved from localStorage`);
+//     return data;
+//   }
+//   console.log(
+//     'Suggestions for',
+//     searchQuery,
+//     'not in localStorage, fetching...'
+//   );
+//   const queryParam = {
+//     q: `${searchQuery}` + 'subject:fiction',
+//     key: BOOKS_API_KEY,
+//     maxResults: 10,
+//     langRestrict: 'en',
+//     country: 'US',
+//     printType: 'all',
+//     orderBy: 'relevance',
+//   };
+//   const params = new URLSearchParams(queryParam).toString();
+//   const config = {
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     method: 'GET',
+//     url: `${BOOKS_BASEURL}${params}`,
+//   };
+//   try {
+//     const response = await axios.request(config, { signal });
+//     console.log('response', response);
+//     if (response.data.totalItems === 0) {
+//       return [];
+//     }
+//     const suggestions = response.data.items.filter((book) => {
+//       const { volumeInfo } = book;
+//       return (
+//         volumeInfo.imageLinks?.thumbnail &&
+//         volumeInfo.description &&
+//         volumeInfo.pageCount > 0
+//       );
+//     });
+
+//     if (suggestions.length === 0) {
+//       return [];
+//     }
+
+//     data = suggestions
+//       .map((book) => {
+//         return {
+//           title: book.volumeInfo.title,
+//           book_image: book.volumeInfo.imageLinks?.thumbnail,
+//           authors: book.volumeInfo.authors,
+//           book_id: book.id,
+//         };
+//       })
+//       .slice(0, 5);
+//     setWithExpiry('suggestions' + searchQuery, data, 24 * 60 * 60 * 1000);
+//     return data;
+//   } catch (error) {
+//     if (axios.isCancel(error)) {
+//       console.log('Request cancelled:', error.message);
+//     } else {
+//       console.error('Fetch error:', error);
+//     }
+//     return [];
+//   }
+// };
+
+const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
   const queryParam = {
-    q: `${searchQuery}` + 'subject:fiction',
+    q: authorNameAndTitle,
     key: BOOKS_API_KEY,
-    maxResults: 10,
+    maxResults: 20,
     langRestrict: 'en',
     country: 'US',
-    printType: 'all',
     orderBy: 'relevance',
+    printType: 'all',
   };
   const params = new URLSearchParams(queryParam).toString();
   const config = {
@@ -188,131 +312,23 @@ const getBooksSuggestions = async (searchQuery, signal) => {
     method: 'GET',
     url: `${BOOKS_BASEURL}${params}`,
   };
-  try {
-    const response = await axios.request(config, { signal });
-    console.log('response', response);
-    if (response.data.totalItems === 0) {
-      return [];
-    }
-    const suggestions = response.data.items.filter((book) => {
-      const { volumeInfo } = book;
-      return (
-        volumeInfo.imageLinks?.thumbnail &&
-        volumeInfo.description &&
-        volumeInfo.pageCount > 0
-      );
-    });
+  const books = await fetch(config);
 
-    console.log({ suggestions });
-    return suggestions
-      .map((book) => {
-        return {
-          title: book.volumeInfo.title,
-          book_image: book.volumeInfo.imageLinks?.thumbnail,
-          authors: book.volumeInfo.authors,
-          book_id: book.id,
-          categories: book.volumeInfo.categories,
-          rating: book.volumeInfo.averageRating,
-          subtitle: book.volumeInfo.subtitle,
-          description: book.volumeInfo.description,
-          publisher: book.volumeInfo.publisher,
-          publishedDate: book.volumeInfo.publishedDate,
-          isbn: book.volumeInfo.industryIdentifiers
-            ?.map((isbn) => isbn.identifier)
-            .join(', '),
-          saleInfo: book.saleInfo || {},
-          pageCount: book.volumeInfo.pageCount,
-          price: book.saleInfo?.listPrice?.amount,
-          currencyCode: book.saleInfo?.listPrice?.currencyCode,
-          language: book.volumeInfo.language,
-          ratingCount: book.volumeInfo.ratingsCount,
-        };
-      })
-      .slice(0, 5);
-  } catch (error) {
-    if (axios.isCancel(error)) {
-      console.log('Request cancelled:', error.message);
-    } else {
-      console.error('Fetch error:', error);
-    }
-    return [];
-  }
-};
+  if (!books.items || !Array.isArray(books.items)) return;
 
-const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
-  let data = getWithExpiry(`booksByAuthorAndTitle-${authorNameAndTitle}`);
-  if (data === null) {
-    console.log(
-      `Books by ${authorNameAndTitle} data not in localStorage or expired, fetching from API...`
-    );
-    const queryParam = {
-      q: authorNameAndTitle,
-      key: BOOKS_API_KEY,
-      maxResults: 20,
-      langRestrict: 'en',
-      country: 'US',
-      orderBy: 'relevance',
-      printType: 'all',
-    };
-    const params = new URLSearchParams(queryParam).toString();
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'GET',
-      url: `${BOOKS_BASEURL}${params}`,
-      transformResponse: [
-        ...axios.defaults.transformResponse,
-        (response) => {
-          // Explicitly parse the response
-          console.log('data', response);
-          if (!response.items || !Array.isArray(response.items)) {
-            throw new Error('Invalid API response: no items found');
-          }
-          return response.items.find((book) => {
-            return (
-              book.volumeInfo.imageLinks?.thumbnail &&
-              book.volumeInfo.description &&
-              book.volumeInfo.pageCount > 0
-            );
-          });
-        },
-      ],
-    };
-    data = await fetchAndStoreData(
-      config,
-      `booksByAuthorAndTitle-${authorNameAndTitle}`
-    );
-  } else {
-    console.log(
-      `Books by ${authorNameAndTitle} data retrieved from localStorage`
-    );
-  }
+  const data = books.items.find(
+    (book) =>
+      book.volumeInfo.imageLinks?.thumbnail &&
+      book.volumeInfo.description &&
+      book.volumeInfo.pageCount > 0
+  );
 
-  return data
-    ? {
-        title: data.volumeInfo?.title,
-        book_image: data.volumeInfo.imageLinks?.thumbnail,
-        authors: data.volumeInfo?.authors,
-        book_id: data.id,
-        volumeId: data.id,
-        categories: data.volumeInfo.categories,
-        rating: data.volumeInfo.averageRating,
-        subtitle: data.volumeInfo.subtitle,
-        description: data.volumeInfo.description,
-        publisher: data.volumeInfo.publisher,
-        publishedDate: data.volumeInfo.publishedDate,
-        isbn: data.volumeInfo.industryIdentifiers
-          ?.map((isbn) => isbn.identifier)
-          .join(', '),
-        saleInfo: data.saleInfo || {},
-        pageCount: data.volumeInfo.pageCount,
-        price: data.saleInfo?.listPrice?.amount,
-        currencyCode: data.saleInfo?.listPrice?.currencyCode,
-        language: data.volumeInfo.language,
-        ratingCount: data.volumeInfo.ratingsCount,
-      }
-    : {};
+  return {
+    title: data.volumeInfo?.title,
+    book_image: data.volumeInfo.imageLinks?.thumbnail,
+    authors: data.volumeInfo?.authors,
+    book_id: data.id,
+  };
 };
 
 const getSimilarBooks = async (title) => {
@@ -366,29 +382,12 @@ const getSimilarBooks = async (title) => {
         book_image: data.volumeInfo.imageLinks?.thumbnail,
         authors: data.volumeInfo?.authors,
         book_id: data.id,
-        volumeId: data.id,
-        categories: data.volumeInfo.categories,
-        rating: data.volumeInfo.averageRating,
-        subtitle: data.volumeInfo.subtitle,
-        description: data.volumeInfo.description,
-        publisher: data.volumeInfo.publisher,
-        publishedDate: data.volumeInfo.publishedDate,
-        isbn: data.volumeInfo.industryIdentifiers
-          ?.map((isbn) => isbn.identifier)
-          .join(', '),
-        saleInfo: data.saleInfo || {},
-        pageCount: data.volumeInfo.pageCount,
-        price: data.saleInfo?.listPrice?.amount,
-        currencyCode: data.saleInfo?.listPrice?.currencyCode,
-        language: data.volumeInfo.language,
-        ratingCount: data.volumeInfo.ratingsCount,
       }
     : {};
 };
 
 const getBestSellers = async () => {
   let data = getWithExpiry('bestsellers');
-  console.log('data', data);
   if (data === null) {
     console.log(
       'Bestsellers Data not in localStorage or expired, fetching from API...'
@@ -415,7 +414,7 @@ const getBestSellers = async () => {
         ...axios.defaults.transformResponse,
         (response) => {
           // Explicitly parse the response
-          console.log('data', response);
+
           if (!response.items || !Array.isArray(response.items)) {
             throw new Error('Invalid API response: no items found');
           }
@@ -430,7 +429,6 @@ const getBestSellers = async () => {
       ],
     };
     data = await fetchAndStoreData(config, 'bestsellers');
-    console.log('response', data);
   } else {
     console.log('Bestsellers Data retrieved from localStorage');
   }
@@ -445,28 +443,157 @@ const getBestSellers = async () => {
       book_image: book.volumeInfo.imageLinks?.thumbnail,
       authors: book.volumeInfo.authors,
       book_id: book.id,
-      volumeId: book.id,
-      categories: book.volumeInfo.categories,
-      rating: book.volumeInfo.averageRating,
-      subtitle: book.volumeInfo.subtitle,
-      description: book.volumeInfo.description,
-      publisher: book.volumeInfo.publisher,
-      publishedDate: book.volumeInfo.publishedDate,
-      isbn: book.volumeInfo.industryIdentifiers
-        ?.map((isbn) => isbn.identifier)
-        .join(', '),
-      saleInfo: book.saleInfo,
-      pageCount: book.volumeInfo.pageCount,
-      price: book.saleInfo?.listPrice?.amount,
-      currencyCode: book.saleInfo?.listPrice?.currencyCode,
-      language: book.volumeInfo.language,
-      ratingCount: book.volumeInfo.ratingsCount,
     };
   });
 };
 
+// ... [Previous utility functions and constants remain the same]
+
+const getBooksSuggestions = async (searchQuery) => {
+  if (!searchQuery) {
+    console.warn('No search query provided');
+    return [];
+  }
+
+  const cacheKey = `suggestions_${searchQuery}`;
+  const cachedData = getWithExpiry(cacheKey);
+
+  if (cachedData) {
+    console.log(`Suggestions for ${searchQuery} retrieved from localStorage`);
+    return cachedData;
+  }
+
+  console.log(
+    `Suggestions for ${searchQuery} not in localStorage, fetching...`
+  );
+
+  try {
+    const results = await fetchAndProcessQueries(searchQuery);
+
+    if (results.length > 0) {
+      setWithExpiry(cacheKey, results, CACHE_TTL);
+    }
+
+    return results;
+  } catch (error) {
+    console.error('Error fetching suggestions:', error.message);
+    return [];
+  }
+};
+
+const fetchAndProcessQueries = async (searchQuery) => {
+  const titleQueries = generateTitleQueries(searchQuery);
+  const authorQuery = searchQuery; // We'll use the original query for author search
+
+  const titleConfigs = titleQueries.map((query) =>
+    buildQueryConfig(query, 'intitle')
+  );
+  const authorConfig = buildQueryConfig(authorQuery, 'inauthor');
+
+  const allConfigs = [...titleConfigs, authorConfig];
+
+  const allResults = await Promise.all(
+    allConfigs.map((config) => fetch(config))
+  );
+
+  const processedResults = allResults.flatMap(processBookResponse);
+  return deduplicateAndRankResults(processedResults, searchQuery);
+};
+
+const processBookResponse = (response) => {
+  if (!response.items || response.totalItems === 0) {
+    return [];
+  }
+
+  return response.items.filter(isValidBook).map(formatBookData);
+};
+
+// Helper functions
+const isValidBook = (book) => {
+  const { volumeInfo } = book;
+  return (
+    volumeInfo.title &&
+    volumeInfo.authors &&
+    volumeInfo.authors.length > 0 &&
+    volumeInfo.imageLinks?.thumbnail &&
+    volumeInfo.description &&
+    volumeInfo.pageCount > 0
+  );
+};
+
+const formatBookData = (book) => ({
+  title: book.volumeInfo.title,
+  book_image: book.volumeInfo.imageLinks?.thumbnail,
+  authors: book.volumeInfo.authors || [],
+  book_id: book.id,
+  description: book.volumeInfo.description,
+  pageCount: book.volumeInfo.pageCount,
+});
+
+const generateTitleQueries = (searchQuery) => {
+  const queries = [searchQuery];
+
+  if (!searchQuery.toLowerCase().startsWith('the ')) {
+    queries.push(`the ${searchQuery}`);
+  }
+
+  return queries;
+};
+
+const buildQueryConfig = (query, searchType) => ({
+  params: new URLSearchParams({
+    q: `${searchType}:${query}`,
+    key: BOOKS_API_KEY,
+    maxResults: 10,
+    langRestrict: 'en',
+    country: 'US',
+    printType: 'all',
+    orderBy: 'relevance',
+  }),
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  method: 'GET',
+  url: BOOKS_BASEURL,
+});
+
+const deduplicateAndRankResults = (results, originalQuery) => {
+  const seen = new Set();
+  return results
+    .filter((book) => {
+      const duplicate = seen.has(book.book_id);
+      seen.add(book.book_id);
+      return !duplicate;
+    })
+    .sort((a, b) => {
+      // Prioritize exact title matches, then 'The' prefixed matches, then author matches
+      const aLower = a.title.toLowerCase();
+      const bLower = b.title.toLowerCase();
+      const queryLower = originalQuery.toLowerCase();
+
+      if (aLower === queryLower && bLower !== queryLower) return -1;
+      if (bLower === queryLower && aLower !== queryLower) return 1;
+      if (aLower === `the ${queryLower}` && bLower !== `the ${queryLower}`)
+        return -1;
+      if (bLower === `the ${queryLower}` && aLower !== `the ${queryLower}`)
+        return 1;
+      if (
+        a.authors.some((author) => author.toLowerCase().includes(queryLower)) &&
+        !b.authors.some((author) => author.toLowerCase().includes(queryLower))
+      )
+        return -1;
+      if (
+        b.authors.some((author) => author.toLowerCase().includes(queryLower)) &&
+        !a.authors.some((author) => author.toLowerCase().includes(queryLower))
+      )
+        return 1;
+
+      return 0;
+    })
+    .slice(0, 10);
+};
+
 export default {
-  getBooks,
   getHotBooks,
   getBooksByAuthor,
   getBookByVolumeId,

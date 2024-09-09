@@ -2,21 +2,22 @@ import React, { useState } from 'react';
 import '../styles/SignIn.css';
 import Button from '@mui/material/Button';
 import Google from '@mui/icons-material/Google';
+import Facebook from '@mui/icons-material/Facebook';
 
 const SignIn = () => {
   const [signUp, setSignUp] = useState(true);
 
-  const header = signUp ? 'Sign Up' : 'Sign In';
+  const header = signUp ? 'Sign up for free' : 'Sign in';
   const prompt = signUp
     ? 'Sign up to create an account and save your thrills.'
     : 'Sign in to your account to access your thrills';
-  const buttonText = signUp ? 'Sign Up' : 'Sign In';
+  const buttonText = signUp ? 'Sign up for free' : 'Sign in';
   const buttonColor = signUp ? 'blue' : 'ochre';
   const endPrompt = signUp
     ? 'Already have an account?'
     : "Don't have an account?";
 
-  const endPromptButtonText = signUp ? 'Sign In' : 'Sign Up';
+  const endPromptButtonText = signUp ? 'Sign in' : 'Sign up for free';
 
   const handleSignUp = () => {
     setSignUp(!signUp);
@@ -64,9 +65,21 @@ const SignIn = () => {
           <Button variant='contained' color={buttonColor}>
             {buttonText}
           </Button>
-          <hr className='divider'></hr>
+          <div className='divider-container'>
+            <hr className='divider'></hr>
+            <span>or</span>
+            <hr className='divider'></hr>
+          </div>
+
           <Button variant='contained' color='secondary' startIcon={<Google />}>
-            {buttonText} with Google
+            Continue with Google
+          </Button>
+          <Button
+            variant='contained'
+            color='secondary'
+            startIcon={<Facebook />}
+          >
+            Continue with Facebook
           </Button>
         </div>
       </form>

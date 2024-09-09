@@ -70,10 +70,19 @@
   width: 100%;
 }
 
+.divider-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  text-transform: uppercase;
+}
+
 .divider {
   height: 1px;
   background-color: #d1d5db;
   margin: 1rem 0;
+  width: 100%;
 }
 
 .signUp-prompt button {

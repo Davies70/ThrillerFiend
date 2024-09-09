@@ -47,7 +47,7 @@ const Suggestions = ({
               </div>
             ) : (
               <Link
-                to={`/book/inauthor:${suggestion.authors}+intitle:${suggestion.title}`}
+                to={`/book/${suggestion.book_id}`}
                 key={index}
                 state={{ suggestions: suggestion }}
                 className='suggestion-item'

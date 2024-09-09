@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import IconButton from '@mui/material/IconButton';
 
-const Shape = ({ shape, isAuthorName, book, author, isDataAvailable }) => {
+const Shape = ({ shape, isAuthorName, book, author }) => {
   if (shape === 'circle') {
     const { authorName, coverPhoto, id } = author;
     return (
@@ -46,10 +46,10 @@ const Shape = ({ shape, isAuthorName, book, author, isDataAvailable }) => {
       </div>
     );
   } else {
-    const { title, book_image, authors } = book;
+    const { title, book_image, authors, book_id } = book;
     const authorName =
       typeof authors === 'string' ? authors : authors?.join(', ');
-    const data = isDataAvailable ? book : null;
+    // const data = isDataAvailable ? book : null;
 
     return (
       <div className='card'>
@@ -66,10 +66,7 @@ const Shape = ({ shape, isAuthorName, book, author, isDataAvailable }) => {
               />
             )}
 
-            <Link
-              className='bg square'
-              to={`/book/inauthor:${authorName}+intitle:${title}`}
-            >
+            <Link className='bg square' to={`/book/${book_id}`}>
               <IconButton
                 className='top-left'
                 title='Add to Read Later'
@@ -84,12 +81,7 @@ const Shape = ({ shape, isAuthorName, book, author, isDataAvailable }) => {
             </Link>
           </div>
           <div className='primary-tag'>
-            <Link
-              className='taglink'
-              to={`/book/inauthor:${authorName}+intitle:${title}`}
-              title={title}
-              state={{ data }}
-            >
+            <Link className='taglink' to={`/book/${book_id}`} title={title}>
               {title}
             </Link>
             {isAuthorName && (

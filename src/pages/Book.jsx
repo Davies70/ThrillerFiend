@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import bookServices from '../services/bookServices';
 import NoteCard from '../components/NoteCard';
 import '../styles/Book.css';
@@ -23,7 +23,6 @@ const Book = () => {
   const { id } = useParams();
 
   const [isTextExpanded, setIsTextExpanded] = useState(false);
-  const location = useLocation();
 
   const descriptionRef = useRef(null);
 
@@ -33,8 +32,7 @@ const Book = () => {
     isError,
   } = useQuery({
     queryKey: ['book', id],
-    queryFn: () =>
-      location.state?.data || bookServices.getBookByAuthorAndTitle(id),
+    queryFn: () => bookServices.getBookByVolumeId(id),
   });
 
   const {
@@ -194,8 +192,7 @@ const Book = () => {
                   onChange={handleRating}
                   value={currentRating}
                   color='white'
-                  sx = {{fontSize: '3rem'}}
-                  
+                  sx={{ fontSize: '3rem' }}
                 />
               </div>
               <div className='rating-tag'>
