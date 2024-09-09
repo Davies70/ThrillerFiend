@@ -1,47 +1,36 @@
 import { useState } from 'react';
 import '../styles/SignIn.css';
 import Button from '@mui/material/Button';
-import Google from '@mui/icons-material/Google';
-import { Link, useNavigate } from 'react-router-dom';
-import { signInWithPopup } from 'firebase/auth';
-import { auth, provider } from '../firebase/config';
-import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 
-const SignIn = () => {
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { auth } from '../firebase/config';
+
+const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
 
   const navigate = useNavigate();
 
-  const header = 'Sign in';
-  const prompt = 'Sign in to your account to access your thrills';
-  const buttonText = 'Sign in';
+  const [createUserWithEmailAndPassword] =
+    useCreateUserWithEmailAndPassword(auth);
+
+  const header = 'Sign up for free';
+  const prompt = 'Sign up to create an account and save your thrills.';
+
+  const buttonText = 'Sign up';
   const buttonColor = 'blue';
-  const endPrompt = "Don't have an account?";
+  const endPrompt = 'Already have an account?';
 
-  const handleSignIn = async (event) => {
+  const handleSignUp = async (event) => {
     event.preventDefault();
     try {
-      const user = await signInWithEmailAndPassword(email, password);
-      sessionStorage.setItem('user', JSON.stringify(user));
-      setEmail('');
-      setPassword('');
-      navigate('/');
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleSigninWithGoogle = async (event) => {
-    event.preventDefault();
-    try {
-      const response = await signInWithPopup(auth, provider);
-      console.log('Successfully signed in with Google');
+      const response = await createUserWithEmailAndPassword(email, password);
       console.log({ response });
       setEmail('');
-      setPassword('');
       navigate('/');
+      setPassword('');
     } catch (error) {
       console.log(error);
     }
@@ -57,6 +46,7 @@ const SignIn = () => {
             <label htmlFor='email'>Email</label>
             <input
               type='email'
+              placeholder='name@example.com'
               required
               autoComplete='off'
               value={email}
@@ -68,6 +58,7 @@ const SignIn = () => {
             <input
               type='password'
               autoComplete='off'
+              placeholder={'At least 6 characters'}
               value={password}
               onChange={({ target }) => setPassword(target.value)}
             />
@@ -78,35 +69,30 @@ const SignIn = () => {
           <Button
             variant='contained'
             color={buttonColor}
-            onClick={handleSignIn}
+            onClick={handleSignUp}
           >
             {buttonText}
           </Button>
-          <div className='divider-container'>
+          {/* <div className='divider-container'>
             <hr className='divider'></hr>
             <span>or</span>
             <hr className='divider'></hr>
           </div>
 
-          <Button
-            variant='contained'
-            color='secondary'
-            startIcon={<Google />}
-            onClick={handleSigninWithGoogle}
-          >
+          <Button variant='contained' color='secondary' startIcon={<Google />}>
             Continue with Google
-          </Button>
+          </Button> */}
         </div>
       </form>
       <p className='signUp-prompt'>
         {endPrompt}{' '}
-        <Link to={'/signup'}>
+        <Link to={'/signin'}>
           {' '}
-          <span>Sign up for free</span>
+          <span>Sign in</span>
         </Link>
       </p>
     </div>
   );
 };
 
-export default SignIn;
+export default SignUp;

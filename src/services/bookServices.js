@@ -590,7 +590,7 @@ const deduplicateAndRankResults = (results, originalQuery) => {
 
       return 0;
     })
-    .slice(0, 10);
+    .slice(0, 8);
 };
 
 export default {

@@ -121,13 +121,21 @@
   background-color: var(--hover-blue);
 }
 
-/* Profile Button Styles */
+/* Sign-out Button Styles */
+
+.sign-out-wrapper {
+  margin: 0 0 0 1rem; /* 16px / 16px per rem */
+  padding: 0.5 0.75rem 0 0; /* 12px / 16px per rem */
+}
+
+/* Sign-out Button Hover Styles */
+
 .profile {
-  padding: 0.5rem; /* 8px / 16px per rem */
+ padding: 0.2rem;
   background-color: rgb(37, 209, 218);
   border-radius: 50%;
   color: black;
-  border: 0.125rem solid transparent; /* 2px / 16px per rem */
+  border: 0.125rem solid transparent;
   box-shadow: none;
   user-select: none;
   display: none;
@@ -135,10 +143,14 @@
   box-sizing: border-box;
   text-align: center;
   text-decoration: none;
-  font-size: 0.75rem; /* 12px / 16px per rem */
-  line-height: 1rem; /* 16px / 16px per rem */
+  font-size: 0.75rem;
+
   white-space: normal;
   cursor: pointer;
+}
+
+.p-signout {
+  background-color: #e3d026;
 }
 
 /* Search Container Styles */
@@ -409,7 +421,7 @@ input {
     display: flex;
   }
 
-  .sign-in,
+  .sign-out-wrapper,
   .sign-in-wrapper {
     display: none;
     padding: 0;
@@ -461,7 +473,7 @@ input {
     display: none;
   }
   .sign-in-wrapper,
-  .sign-in {
+  .sign-out-wrapper {
     display: inline-flex;
   }
 }
@@ -491,7 +503,8 @@ input {
   .hide-search-container {
     display: none;
   }
-  .sign-in-wrapper {
+  .sign-in-wrapper,
+  .sign-out-wrapper {
     display: inline;
     margin-inline-end: 0.75rem; /* 12px / 16px per rem */
   }

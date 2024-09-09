@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import NewThrills from './pages/NewThrills';
 import Collections from './pages/Collections';
 import NotFound from './pages/NotFound';
+import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Author from './pages/Author';
 import Book from './pages/Book';
@@ -13,6 +14,7 @@ import Authors from './pages/Authors';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './styles/theme';
+
 
 import './styles/App.css';
 
@@ -29,6 +31,7 @@ function App() {
               <Route path='/new' element={<NewThrills />} />
               <Route path='/collections' element={<Collections />} />
               <Route path='*' element={<NotFound />} />
+              <Route path='/signup' element={<SignUp />} />
               <Route path='/signin' element={<SignIn />} />
               <Route path='/author/:id' element={<Author />} />
               <Route path='/book/:id' element={<Book />} />

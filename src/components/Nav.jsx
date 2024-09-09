@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import '../styles/Nav.css';
 import Logo from './icons/nav/Logo';
 import LogoSmall from './icons/nav/LogoSmall';
@@ -12,6 +12,12 @@ import { Link, useLocation } from 'react-router-dom';
 import Suggestions from './Suggestions';
 import bookServices from '../services/bookServices';
 import { useQuery } from '@tanstack/react-query';
+import { auth } from '../firebase/config';
+import { signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthProvider';
+import Button from '@mui/material/Button';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Nav = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -88,6 +94,22 @@ const Nav = () => {
   const closeSugesstions = () => {
     setShowSuggestions(false);
   };
+
+  const navigate = useNavigate();
+
+  const handleSignOut = (event) => {
+    event.preventDefault();
+    signOut(auth)
+      .then(() => {
+        console.log('Sign out successful');
+        navigate('/signin');
+      })
+      .catch((error) => {
+        console.error('Sign out error:', error);
+      });
+  };
+
+  const user = useAuth();
 
   const searchContainer = () => {
     return (
@@ -177,19 +199,19 @@ const Nav = () => {
             </span>
             <span className='nav-text'>Free Thrills</span>
           </Link>
-          <Link
+          {/* <Link
             className={
               location.pathname === '/collections'
                 ? 'nav-link-active'
                 : 'nav-link'
             }
-            to={'/collections'}
+            to={user ? '/collections' : '/signin'}
           >
             <span id='nav-icon'>
               <LibraryBooksIcon />
             </span>
             <span className='nav-text home-icon'>Collections</span>
-          </Link>
+          </Link> */}
           <button className='search-icon-small' onClick={handleSearchIconClick}>
             <SearchIcon />
           </button>
@@ -229,16 +251,32 @@ const Nav = () => {
               />
             )}
           </div>
-          <li className='sign-in-wrapper'>
-            <button className='sign-in'>
-              <Link to={'/signin'}>sign in</Link>
-            </button>
-          </li>
-          <button className='profile'>
-            <Link to={'/signin'}>
-              <AccountCircleIcon />
-            </Link>
-          </button>
+          {user ? (
+            <li className='sign-out-wrapper'>
+              <Button onClick={handleSignOut} variant='contained' color='ochre'>
+                <span>Sign out</span>
+              </Button>
+            </li>
+          ) : (
+            <li className='sign-in-wrapper'>
+              <Button variant='contained' color='blue'>
+                <Link to={'/signin'}>Sign in</Link>
+              </Button>
+            </li>
+          )}
+          {user ? (
+            <li className='profile p-signout'>
+              <button onClick={handleSignOut}>
+                <LogoutIcon />
+              </button>
+            </li>
+          ) : (
+            <li className='profile'>
+              <Link to={'/signin'}>
+                <AccountCircleIcon />
+              </Link>
+            </li>
+          )}
         </ul>
       )}
     </nav>

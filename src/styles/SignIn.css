@@ -85,8 +85,9 @@
   width: 100%;
 }
 
-.signUp-prompt button {
+.signUp-prompt a {
   color: #3b82f6;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  text-decoration: underline;
 }
