@@ -38,6 +38,8 @@
 /* Container for the book image */
 .book-image-container {
   display: flex;
+  width: 100%;
+  justify-content: flex-end;
 }
 
 /* Styling for the book image */
@@ -256,6 +258,10 @@
   margin-top: 1.5rem;
 }
 
+textarea:target {
+  scroll-margin-top: 30rem;
+}
+
 /* Responsive styles */
 @media screen and (max-width: 1024px) {
   .book-grid {
@@ -313,6 +319,9 @@
 
     justify-content: center;
   }
+  .book-image-container {
+    justify-content: center;
+  }
 }
 @media screen and (max-width: 568px) {
   .book-grid {
@@ -353,6 +362,10 @@
     align-self: center;
     justify-content: center;
     text-align: center;
+  }
+
+  .book-image-container {
+    justify-content: center;
   }
 }
 

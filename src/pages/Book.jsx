@@ -194,6 +194,8 @@ const Book = () => {
                   onChange={handleRating}
                   value={currentRating}
                   color='white'
+                  sx = {{fontSize: '3rem'}}
+                  
                 />
               </div>
               <div className='rating-tag'>
@@ -270,7 +272,7 @@ const Book = () => {
         )}
       </div>
 
-      <div className='book-edition-details' id='write-note'>
+      <div className='book-edition-details'>
         <h2>About this edition</h2>
         <ul className='text-base'>
           <li>
@@ -308,15 +310,16 @@ const Book = () => {
       </span>
 
       <div className='notes'>
-        <div>
+        <section>
           <div className='note-actions'>
             <textarea
               type='text'
               placeholder='Add a note...'
               rows={4}
               cols={50}
+              id='write-note'
             />
-            {/* <button className='book-btn book-btn-1'>Add</button> */}
+
             <Button variant='contained' color='blue' size='small'>
               Add
             </Button>
@@ -329,7 +332,7 @@ const Book = () => {
             <NoteCard />
             <NoteCard />
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

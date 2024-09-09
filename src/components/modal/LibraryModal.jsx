@@ -51,7 +51,7 @@ const LibraryModal = ({ closeModal }) => {
 
         <Button
           variant='contained'
-          endIcon={<DeleteIcon />}
+          endIcon={<DeleteIcon color='red' />}
           color='white'
           size='small'
           disableElevation

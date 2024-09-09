@@ -92,7 +92,12 @@ const Nav = () => {
   const searchContainer = () => {
     return (
       <div className='show-search-container'>
-        <form className='search-form-mini' autoComplete='off' ref={inputRef}>
+        <form
+          className='search-form-mini'
+          autoComplete='off'
+          ref={inputRef}
+          onSubmit={handleSearchQuery}
+        >
           <input
             className='search-bar-mini'
             aria-label='Search'
@@ -190,7 +195,7 @@ const Nav = () => {
           </button>
 
           <div className='search-container'>
-            <form className='search-form'>
+            <form className='search-form' onSubmit={handleSearchQuery}>
               <input
                 className='search-bar'
                 aria-label='Search'
@@ -201,10 +206,7 @@ const Nav = () => {
                 ref={inputRef}
                 onChange={({ target }) => setSearchQuery(target.value)}
               />
-              <button
-                className='search-icon-button'
-                onClick={handleSearchQuery}
-              >
+              <button className='search-icon-button' type='submit'>
                 <SearchIcon />
               </button>
 
@@ -229,7 +231,7 @@ const Nav = () => {
           </div>
           <li className='sign-in-wrapper'>
             <button className='sign-in'>
-              <span>sign in</span>
+              <Link to={'/signin'}>sign in</Link>
             </button>
           </li>
           <button className='profile'>
