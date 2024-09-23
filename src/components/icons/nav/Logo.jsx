@@ -7,20 +7,20 @@ const Logo = (props) => (
     xmlns='http://www.w3.org/2000/svg'
     {...props}
     height={60}
-    width={120}
+    width={200}
   >
     {/* Background */}
 
     {/* Text "Thriller" */}
     <text
-      x='0' // Adjusted x position
-      y='50' // Adjusted y position
+      x='45' // Adjusted x position
+      y='45' // Adjusted y position
       fontFamily='Nosifer, sans-serif'
-      fontSize={38}
+      fontSize={28}
       fontWeight={800}
       fill='#ffffff'
     >
-      {'Thriller'}
+      {'Thriller Fiend'}
     </text>
 
     {/* Polygon */}
@@ -30,17 +30,17 @@ const Logo = (props) => (
       opacity='0.3' // Reduced opacity to make it flashy
     />
 
-    {/* Text "Fiend" */}
-    <text
+    {/* <text
       x='270' // Adjusted x position
       y='65' // Adjusted y position
-      fontFamily='Creepster, system-ui'
-      fontSize={55}
+      // fontFamily='Creepster, system-ui'
+      fontFamily='Nosifer, sans-serif'
+      fontSize={38}
       fontWeight={100}
       fill='#ffffff'
     >
       {'Fiend'}
-    </text>
+    </text> */}
   </svg>
 );
 

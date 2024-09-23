@@ -6,25 +6,64 @@ import '../styles/Book.css';
 import AddIcon from '@mui/icons-material/Add';
 import ShareIcon from '@mui/icons-material/Share';
 import { Rating } from '@mui/material';
-import { getLanguage } from '../utils';
+import { getLanguage } from '../utils/utils';
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import Button from '@mui/material/Button';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import useCheckIfOverflowing from '../hooks/useCheckIfOverflowing';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import Loader from '../components/Loader';
 import LibraryModal from '../components/modal/LibraryModal';
 import ShareModal from '../components/modal/ShareModal';
 import { Link } from 'react-router-dom';
 import Notification from '../components/Notification';
+import {
+  writeNote,
+  writeRating,
+  deleteNote,
+  updateNote,
+} from '../services/userServices';
+import { useAuth } from '../context/AuthProvider';
+import LoadingButton from '@mui/lab/LoadingButton';
+import useBookNotes from '../hooks/useBookNotes';
 
 const Book = () => {
   const { id } = useParams();
 
+  const { user } = useAuth();
+
   const [isTextExpanded, setIsTextExpanded] = useState(false);
 
   const descriptionRef = useRef(null);
+
+  const [noteText, setNoteText] = useState('');
+
+  const [saveLoading, setSaveLoading] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: () => writeNote(user.uid, id, noteText),
+    onSuccess: () => {
+      setNoteText('');
+    },
+    enabled: !!user?.uid,
+  });
+
+  const deleteNoteMutation = useMutation({
+    mutationFn: (noteId) => deleteNote(user.uid, id, noteId),
+    enabled: !!user?.uid,
+  });
+
+  // const updateMutation = useMutation({
+  //   mutationFn: (updatedNoteText, noteId) =>
+  //     updateNote(user.uid, id, noteId, updatedNoteText),
+  //   enabled: !!user?.uid,
+  // });
+
+  const ratingMutation = useMutation({
+    mutationFn: () => writeRating(user.uid, id, currentRating),
+    enabled: !!user?.uid,
+  });
 
   const {
     data: book,
@@ -34,6 +73,51 @@ const Book = () => {
     queryKey: ['book', id],
     queryFn: () => bookServices.getBookByVolumeId(id),
   });
+
+  const handleAddNote = (event) => {
+    event.preventDefault();
+    mutation.mutate();
+    setSaveLoading(true);
+    setTimeout(() => {
+      setSaveLoading(false);
+    }, 1000);
+    setNotification({
+      title: 'Success',
+      message: 'Note saved',
+    });
+    clearNotification();
+  };
+
+  // const handleUpdateNote = (updatedNoteText, noteId) => {
+  //   console.log(updatedNoteText, noteId);
+  //   updateMutation.mutate(updatedNoteText, noteId);
+  //   setNotification({
+  //     title: 'Success',
+  //     message: 'Note updated',
+  //   });
+  //   clearNotification();
+  // };
+
+  const handleDeleteNote = (event, noteId) => {
+    event.preventDefault();
+    deleteNoteMutation.mutate(noteId);
+    setNotification({
+      title: 'Success',
+      message: 'Note deleted',
+    });
+    clearNotification();
+  };
+
+  const handleUpdateNote = async (updatedNoteText, noteId) => {
+    await updateNote(user.uid, id, noteId, updatedNoteText);
+    setNotification({
+      title: 'Success',
+      message: 'Note updated',
+    });
+    clearNotification();
+  };
+
+  const { notes, loading, error } = useBookNotes(user?.uid, id);
 
   const {
     title,
@@ -86,15 +170,17 @@ const Book = () => {
     expandedTextClass = isTextExpanded ? 'expanded' : 'collapsed';
   }
 
-  if (isLoading) {
+  if (isLoading || loading) {
     return <Loader />;
   }
 
-  if (isError) {
+  if (isError || error) {
     return <div>Error fetching book data</div>;
   }
 
-  const handleRating = (event, newValue) => {
+  const handleRating = async (event, newValue) => {
+    event.preventDefault();
+    ratingMutation.mutate();
     setCurrentRating(newValue);
     setPreviousRating(currentRating);
     const ratingValue = newValue;
@@ -185,27 +271,6 @@ const Book = () => {
                   Share
                 </Button>
               </div>
-              <div className='btn-actions-down'>
-                <Rating
-                  size='large'
-                  precision={0.5}
-                  onChange={handleRating}
-                  value={currentRating}
-                  color='white'
-                  sx={{ fontSize: '3rem' }}
-                />
-              </div>
-              <div className='rating-tag'>
-                <span>
-                  {' '}
-                  {currentRating === 0 ? 'Rate this book' : `Saved.`}
-                </span>
-                {currentRating > 0 && (
-                  <span className='writeNote'>
-                    <a href='#write-note'>Write a note</a>
-                  </span>
-                )}
-              </div>
             </div>
           </div>
           <Notification
@@ -230,6 +295,26 @@ const Book = () => {
                 alt={title}
                 style={{}}
               />
+            )}
+          </div>
+          <div className='btn-actions-down'>
+            <Rating
+              size='large'
+              precision={0.5}
+              onChange={handleRating}
+              value={currentRating}
+              color='white'
+              sx={{
+                fontSize: '3rem',
+              }}
+            />
+          </div>
+          <div className='rating-tag'>
+            <span> {currentRating === 0 ? 'Rate this book' : `Saved.`}</span>
+            {currentRating > 0 && (
+              <span className='writeNote'>
+                <a href='#write-note'>Write a note</a>
+              </span>
             )}
           </div>
         </div>
@@ -312,22 +397,43 @@ const Book = () => {
             <textarea
               type='text'
               placeholder='Add a note...'
-              rows={4}
-              cols={50}
+              rows={10}
+              cols={30}
               id='write-note'
+              value={noteText}
+              onChange={({ target }) => setNoteText(target.value)}
             />
 
-            <Button variant='contained' color='blue' size='small'>
-              Add
-            </Button>
+            <span className='save-button'>
+              <LoadingButton
+                variant='contained'
+                loading={saveLoading}
+                color='blue'
+                onClick={handleAddNote}
+                size='small'
+              >
+                Save
+              </LoadingButton>
+            </span>
           </div>
           <div className='notecard-header'>
             <h2>Your Notes</h2>
           </div>
           <div className='notecard-container'>
-            <NoteCard />
-            <NoteCard />
-            <NoteCard />
+            {notes && notes.length > 0 ? (
+              notes.map(({ noteText, created }, index) => (
+                <NoteCard
+                  noteText={noteText}
+                  key={index}
+                  created={created}
+                  deleteNote={(event) => handleDeleteNote(event, index)}
+                  updateNote={handleUpdateNote}
+                  noteId={index}
+                />
+              ))
+            ) : (
+              <p>No notes added yet</p>
+            )}
           </div>
         </section>
       </div>

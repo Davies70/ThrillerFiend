@@ -33,15 +33,16 @@
   list-style-type: none;
   align-items: center;
   padding-left: 0;
-  padding-right: 0.9375rem; /* 15px / 16px per rem */
+  padding-right: 0; /* 15px / 16px per rem */
   position: relative;
+  margin: 0 auto;
 }
 
 /* Logo Styles */
 #logo {
   display: inline-flex;
-  width: 8.75rem; /* 140px / 16px per rem */
-  height: 5rem; /* 80px / 16px per rem */
+  /* width: 8.75rem; /* 140px / 16px per rem */
+  /* height: 5rem; 80px / 16px per rem */
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
@@ -131,7 +132,7 @@
 /* Sign-out Button Hover Styles */
 
 .profile {
- padding: 0.2rem;
+  padding: 0.2rem;
   background-color: rgb(37, 209, 218);
   border-radius: 50%;
   color: black;
@@ -276,6 +277,7 @@ input {
   right: 0.75rem; /* 12px / 16px per rem */
   padding-top: 0.3125rem; /* 5px / 16px per rem */
   cursor: pointer;
+  border-radius: 18.75rem;
 }
 
 /* Search Icon Button Focus Styles */
@@ -482,7 +484,7 @@ input {
 @media only screen and (min-width: 641px) /* 641px / 16px per rem */ {
   .nav-list {
     padding-inline-end: 0;
-    padding-inline-start: 1rem; /* 16px / 16px per rem */
+    padding-inline-start: 0; /* 16px / 16px per rem */
   }
   .nav-text {
     display: none;

@@ -1,10 +1,27 @@
-
 import authorServices from '../services/authorServices';
 import Shape from '../components/Shape';
 import '../styles/Authors.css';
+import { useQuery } from '@tanstack/react-query';
+import Loader from '../components/Loader';
 
 const Authors = () => {
-  const authors = authorServices.getAuthors();
+  const {
+    data: authors,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['authors'],
+    queryFn: authorServices.getAuthors,
+  });
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return <div>Something went wrong</div>;
+  }
+
   const shape = 'circle';
   return (
     <div

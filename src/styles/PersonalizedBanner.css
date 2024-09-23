@@ -1,0 +1,148 @@
+.personalized-banner {
+  background: linear-gradient(to right, #4fd1c5, #2c7a7b);
+  padding: 1rem;
+  border-radius: 0.6667rem;
+  box-shadow: 0 0.3333rem 0.5rem rgba(0, 0, 0, 0.1);
+  margin: 0 2rem;
+  margin-top: 2rem;
+}
+
+.personalized-banner h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.banner-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1.3333rem;
+}
+
+.user-info h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+.user-info-child span {
+  font-family: 'Nosifer', sans-serif;
+  font-size: 1.5rem;
+  color: rgb(26, 1, 1);
+  padding-bottom: 0.5rem;
+  text-transform: lowercase;
+  text-shadow: 0 0 0.3333rem rgba(0, 0, 0, 0.5);
+  font-weight: lighter;
+}
+
+.user-info p {
+  color: #e6fffa;
+  margin: 0.3333rem 0 0 0;
+}
+
+.user-stats {
+  display: flex;
+  gap: 2.6667rem;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  margin: 0.3333rem 0;
+}
+
+.stat-label {
+  font-size: 1.1667rem;
+  color: #e6fffa;
+  margin: 0;
+}
+
+.icon {
+  color: white;
+  font-size: 2.6667rem;
+}
+
+@media (max-width: 0) {
+  .personalized-banner {
+    padding: 0.6667rem;
+  }
+
+  .personalized-banner h1 {
+    font-size: 1.5rem;
+  }
+
+  .user-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .user-info p {
+    font-size: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.1667rem;
+  }
+
+  .stat-label {
+    font-size: 1rem;
+  }
+
+  .icon {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .banner-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.3333rem;
+  }
+
+  .user-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .user-info {
+    width: 100%;
+    justify-content: space-between;
+
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .user-info-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3333rem;
+  }
+
+  .user-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .stat {
+    flex: 1;
+  }
+
+  .user-info-child span {
+    display: block;
+    margin-top: 0.5rem;
+  }
+}

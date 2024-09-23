@@ -7,9 +7,8 @@ const NYT_BASEURL = 'https://api.nytimes.com/svc/books/v3/';
 const NYT_API_KEY = import.meta.env.VITE_BOOK_NYT_API_KEY;
 const BOOKS_BASEURL = `https://www.googleapis.com/books/v1/volumes?`;
 const BOOKS_API_KEY = import.meta.env.VITE_BOOKS_API_KEY;
-import { setSome } from '../utils';
+import { setSome } from '../utils/utils';
 import axios from 'axios';
-import authorServices from './authorServices';
 
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
@@ -34,82 +33,88 @@ async function fetch(config) {
   }
 }
 
+const getNewYorkTimesBestSellers = async () => {
+  let NYTBooks = getWithExpiry('nytBestSellers');
+  if (NYTBooks) {
+    console.log('NYT Best Sellers Data retrieved from localStorage');
+    return NYTBooks;
+  }
+  console.log(
+    'NYT Best Sellers Data not in localStorage or expired, fetching from API...'
+  );
+  const books = await fetch(nytConfig);
+  if (books && books.results) {
+    NYTBooks = books.results.books.map((book) => {
+      return {
+        title: book.title,
+        authorName: book.author,
+      };
+    });
+    setWithExpiry('nytBestSellers', NYTBooks, CACHE_TTL);
+    return NYTBooks;
+  }
+  return [];
+};
+
 async function getHotBooks() {
   let data = getWithExpiry('hotBooks');
 
-  if (data === null) {
-    console.log(
-      'HotBooks Data not in localStorage or expired, fetching from API...'
-    );
-
-    const books = await fetch(nytConfig);
-
-    if (books && books.results) {
-      const NYTbooks = books.results.books.map((book) => {
-        return {
-          title: book.title,
-          authorName: book.author,
-        };
-      });
-
-      const hotBooks = await Promise.all(
-        NYTbooks.map(async (book) => {
-          const { title, authorName } = book;
-          const bookData = await getBookByAuthorAndTitle(
-            `inauthor:${authorName}+intitle:${title}`
-          );
-          if (bookData && bookData.title) {
-            return bookData;
-          }
-          // Return undefined when bookData doesn't exist
-          return undefined;
-        })
-      );
-
-      data = hotBooks.filter((book) => book !== undefined).slice(0, 12);
-      if (data.length > 0) setWithExpiry('hotBooks', data, CACHE_TTL);
-    }
-  } else {
+  if (data) {
     console.log('HotBooks Data retrieved from localStorage');
+    return data;
   }
+
+  console.log(
+    'HotBooks Data not in localStorage or expired, fetching from API...'
+  );
+
+  const NYTbooks = await getNewYorkTimesBestSellers();
+  console.log({ NYTbooks });
+  const hotBooks = await Promise.all(
+    NYTbooks.map(async (book) => {
+      const { title, authorName } = book;
+      const bookData = await getBookByAuthorAndTitle(
+        `inauthor:${authorName}+intitle:${title}`
+      );
+      if (bookData && bookData.title) {
+        return bookData;
+      }
+      // Return undefined when bookData doesn't exist
+      return undefined;
+    })
+  );
+
+  console.log({ hotBooks });
+
+  data = hotBooks.filter((book) => book !== undefined).slice(0, 12);
+  if (data.length > 0) setWithExpiry('hotBooks', data, CACHE_TTL);
+
   return data;
 }
 
-const getBooksByAuthor = async (id) => {
-  const author = authorServices.getAuthorById(id);
-  const authorName = author.authorName;
+const isTitleUnique = (bookTitle, titles) => {
+  return !setSome(titles, (title) => bookTitle.toLowerCase().includes(title));
+};
+
+const getBooksByAuthor = async (author) => {
+  const { authorName, notableWorks } = author;
   let data = getWithExpiry('booksByAuthor-' + authorName);
-  if (data === null) {
-    console.log(
-      `Books by ${authorName} data not in localStorage or expired, fetching from API...`
-    );
-    const queryParam = {
-      q: `inauthor:"${authorName}"+subject:fiction`,
-      key: BOOKS_API_KEY,
-      maxResults: 40,
-      langRestrict: 'en',
-      country: 'US',
-      orderBy: 'relevance',
-      printType: 'books',
-    };
-    const params = new URLSearchParams(queryParam).toString();
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'GET',
-      url: `${BOOKS_BASEURL}${params}`,
-    };
-    data = await fetchAndStoreData(config, `booksByAuthor-${authorName}`);
-  } else {
+  if (data) {
     console.log(`Books by ${authorName} data retrieved from localStorage`);
+    return data;
   }
+
+  console.log(
+    `Books by ${authorName} data not in localStorage or expired, fetching from API...`
+  );
+
+  const config = buildQueryConfig(`${authorName}`, 'inauthor', 40);
+  data = await fetch(config);
+
+  if (!data.items || !Array.isArray(data.items)) return [];
 
   const uniqueBooks = [];
   const titles = new Set();
-  const isTitleUnique = (bookTitle) => {
-    return !setSome(titles, (title) => bookTitle.toLowerCase().includes(title));
-  };
 
   data.items.forEach((book) => {
     const title = book.volumeInfo.title
@@ -127,7 +132,7 @@ const getBooksByAuthor = async (id) => {
 
     if (
       !titles.has(title) &&
-      isTitleUnique(title) &&
+      isTitleUnique(title, titles) &&
       !title.includes(authorsName) &&
       authorsName.includes(authorName.toLowerCase()) &&
       book.volumeInfo.language === 'en'
@@ -136,32 +141,19 @@ const getBooksByAuthor = async (id) => {
       uniqueBooks.push(book);
     }
   });
+
   const booksByAuthor = uniqueBooks.map((book) => {
     return {
       title: book.volumeInfo?.title,
       book_image: book.volumeInfo.imageLinks?.thumbnail,
       authors: book.volumeInfo?.authors,
       book_id: book.id,
-      volumeId: book.id,
-      categories: book.volumeInfo.categories,
-      rating: book.volumeInfo.averageRating,
-      subtitle: book.volumeInfo.subtitle,
-      description: book.volumeInfo.description,
-      publisher: book.volumeInfo.publisher,
-      publishedDate: book.volumeInfo.publishedDate,
-      isbn: book.volumeInfo.industryIdentifiers
-        ?.map((isbn) => isbn.identifier)
-        .join(', '),
-      saleInfo: book.saleInfo || {},
-      pageCount: book.volumeInfo.pageCount,
-      price: book.saleInfo?.listPrice?.amount,
-      currencyCode: book.saleInfo?.listPrice?.currencyCode,
-      language: book.volumeInfo.language,
-      ratingCount: book.volumeInfo.ratingsCount,
     };
   });
 
-  const toLowerCaseNotableWorks = author.notableWorks.map((notableWork) =>
+  console.log({ uniqueBooks });
+
+  const toLowerCaseNotableWorks = notableWorks.map((notableWork) =>
     notableWork.toLowerCase()
   );
 
@@ -171,7 +163,15 @@ const getBooksByAuthor = async (id) => {
     }
   });
 
-  return books.length > 12 ? books.slice(0, 12) : books;
+  if (books.length === 0) return;
+
+  if (books.length > 12) {
+    setWithExpiry('booksByAuthor-' + authorName, books, CACHE_TTL);
+    return books.slice(0, 12);
+  }
+
+  setWithExpiry('booksByAuthor-' + authorName, books, CACHE_TTL);
+  return books;
 };
 
 const getBookByVolumeId = async (volumeId) => {
@@ -220,98 +220,37 @@ const getBookByVolumeId = async (volumeId) => {
   return data;
 };
 
-// const getBooksSuggestions = async (searchQuery, signal) => {
-//   if (!searchQuery) {
-//     console.warn('No search query provided');
-//     return [];
-//   }
-//   let data;
-//   data = getWithExpiry('suggestions' + searchQuery);
-//   if (data) {
-//     console.log(`Suggestions for ${searchQuery} retrieved from localStorage`);
-//     return data;
-//   }
-//   console.log(
-//     'Suggestions for',
-//     searchQuery,
-//     'not in localStorage, fetching...'
-//   );
-//   const queryParam = {
-//     q: `${searchQuery}` + 'subject:fiction',
-//     key: BOOKS_API_KEY,
-//     maxResults: 10,
-//     langRestrict: 'en',
-//     country: 'US',
-//     printType: 'all',
-//     orderBy: 'relevance',
-//   };
-//   const params = new URLSearchParams(queryParam).toString();
-//   const config = {
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     method: 'GET',
-//     url: `${BOOKS_BASEURL}${params}`,
-//   };
-//   try {
-//     const response = await axios.request(config, { signal });
-//     console.log('response', response);
-//     if (response.data.totalItems === 0) {
-//       return [];
-//     }
-//     const suggestions = response.data.items.filter((book) => {
-//       const { volumeInfo } = book;
-//       return (
-//         volumeInfo.imageLinks?.thumbnail &&
-//         volumeInfo.description &&
-//         volumeInfo.pageCount > 0
-//       );
-//     });
-
-//     if (suggestions.length === 0) {
-//       return [];
-//     }
-
-//     data = suggestions
-//       .map((book) => {
-//         return {
-//           title: book.volumeInfo.title,
-//           book_image: book.volumeInfo.imageLinks?.thumbnail,
-//           authors: book.volumeInfo.authors,
-//           book_id: book.id,
-//         };
-//       })
-//       .slice(0, 5);
-//     setWithExpiry('suggestions' + searchQuery, data, 24 * 60 * 60 * 1000);
-//     return data;
-//   } catch (error) {
-//     if (axios.isCancel(error)) {
-//       console.log('Request cancelled:', error.message);
-//     } else {
-//       console.error('Fetch error:', error);
-//     }
-//     return [];
-//   }
-// };
-
 const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
-  const queryParam = {
-    q: authorNameAndTitle,
-    key: BOOKS_API_KEY,
-    maxResults: 20,
-    langRestrict: 'en',
-    country: 'US',
-    orderBy: 'relevance',
-    printType: 'all',
-  };
-  const params = new URLSearchParams(queryParam).toString();
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    method: 'GET',
-    url: `${BOOKS_BASEURL}${params}`,
-  };
+  const result = getWithExpiry(`bookByAuthorAndTitle-${authorNameAndTitle}`);
+  if (result) {
+    console.log(
+      `Book by ${authorNameAndTitle} data retrieved from localStorage`
+    );
+    return result;
+  }
+  // const queryParam = {
+  //   q: authorNameAndTitle,
+  //   key: BOOKS_API_KEY,
+  //   maxResults: 20,
+  //   langRestrict: 'en',
+  //   country: 'US',
+  //   orderBy: 'relevance',
+  //   printType: 'all',
+  // };
+  // const params = new URLSearchParams(queryParam).toString();
+  // const config = {
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   method: 'GET',
+  //   url: `${BOOKS_BASEURL}${params}`,
+  // };
+
+  console.log(
+    `Book by ${authorNameAndTitle} data not in localStorage or expired, fetching from API...`
+  );
+
+  const config = buildQueryConfig(authorNameAndTitle, null, 20);
   const books = await fetch(config);
 
   if (!books.items || !Array.isArray(books.items)) return;
@@ -333,6 +272,10 @@ const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
 
 const getSimilarBooks = async (title) => {
   let data = getWithExpiry(`similarBooks,-${title}`);
+  if (data) {
+    console.log(`Similar books by ${title} data retrieved from localStorage`);
+    return data;
+  }
   if (data === null) {
     console.log(
       `Similar books like ${title} data not in localStorage or expired, fetching from API...`
@@ -372,18 +315,15 @@ const getSimilarBooks = async (title) => {
       ],
     };
     data = await fetchAndStoreData(config, `similarBooks-${title}`);
-  } else {
-    console.log(`Similar books by ${title} data retrieved from localStorage`);
+    return data
+      ? {
+          title: data.volumeInfo?.title,
+          book_image: data.volumeInfo.imageLinks?.thumbnail,
+          authors: data.volumeInfo?.authors,
+          book_id: data.id,
+        }
+      : [];
   }
-
-  return data
-    ? {
-        title: data.volumeInfo?.title,
-        book_image: data.volumeInfo.imageLinks?.thumbnail,
-        authors: data.volumeInfo?.authors,
-        book_id: data.id,
-      }
-    : {};
 };
 
 const getBestSellers = async () => {
@@ -486,9 +426,9 @@ const fetchAndProcessQueries = async (searchQuery) => {
   const authorQuery = searchQuery; // We'll use the original query for author search
 
   const titleConfigs = titleQueries.map((query) =>
-    buildQueryConfig(query, 'intitle')
+    buildQueryConfig(query, 'intitle', 10)
   );
-  const authorConfig = buildQueryConfig(authorQuery, 'inauthor');
+  const authorConfig = buildQueryConfig(authorQuery, 'inauthor', 10);
 
   const allConfigs = [...titleConfigs, authorConfig];
 
@@ -540,11 +480,11 @@ const generateTitleQueries = (searchQuery) => {
   return queries;
 };
 
-const buildQueryConfig = (query, searchType) => ({
+const buildQueryConfig = (query, searchType, maxResults) => ({
   params: new URLSearchParams({
-    q: `${searchType}:${query}`,
+    q: searchType ? `${searchType}:${query}` : query,
     key: BOOKS_API_KEY,
-    maxResults: 10,
+    maxResults,
     langRestrict: 'en',
     country: 'US',
     printType: 'all',

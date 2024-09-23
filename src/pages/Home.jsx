@@ -5,9 +5,11 @@ import bookServices from '../services/bookServices';
 import authorServices from '../services/authorServices';
 import { useQueries } from '@tanstack/react-query';
 import Loader from '../components/Loader';
+import PersonalizedBanner from '../components/sections/PersonalizedBanner';
+import { useAuth } from '../context/AuthProvider';
 
 const Home = () => {
-  const [hotBooksQuery, bestSellerQuery] = useQueries({
+  const [hotBooksQuery, bestSellerQuery, hotAuthorsQuery] = useQueries({
     queries: [
       {
         queryKey: ['hotbooks'],
@@ -17,24 +19,43 @@ const Home = () => {
         queryKey: ['bestsellers'],
         queryFn: bookServices.getBestSellers,
       },
+      {
+        queryKey: ['authors'],
+        queryFn: authorServices.getHotAuthors,
+      },
     ],
   });
 
-  if (hotBooksQuery.isLoading || bestSellerQuery.isLoading) {
+  const user = useAuth();
+
+  if (
+    hotBooksQuery.isLoading ||
+    bestSellerQuery.isLoading ||
+    hotAuthorsQuery.isLoading
+  ) {
     return <Loader />;
   }
 
-  if (hotBooksQuery.isError || bestSellerQuery.isError) {
-    return <div>Something went wrong</div>;
+  if (hotBooksQuery.isError) {
+    return <div>Something went wrong with hotbooks</div>;
+  }
+
+  if (bestSellerQuery.isError) {
+    return <div>Something went wrong with bestsellers</div>;
+  }
+
+  if (hotAuthorsQuery.isError) {
+    return <div>Something went wrong with authors</div>;
   }
 
   const hotbooks = hotBooksQuery.data;
   const bestSellers = bestSellerQuery.data;
+  const hotAuthors = hotAuthorsQuery.data;
 
   return (
     <div>
       <BookScroller
-        data={authorServices.getHotAuthors()}
+        data={hotAuthors}
         shape='circle'
         headerText='Hot Authors'
         isNavLink={true}
@@ -42,7 +63,16 @@ const Home = () => {
         isControls={true}
         isDataAvailable={true}
       />
-      <Banner />
+      {user ? (
+        <PersonalizedBanner
+          username={user.displayName}
+          booksRead={25}
+          favoriteGenre='10'
+        />
+      ) : (
+        <Banner />
+      )}
+
       <BookScroller
         data={hotbooks}
         shape='square'

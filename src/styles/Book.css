@@ -31,15 +31,18 @@
 /* Right section of the book grid */
 .book-right {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   padding: 1.5rem;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
 }
 
 /* Container for the book image */
 .book-image-container {
   display: flex;
   width: 100%;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 /* Styling for the book image */
@@ -262,6 +265,14 @@ textarea:target {
   scroll-margin-top: 30rem;
 }
 
+.save-button {
+  background-color: white;
+  border: 1px solid black;
+  display: inline-block;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
 /* Responsive styles */
 @media screen and (max-width: 1024px) {
   .book-grid {
@@ -290,7 +301,7 @@ textarea:target {
   }
 
   .btn-actions-down {
-    align-self: center +;
+    align-self: center;
   }
 
   .book-btn {

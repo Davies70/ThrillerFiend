@@ -4,7 +4,6 @@ import Logo from './icons/nav/Logo';
 import LogoSmall from './icons/nav/LogoSmall';
 import HomeIcon from '@mui/icons-material/Home';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import SearchIcon from '@mui/icons-material/Search';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -110,6 +109,9 @@ const Nav = () => {
   };
 
   const user = useAuth();
+
+  const dontShowSignInButton =
+    location.pathname === '/signin' || location.pathname === '/signup';
 
   const searchContainer = () => {
     return (
@@ -253,16 +255,31 @@ const Nav = () => {
           </div>
           {user ? (
             <li className='sign-out-wrapper'>
-              <Button onClick={handleSignOut} variant='contained' color='ochre'>
+              <Button
+                onClick={handleSignOut}
+                variant='contained'
+                color='ochre'
+                sx={{
+                  borderRadius: '1.5rem',
+                }}
+              >
                 <span>Sign out</span>
               </Button>
             </li>
           ) : (
-            <li className='sign-in-wrapper'>
-              <Button variant='contained' color='blue'>
-                <Link to={'/signin'}>Sign in</Link>
-              </Button>
-            </li>
+            !dontShowSignInButton && (
+              <li className='sign-in-wrapper'>
+                <Button
+                  variant='contained'
+                  color='blue'
+                  sx={{
+                    borderRadius: '1.5rem',
+                  }}
+                >
+                  <Link to={'/signin'}>Sign in</Link>
+                </Button>
+              </li>
+            )
           )}
           {user ? (
             <li className='profile p-signout'>

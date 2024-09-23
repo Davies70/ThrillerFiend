@@ -6,11 +6,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../firebase/config';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import Alert from '@mui/material/Alert';
+import Loader from '../components/Loader';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword, , loading] =
+    useSignInWithEmailAndPassword(auth);
+  const [signInError, setSignInError] = useState(null);
 
   const navigate = useNavigate();
 
@@ -22,36 +26,55 @@ const SignIn = () => {
 
   const handleSignIn = async (event) => {
     event.preventDefault();
+    setSignInError(null);
     try {
-      const user = await signInWithEmailAndPassword(email, password);
-      sessionStorage.setItem('user', JSON.stringify(user));
-      setEmail('');
-      setPassword('');
-      navigate('/');
+      const result = await signInWithEmailAndPassword(email, password);
+      if (result) {
+        const user = result.user;
+        sessionStorage.setItem('user', JSON.stringify(user));
+        setEmail('');
+        setPassword('');
+        navigate('/');
+      } else {
+        setSignInError('Invalid email or password. Please try again');
+      }
     } catch (error) {
-      console.log(error);
+      console.log('error signing in', error);
     }
   };
 
   const handleSigninWithGoogle = async (event) => {
     event.preventDefault();
+    setSignInError(null);
+
     try {
       const response = await signInWithPopup(auth, provider);
-      console.log('Successfully signed in with Google');
-      console.log({ response });
-      setEmail('');
-      setPassword('');
-      navigate('/');
+      if (response) {
+        const user = response.user;
+        sessionStorage.setItem('user', JSON.stringify(user));
+        console.log('Successfully signed in with Google');
+        console.log({ response });
+        setEmail('');
+        setPassword('');
+        navigate('/');
+      } else {
+        setSignInError('An error occurred while signing in with Google');
+      }
     } catch (error) {
       console.log(error);
     }
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <div className='signIn-Container'>
       <form className='signIn-Form'>
         <h1>{header}</h1>
         <p className='signIn-prompt'>{prompt}</p>
+        {signInError && <Alert severity='error'>{signInError}</Alert>}
         <div className='input-groups'>
           <div className='input-group'>
             <label htmlFor='email'>Email</label>

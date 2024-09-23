@@ -29,7 +29,7 @@ const Banner = () => {
             y='25%'
             fontFamily='Roboto, sans-serif'
             fontSize='30'
-            fill='#000'
+            fill='white'
             textAnchor='middle'
             dominantBaseline='middle'
             fontWeight={700}
@@ -41,7 +41,7 @@ const Banner = () => {
             y='25%'
             fontFamily='Nosifer, sans-serif'
             fontSize='30'
-            fill='#000'
+            fill='white'
             textAnchor='middle'
             dominantBaseline='middle'
             fontWeight={700}
@@ -53,12 +53,12 @@ const Banner = () => {
             y='52%'
             fontFamily='Roboto, sans-serif'
             fontSize='30'
-            fill='#000'
+            fill='white'
             textAnchor='middle'
             dominantBaseline='middle'
             fontWeight={700}
           >
-            Sign up to explore the dark and enigmatic depths of fiction
+            Sign up to explore the dark depths of thrillers and mysteries
           </text>
           <text
             x='33.2%'

@@ -19,15 +19,13 @@ export default function Author() {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const authorId = parseInt(id);
-
   const {
     data: author,
     isLoading: authorIsLoading,
     isError: authorIsError,
   } = useQuery({
     queryKey: ['author', id],
-    queryFn: () => authorServices.getAuthorById(authorId),
+    queryFn: () => authorServices.getAuthorById(id),
   });
 
   const {
@@ -36,50 +34,65 @@ export default function Author() {
     isError: booksByAuthorIsError,
   } = useQuery({
     queryKey: ['booksByAuthor', id],
-    queryFn: () => bookServices.getBooksByAuthor(authorId),
+    queryFn: () => bookServices.getBooksByAuthor(author),
+    enabled: !!author,
   });
 
-  const notableWorks = author?.notableWorks || [];
+  const notableWorks = author?.notableWorks ? author.notableWorks : [];
 
   const notableWorksQueries = useQueries({
     queries:
       notableWorks.length > 0
-        ? author.notableWorks.map((notableWork) => ({
+        ? notableWorks.map((notableWork) => ({
             queryKey: ['notableThrills', notableWork],
             queryFn: () =>
               bookServices.getBookByAuthorAndTitle(
                 `intitle:${notableWork}+inauthor:${author.authorName}`
               ),
+            enabled: !!author,
           }))
         : [],
   });
 
-  const notableWorksIsLoading = notableWorksQueries.some(
-    (query) => query.isLoading
-  );
-
-  const notableThrills = notableWorksQueries.map((query) => query.data);
-
-  if (authorIsLoading || booksByAuthorIsLoading || notableWorksIsLoading) {
+  if (
+    authorIsLoading ||
+    booksByAuthorIsLoading ||
+    notableWorksQueries.some((query) => query.isLoading)
+  ) {
     return <Loader />;
   }
 
-  if (
-    authorIsError ||
-    booksByAuthorIsError ||
-    notableWorksQueries.some((query) => query.isError)
-  ) {
-    return <div>Something went wrong</div>;
+  if (authorIsError) {
+    return <div>Something went wrong wih author</div>;
   }
+
+  if (booksByAuthorIsError) {
+    return <div>Something went wrong with books by author</div>;
+  }
+
+  if (notableWorksQueries.some((query) => query.isError)) {
+    return <div>Something went wrong with notable works</div>;
+  }
+
+  const notableThrills = notableWorksQueries.map((query) => query.data);
 
   const {
     authorName,
-    description,
-    nationality,
     coverPhoto,
+    nationality,
     genres,
+    description,
     similarAuthors,
   } = author;
+
+  // const {
+  //   authorName,
+  //   description,
+  //   nationality,
+  //   coverPhoto,
+  //   genres,
+  //   similarAuthors,
+  // } = author;
 
   const followClass = isFollowing
     ? 'unfollow-button followed'
@@ -144,6 +157,8 @@ export default function Author() {
     event.preventDefault();
     setNotification({ title: '', message: '', type: '' });
   };
+
+  console.log({ similarAuthors });
 
   return (
     <div className='author-page'>

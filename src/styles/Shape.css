@@ -101,8 +101,8 @@
   position: absolute;
   background-color: transparent;
   font-weight: bold;
-  top: 5%;
-  left: 2%; /* 15px / 16 */
+  top: 3%;
+  left: 73%; /* 15px / 16 */
 }
 
 .bg .top-left:hover {

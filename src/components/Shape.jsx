@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 
 const Shape = ({ shape, isAuthorName, book, author }) => {
   if (shape === 'circle') {
-    const { authorName, coverPhoto, id } = author;
+    const { authorName, coverPhoto, id, name } = author;
     return (
       <div className='card'>
         <div className='card-content'>
@@ -16,7 +16,7 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
             <img
               src={coverPhoto}
               loading='lazy'
-              alt={authorName}
+              alt={authorName || name}
               style={{
                 maxWidth: '100%',
                 height: 'auto',
@@ -38,7 +38,7 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
                 textOverflow: 'ellipsis',
               }}
             >
-              {authorName}
+              {authorName || name}
             </Link>
           </div>
         </div>
