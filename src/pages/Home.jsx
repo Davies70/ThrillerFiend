@@ -26,7 +26,7 @@ const Home = () => {
     ],
   });
 
-  const user = useAuth();
+  const { user } = useAuth();
 
   if (
     hotBooksQuery.isLoading ||

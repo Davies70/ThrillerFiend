@@ -6,6 +6,7 @@ import {
   updateDoc,
   getDoc,
   arrayRemove,
+  arrayUnion,
 } from 'firebase/firestore';
 
 const createUser = async (id) => {
@@ -14,7 +15,7 @@ const createUser = async (id) => {
     await setDoc(userRef, {
       id,
       haveRead: [],
-      reading: [],
+      readLater: [],
       wantToRead: [],
       favorites: [],
       notes: {},
@@ -102,4 +103,113 @@ const writeRating = async (userId, bookId, rating) => {
   }
 };
 
-export { createUser, writeNote, writeRating, deleteNote, updateNote };
+const getRating = async (userId, bookId) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    const ratings = userDoc.data()?.ratings || {};
+
+    return ratings[bookId] || null;
+  } catch (error) {
+    console.error('Error getting rating:', error);
+  }
+};
+
+const getBookStatus = async (userId, bookId) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+      console.log('User document does not exist');
+      return { haveRead: false, readLater: false, favorites: false };
+    }
+
+    const userDocData = userDoc.data();
+
+    const haveRead = userDocData.haveRead || [];
+    const readLater = userDocData.readLater || [];
+    const favorites = userDocData.favorites || [];
+
+    return {
+      haveRead: haveRead.includes(bookId),
+      readLater: readLater.includes(bookId),
+      favorites: favorites.includes(bookId),
+    };
+  } catch (error) {
+    console.error('Error fetching book status:', error);
+    return { haveRead: false, readLater: false, favorites: false };
+  }
+};
+
+const addBookStatus = async (userId, bookId, status) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+
+    switch (status) {
+      case 'haveRead':
+        await updateDoc(userRef, {
+          haveRead: arrayUnion(bookId),
+        });
+        break;
+      case 'readLater':
+        await updateDoc(userRef, {
+          readLater: arrayUnion(bookId),
+        });
+        break;
+      case 'favorites':
+        await updateDoc(userRef, {
+          favorites: arrayUnion(bookId),
+        });
+        break;
+      default:
+        console.error('Invalid status:', status);
+    }
+
+    console.log('Book status added successfully');
+  } catch (error) {
+    console.error('Error adding book status:', error);
+  }
+};
+
+const removeBookStatus = async (userId, bookId, status) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+
+    switch (status) {
+      case 'haveRead':
+        await updateDoc(userRef, {
+          haveRead: arrayRemove(bookId),
+        });
+        break;
+      case 'readLater':
+        await updateDoc(userRef, {
+          readLater: arrayRemove(bookId),
+        });
+        break;
+      case 'favorites':
+        await updateDoc(userRef, {
+          favorites: arrayRemove(bookId),
+        });
+        break;
+      default:
+        console.error('Invalid status:', status);
+    }
+
+    console.log('Book status removed successfully');
+  } catch (error) {
+    console.error('Error removing book status:', error);
+  }
+};
+
+export {
+  createUser,
+  writeNote,
+  writeRating,
+  deleteNote,
+  updateNote,
+  getRating,
+  getBookStatus,
+  addBookStatus,
+  removeBookStatus,
+};

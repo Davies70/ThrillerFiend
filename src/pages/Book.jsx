@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import bookServices from '../services/bookServices';
 import NoteCard from '../components/NoteCard';
@@ -23,6 +23,8 @@ import {
   writeRating,
   deleteNote,
   updateNote,
+  getRating,
+  getBookStatus,
 } from '../services/userServices';
 import { useAuth } from '../context/AuthProvider';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -41,6 +43,18 @@ const Book = () => {
 
   const [saveLoading, setSaveLoading] = useState(false);
 
+  const [previousRating, setPreviousRating] = useState(0); // Track previous rating
+  const [currentRating, setCurrentRating] = useState(0); // Track current rating
+
+  const [ratingPrompt, setRatingPrompt] = useState('Rate this book');
+  const [isNotePrompt, setIsNotePrompt] = useState(false);
+
+  const [bookState, setBookState] = useState({
+    haveRead: false,
+    readLater: false,
+    favorite: false,
+  });
+
   const mutation = useMutation({
     mutationFn: () => writeNote(user.uid, id, noteText),
     onSuccess: () => {
@@ -53,12 +67,6 @@ const Book = () => {
     mutationFn: (noteId) => deleteNote(user.uid, id, noteId),
     enabled: !!user?.uid,
   });
-
-  // const updateMutation = useMutation({
-  //   mutationFn: (updatedNoteText, noteId) =>
-  //     updateNote(user.uid, id, noteId, updatedNoteText),
-  //   enabled: !!user?.uid,
-  // });
 
   const ratingMutation = useMutation({
     mutationFn: () => writeRating(user.uid, id, currentRating),
@@ -88,16 +96,6 @@ const Book = () => {
     clearNotification();
   };
 
-  // const handleUpdateNote = (updatedNoteText, noteId) => {
-  //   console.log(updatedNoteText, noteId);
-  //   updateMutation.mutate(updatedNoteText, noteId);
-  //   setNotification({
-  //     title: 'Success',
-  //     message: 'Note updated',
-  //   });
-  //   clearNotification();
-  // };
-
   const handleDeleteNote = (event, noteId) => {
     event.preventDefault();
     deleteNoteMutation.mutate(noteId);
@@ -116,6 +114,25 @@ const Book = () => {
     });
     clearNotification();
   };
+
+  useEffect(() => {
+    const fetchRating = async () => {
+      if (!user) return;
+      const rating = await getRating(user?.uid, id);
+      setCurrentRating(rating || 0);
+    };
+
+    fetchRating();
+  }, [user, id]);
+
+  useEffect(() => {
+    const fetchBookStatus = async () => {
+      if (!user) return;
+      const status = await getBookStatus(user?.uid, id);
+      setBookState(status);
+    };
+    fetchBookStatus();
+  }, [user, id]);
 
   const { notes, loading, error } = useBookNotes(user?.uid, id);
 
@@ -150,9 +167,6 @@ const Book = () => {
     title: '',
     message: '',
   });
-
-  const [previousRating, setPreviousRating] = useState(0); // Track previous rating
-  const [currentRating, setCurrentRating] = useState(0); // Track current rating
 
   const openLibraryModal = () => setIsLibraryModalOpen(true);
   const closeLibraryModal = () => setIsLibraryModalOpen(false);
@@ -205,6 +219,8 @@ const Book = () => {
         });
         clearNotification();
       }
+      setRatingPrompt('Saved');
+      setIsNotePrompt(true);
     }
   };
 
@@ -279,7 +295,13 @@ const Book = () => {
           />
 
           {isLibraryModalOpen && (
-            <LibraryModal closeModal={closeLibraryModal} />
+            <LibraryModal
+              closeModal={closeLibraryModal}
+              bookId={id}
+              userId={user?.uid}
+              bookState={bookState}
+              setBookState={setBookState}
+            />
           )}
 
           {isShareModalOpen && <ShareModal closeModal={closeShareModal} />}
@@ -310,10 +332,10 @@ const Book = () => {
             />
           </div>
           <div className='rating-tag'>
-            <span> {currentRating === 0 ? 'Rate this book' : `Saved.`}</span>
+            <span> {ratingPrompt}</span>
             {currentRating > 0 && (
               <span className='writeNote'>
-                <a href='#write-note'>Write a note</a>
+                {isNotePrompt && <a href='#write-note'>Write a note</a>}
               </span>
             )}
           </div>

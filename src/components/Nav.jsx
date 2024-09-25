@@ -108,7 +108,7 @@ const Nav = () => {
       });
   };
 
-  const user = useAuth();
+  const { user } = useAuth();
 
   const dontShowSignInButton =
     location.pathname === '/signin' || location.pathname === '/signup';
