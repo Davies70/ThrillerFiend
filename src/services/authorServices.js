@@ -5,6 +5,8 @@ import {
   getDoc,
   doc,
   updateDoc,
+  arrayUnion,
+  arrayRemove,
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
@@ -55,14 +57,39 @@ const addSimilarAuthorsRandomly = async () => {
   }
 };
 
-const followAuthor = (id) => {
-  const author = hotAuthors.find((author) => String(author.id) === id);
-  author.isFollowing = true;
+const followAuthor = (authorId, userId) => {
+  try {
+    const authorRef = doc(db, 'authors', authorId);
+    updateDoc(authorRef, {
+      followers: arrayUnion(userId),
+    });
+    console.log('Author followed successfully');
+  } catch (error) {
+    console.error('Error following author:', error);
+  }
 };
 
-const unfollowAuthor = (id) => {
-  const author = hotAuthors.find((author) => String(author.id) === id);
-  author.isFollowing = false;
+const unfollowAuthor = (authorId, userId) => {
+  try {
+    const authorRef = doc(db, 'authors', authorId);
+    updateDoc(authorRef, {
+      followers: arrayRemove(userId),
+    });
+    console.log('Author unfollowed successfully');
+  } catch (error) {
+    console.error('Error unfollowing author:', error);
+  }
+};
+
+const checkFollowing = async (authorId, userId) => {
+  try {
+    const authorRef = doc(db, 'authors', authorId);
+    const authorDoc = await getDoc(authorRef);
+    const authorData = authorDoc.data();
+    return authorData.followers.includes(userId);
+  } catch (error) {
+    console.error('Error checking if following author:', error);
+  }
 };
 
 const getSimilarAuthors = (id, authors) => {
@@ -92,4 +119,5 @@ export default {
   unfollowAuthor,
   getSimilarAuthors,
   addSimilarAuthorsRandomly,
+  checkFollowing,
 };

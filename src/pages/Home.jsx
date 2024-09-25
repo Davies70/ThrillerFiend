@@ -7,31 +7,38 @@ import { useQueries } from '@tanstack/react-query';
 import Loader from '../components/Loader';
 import PersonalizedBanner from '../components/sections/PersonalizedBanner';
 import { useAuth } from '../context/AuthProvider';
+import { getReadLaterAndHaveReadCount } from '../services/userServices';
 
 const Home = () => {
-  const [hotBooksQuery, bestSellerQuery, hotAuthorsQuery] = useQueries({
-    queries: [
-      {
-        queryKey: ['hotbooks'],
-        queryFn: bookServices.getHotBooks,
-      },
-      {
-        queryKey: ['bestsellers'],
-        queryFn: bookServices.getBestSellers,
-      },
-      {
-        queryKey: ['authors'],
-        queryFn: authorServices.getHotAuthors,
-      },
-    ],
-  });
-
   const { user } = useAuth();
+  const [hotBooksQuery, bestSellerQuery, hotAuthorsQuery, countQuery] =
+    useQueries({
+      queries: [
+        {
+          queryKey: ['hotbooks'],
+          queryFn: bookServices.getHotBooks,
+        },
+        {
+          queryKey: ['bestsellers'],
+          queryFn: bookServices.getBestSellers,
+        },
+        {
+          queryKey: ['authors'],
+          queryFn: authorServices.getHotAuthors,
+        },
+        {
+          queryKey: ['count'],
+          queryFn: () => getReadLaterAndHaveReadCount(user.uid),
+          enabled: !!user?.uid,
+        },
+      ],
+    });
 
   if (
     hotBooksQuery.isLoading ||
     bestSellerQuery.isLoading ||
-    hotAuthorsQuery.isLoading
+    hotAuthorsQuery.isLoading ||
+    countQuery.isLoading
   ) {
     return <Loader />;
   }
@@ -48,9 +55,14 @@ const Home = () => {
     return <div>Something went wrong with authors</div>;
   }
 
+  if (countQuery.isError) {
+    return <div>Something went wrong with count</div>;
+  }
+
   const hotbooks = hotBooksQuery.data;
   const bestSellers = bestSellerQuery.data;
   const hotAuthors = hotAuthorsQuery.data;
+  const { haveReadCount, readLaterCount } = countQuery.data;
 
   return (
     <div>
@@ -66,7 +78,8 @@ const Home = () => {
       {user ? (
         <PersonalizedBanner
           username={user.displayName}
-          booksRead={25}
+          booksRead={haveReadCount}
+          booksToRead={readLaterCount}
           favoriteGenre='10'
         />
       ) : (

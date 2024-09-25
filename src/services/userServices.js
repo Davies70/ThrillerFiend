@@ -145,17 +145,27 @@ const getBookStatus = async (userId, bookId) => {
 const addBookStatus = async (userId, bookId, status) => {
   try {
     const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    const readLater = userDoc.data().readLater;
 
     switch (status) {
       case 'haveRead':
         await updateDoc(userRef, {
           haveRead: arrayUnion(bookId),
         });
+
+        if (readLater.includes(bookId)) {
+          await updateDoc(userRef, {
+            readLater: arrayRemove(bookId),
+          });
+        }
+
         break;
       case 'readLater':
         await updateDoc(userRef, {
           readLater: arrayUnion(bookId),
         });
+
         break;
       case 'favorites':
         await updateDoc(userRef, {
@@ -202,6 +212,22 @@ const removeBookStatus = async (userId, bookId, status) => {
   }
 };
 
+const getReadLaterAndHaveReadCount = async (userId) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    const userDocData = userDoc.data();
+
+    const haveReadCount = userDocData.haveRead.length;
+    const readLaterCount = userDocData.readLater.length;
+
+    return { haveReadCount, readLaterCount };
+  } catch (error) {
+    console.error('Error fetching read later and have read count:', error);
+    return { haveReadCount: 0, readLaterCount: 0 };
+  }
+};
+
 export {
   createUser,
   writeNote,
@@ -212,4 +238,5 @@ export {
   getBookStatus,
   addBookStatus,
   removeBookStatus,
+  getReadLaterAndHaveReadCount,
 };

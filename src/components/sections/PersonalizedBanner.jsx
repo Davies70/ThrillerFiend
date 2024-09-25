@@ -3,7 +3,7 @@ import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
 import '../../styles/PersonalizedBanner.css';
 import PropTypes from 'prop-types';
 
-const PersonalizedBanner = ({ username, booksRead, favoriteGenre }) => {
+const PersonalizedBanner = ({ username, booksRead, booksToRead }) => {
   return (
     <div className='personalized-banner'>
       <div className='banner-content'>
@@ -19,11 +19,13 @@ const PersonalizedBanner = ({ username, booksRead, favoriteGenre }) => {
           <div className='stat'>
             <BookOutlinedIcon className='icon' fontSize='30rem' />
             <p className='stat-value'>{booksRead}</p>
-            <p className='stat-label'>Books Read</p>
+            <p className='stat-label'>
+              {booksRead > 1 ? 'Books Read' : 'Book Read'}
+            </p>
           </div>
           <div className='stat'>
             <StarBorderOutlinedIcon className='icon' fontSize='30rem' />
-            <p className='stat-value'>{favoriteGenre}</p>
+            <p className='stat-value'>{booksToRead}</p>
             <p className='stat-label'>Want To Read</p>
           </div>
         </div>
@@ -35,7 +37,7 @@ const PersonalizedBanner = ({ username, booksRead, favoriteGenre }) => {
 PersonalizedBanner.propTypes = {
   username: PropTypes.string.isRequired,
   booksRead: PropTypes.number.isRequired,
-  favoriteGenre: PropTypes.string.isRequired,
+  booksToRead: PropTypes.number.isRequired,
 };
 
 export default PersonalizedBanner;

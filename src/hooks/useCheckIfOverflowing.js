@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 const useCheckIfOverflowing = (descriptionRef, isTextExpanded, description) => {
-  const [showButton, setShowButton] = useState(false);
+  const [showButton, setShowButton] = useState(true);
 
   useEffect(() => {
     const checkIfOverflowing = () => {

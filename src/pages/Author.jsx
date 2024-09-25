@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import authorServices from '../services/authorServices.js';
 import bookServices from '../services/bookServices.js';
 import { useParams } from 'react-router-dom';
@@ -6,11 +6,14 @@ import BookScroller from '../components/sections/BookScroller.jsx';
 import Notification from '../components/Notification';
 import '../styles/Author.css';
 import OutsideClickHandler from '../components/OutsideClickHandler.jsx';
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import Loader from '../components/Loader.jsx';
+import { useAuth } from '../context/AuthProvider.jsx';
 
 export default function Author() {
   const { id } = useParams();
+  const { user } = useAuth();
+
   const [isFollowing, setIsFollowing] = useState(false);
   const [notification, setNotification] = useState({
     title: '',
@@ -18,6 +21,15 @@ export default function Author() {
     type: '',
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const checkFollowing = async () => {
+      const isFollowing = await authorServices.checkFollowing(id, user.uid);
+      setIsFollowing(isFollowing);
+    };
+    checkFollowing();
+  }, [user, id]);
 
   const {
     data: author,
@@ -85,22 +97,13 @@ export default function Author() {
     similarAuthors,
   } = author;
 
-  // const {
-  //   authorName,
-  //   description,
-  //   nationality,
-  //   coverPhoto,
-  //   genres,
-  //   similarAuthors,
-  // } = author;
-
   const followClass = isFollowing
     ? 'unfollow-button followed'
     : 'follow-button';
 
   const follow = () => {
     try {
-      authorServices.followAuthor(id);
+      authorServices.followAuthor(id, user?.uid);
       setNotification({
         title: 'Success',
         message: `You are now following ${authorName}`,
@@ -121,7 +124,7 @@ export default function Author() {
 
   const unfollowAfterModal = () => {
     try {
-      authorServices.unfollowAuthor(id);
+      authorServices.unfollowAuthor(id, user?.uid);
       setNotification({
         title: 'Success',
         message: `You have unfollowed ${authorName}`,
@@ -157,8 +160,6 @@ export default function Author() {
     event.preventDefault();
     setNotification({ title: '', message: '', type: '' });
   };
-
-  console.log({ similarAuthors });
 
   return (
     <div className='author-page'>
