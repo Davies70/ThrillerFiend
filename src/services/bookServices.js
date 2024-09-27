@@ -84,9 +84,7 @@ async function getHotBooks() {
     })
   );
 
-  console.log({ hotBooks });
-
-  data = hotBooks.filter((book) => book !== undefined).slice(0, 12);
+  data = hotBooks.filter((book) => book !== undefined);
   if (data.length > 0) setWithExpiry('hotBooks', data, CACHE_TTL);
 
   return data;
@@ -150,8 +148,6 @@ const getBooksByAuthor = async (author) => {
       book_id: book.id,
     };
   });
-
-  console.log({ uniqueBooks });
 
   const toLowerCaseNotableWorks = notableWorks.map((notableWork) =>
     notableWork.toLowerCase()
@@ -228,23 +224,6 @@ const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
     );
     return result;
   }
-  // const queryParam = {
-  //   q: authorNameAndTitle,
-  //   key: BOOKS_API_KEY,
-  //   maxResults: 20,
-  //   langRestrict: 'en',
-  //   country: 'US',
-  //   orderBy: 'relevance',
-  //   printType: 'all',
-  // };
-  // const params = new URLSearchParams(queryParam).toString();
-  // const config = {
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //   },
-  //   method: 'GET',
-  //   url: `${BOOKS_BASEURL}${params}`,
-  // };
 
   console.log(
     `Book by ${authorNameAndTitle} data not in localStorage or expired, fetching from API...`
@@ -262,12 +241,20 @@ const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
       book.volumeInfo.pageCount > 0
   );
 
-  return {
+  const dataToStore = {
     title: data.volumeInfo?.title,
     book_image: data.volumeInfo.imageLinks?.thumbnail,
     authors: data.volumeInfo?.authors,
     book_id: data.id,
   };
+
+  setWithExpiry(
+    `bookByAuthorAndTitle-${authorNameAndTitle}`,
+    dataToStore,
+    CACHE_TTL
+  );
+
+  return dataToStore;
 };
 
 const getSimilarBooks = async (title) => {

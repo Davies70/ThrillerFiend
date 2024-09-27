@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
 import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
 const Nav = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -201,7 +202,7 @@ const Nav = () => {
             </span>
             <span className='nav-text'>Free Thrills</span>
           </Link>
-          {/* <Link
+          <Link
             className={
               location.pathname === '/collections'
                 ? 'nav-link-active'
@@ -213,7 +214,7 @@ const Nav = () => {
               <LibraryBooksIcon />
             </span>
             <span className='nav-text home-icon'>Collections</span>
-          </Link> */}
+          </Link>
           <button className='search-icon-small' onClick={handleSearchIconClick}>
             <SearchIcon />
           </button>
@@ -262,6 +263,7 @@ const Nav = () => {
                 sx={{
                   borderRadius: '1.5rem',
                 }}
+                size='small'
               >
                 <span>Sign out</span>
               </Button>
@@ -275,6 +277,7 @@ const Nav = () => {
                   sx={{
                     borderRadius: '1.5rem',
                   }}
+                  size='small'
                 >
                   <Link to={'/signin'}>Sign in</Link>
                 </Button>

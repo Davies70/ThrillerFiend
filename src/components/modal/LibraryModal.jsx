@@ -31,8 +31,6 @@ const LibraryModal = ({
     }
   };
 
-  console.log('bookState:', bookState);
-
   return (
     <OutsideClickHandler onOutsideClick={closeModal} className='modal'>
       <h2>Collection</h2>

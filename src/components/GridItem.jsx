@@ -1,31 +1,24 @@
-
 import Proptypes from 'prop-types';
 import '../styles/GridItem.css';
 import OutboundIcon from '@mui/icons-material/Outbound';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import AddIcon from '@mui/icons-material/Add';
+import { Link } from 'react-router-dom';
 
 const GridItem = ({ book }) => {
-  const { title, book_image, authors } = book;
+  const { title, book_image, authors, book_id } = book;
   return (
     <div className='gridItem'>
       <div className='gridItem-content'>
-        <div className='grid-left'>
+        <Link className='grid-left' to={`/book/${book_id}`}>
           <img src={book_image} loading='lazy' alt={title} />
           <button tabIndex='-1' className='visitButton'>
             <OutboundIcon className='visit' />
           </button>
-          {/* <a className='bg rectangle'>
-            
-            <button className='' tabIndex='-1'>
-              <ArrowCircleRightOutlinedIcon />
-            </button>
-           
-          </a> */}
-        </div>
+        </Link>
         <div className='grid-center'>
           <div className='grid-center-title'>
-            <a>{title}</a>
+            <Link to={`/book/${book_id}`}>{title}</Link>
           </div>
           <span className='grid-center-author'>
             <a>{authors.join(', ')}</a>

@@ -1,6 +1,6 @@
 import authorServices from '../services/authorServices';
 import Shape from '../components/Shape';
-import '../styles/Authors.css';
+import '../styles/HotBooks.css';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '../components/Loader';
 
@@ -24,15 +24,7 @@ const Authors = () => {
 
   const shape = 'circle';
   return (
-    <div
-      className='authors'
-      style={{
-        direction: 'ltr',
-        willChange: 'transform',
-        overflow: 'auto',
-        position: 'relative',
-      }}
-    >
+    <div className='authors'>
       <header>
         <div className='header-text'>
           <h2>Hot Authors</h2>

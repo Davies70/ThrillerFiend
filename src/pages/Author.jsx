@@ -97,9 +97,7 @@ export default function Author() {
     similarAuthors,
   } = author;
 
-  const followClass = isFollowing
-    ? 'unfollow-button followed'
-    : 'follow-button';
+  const followClass = isFollowing ? 'unfollow-button' : 'follow-button';
 
   const follow = () => {
     try {

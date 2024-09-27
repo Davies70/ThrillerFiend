@@ -1,13 +1,84 @@
 import '../styles/Shape.css';
 import Proptypes from 'prop-types';
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import { Link } from 'react-router-dom';
-// import Loader from './Loader';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import IconButton from '@mui/material/IconButton';
+import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
+import {
+  addBookStatus,
+  getBookStatus,
+  removeBookStatus,
+} from '../services/userServices';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useAuth } from '../context/AuthProvider';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 
 const Shape = ({ shape, isAuthorName, book, author }) => {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const [isRead, setIsRead] = useState(false);
+  const [isReadLater, setIsReadLater] = useState(false);
+
+  const {
+    data: state,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['bookStatus', user?.uid, book?.book_id],
+    queryFn: () => getBookStatus(user?.uid, book?.book_id),
+    enabled: !!user?.uid && !!book,
+  });
+
+  useEffect(() => {
+    if (state) {
+      setIsRead(state.haveRead);
+      setIsReadLater(state.readLater);
+    }
+  }, [state]);
+
+  const updateBookStatusMutation = useMutation({
+    mutationFn: ({ userId, bookId, status, action }) => {
+      if (action === 'add') {
+        return addBookStatus(userId, bookId, status);
+      } else if (action === 'remove') {
+        return removeBookStatus(userId, bookId, status);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['bookStatus', user?.uid, book?.book_id]);
+    },
+  });
+
+  const handleAddToReadLater = async () => {
+    updateBookStatusMutation.mutate({
+      userId: user?.uid,
+      bookId: book?.book_id,
+      status: 'readLater',
+      action: 'add',
+    });
+  };
+
+  const handleMarkAsRead = async () => {
+    updateBookStatusMutation.mutate({
+      userId: user?.uid,
+      bookId: book?.book_id,
+      status: 'haveRead',
+      action: 'add',
+    });
+  };
+
+  // const handleRemoveReadLater = async () => {
+  //   updateBookStatusMutation.mutate({
+  //     userId: user?.uid,
+  //     bookId: book?.book_id,
+  //     status: 'readLater',
+  //     action: 'remove',
+  //   });
+  // };
+
   if (shape === 'circle') {
+    // ... (circle shape rendering remains unchanged)
     const { authorName, coverPhoto, id, name } = author;
     return (
       <div className='card'>
@@ -45,39 +116,57 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
       </div>
     );
   } else {
-    const { title, book_image, authors, book_id } = book;
+    const { title, book_image, authors, book_id } = book || {};
     const authorName =
       typeof authors === 'string' ? authors : authors?.join(', ');
-    // const data = isDataAvailable ? book : null;
+
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Error fetching book status</div>;
 
     return (
       <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper square'>
             {book_image ? (
-              <img src={book_image} loading='lazy' alt={title} style={{}} />
+              <img src={book_image} loading='lazy' alt={title} />
             ) : (
               <img
                 src={`https://lgimages.s3.amazonaws.com/nc-md.gif`}
                 loading='lazy'
                 alt={title}
-                style={{}}
               />
             )}
 
-            <Link className='bg square' to={`/book/${book_id}`}>
-              <IconButton
-                className='top-left'
-                title='Add to Read Later'
-                aria-label='Add to Read Later'
-              >
-                <BookmarkAddOutlinedIcon />
-              </IconButton>
-
-              <button className='right-button'>
-                <MoreHorizOutlinedIcon />
-              </button>
-            </Link>
+            <div className='bg square'>
+              {!isRead && (
+                <IconButton
+                  title={isReadLater ? 'Mark as Read' : 'Add to Read Later'}
+                  aria-label={
+                    isReadLater ? 'Mark as Read' : 'Add to Read Later'
+                  }
+                  onClick={
+                    isReadLater ? handleMarkAsRead : handleAddToReadLater
+                  }
+                  className='top-right'
+                >
+                  {isReadLater ? (
+                    <CheckCircleIcon color='white' />
+                  ) : (
+                    <BookmarkAddOutlinedIcon />
+                  )}
+                </IconButton>
+              )}
+              {isRead && (
+                <IconButton
+                  title='Read'
+                  aria-label='Read'
+                  disabled
+                  className='top-right'
+                >
+                  <CheckCircleIcon color='blue' />
+                </IconButton>
+              )}
+            </div>
           </div>
           <div className='primary-tag'>
             <Link className='taglink' to={`/book/${book_id}`} title={title}>
@@ -96,16 +185,12 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
 };
 
 Shape.propTypes = {
-  name: Proptypes.string,
-  photo: Proptypes.string,
-  shape: Proptypes.string,
-  authors: Proptypes.oneOfType([Proptypes.array, Proptypes.string]),
+  shape: Proptypes.string.isRequired,
   isAuthorName: Proptypes.bool,
-  id: Proptypes.oneOfType([Proptypes.string, Proptypes.number]),
-  volumeId: Proptypes.string,
   book: Proptypes.object,
   author: Proptypes.object,
-  isDataAvailable: Proptypes.bool,
 };
+
+// ... (PropTypes remain unchanged)
 
 export default Shape;

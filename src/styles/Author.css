@@ -276,33 +276,30 @@
   content: 'Follow'; /* Default text */
 }
 
-.unfollow-button.followed::after {
-  content: 'Following'; /* Text when followed */
-  font-weight: bold;
-}
-
-.unfollow-button.followed:hover::after {
-  content: 'Unfollow'; /* Text when followed and hovered */
-  font-weight: lighter;
-}
-
 /* Hover Styles */
 .follow-button:hover {
   background-color: var(--hover-blue);
 }
 
-.unfollow-button:hover {
-  background-color: rgba(238, 51, 18, 0.415);
-  color: lightcoral;
-}
-
-@media (hover: none) {
-  .unfollow-button.followed::after {
+@media (hover: hover) and (pointer: fine) {
+  .unfollow-button::after {
     content: 'Following'; /* Text when followed */
     font-weight: bold;
   }
-  .unfollow-button.followed:hover::after {
-    content: 'Unfollow'; /* Text when followed and hovered */
+  .unfollow-button:hover {
+    background-color: rgba(238, 51, 18, 0.415);
+    color: lightcoral;
+  }
+  .unfollow-button:hover::after {
+    /* Text when followed and hovered */
     font-weight: lighter;
+    content: 'Unfollow';
+  }
+}
+
+@media (hover: none) {
+  .unfollow-button::after {
+    content: 'Following'; /* Text when followed */
+    font-weight: bold;
   }
 }

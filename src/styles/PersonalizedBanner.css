@@ -3,8 +3,10 @@
   padding: 1rem;
   border-radius: 0.6667rem;
   box-shadow: 0 0.3333rem 0.5rem rgba(0, 0, 0, 0.1);
-  margin: 0 2rem;
-  margin-top: 2rem;
+  margin: auto;
+  width: 70%;
+  max-width: 1000px;
+  margin-top: 4rem;
 }
 
 .personalized-banner h1 {
@@ -33,7 +35,7 @@
   margin: 0;
 }
 
-.user-info-child span {
+.user-info-child h2 {
   font-family: 'Nosifer', sans-serif;
   font-size: 1.5rem;
   padding-bottom: 0.7rem;

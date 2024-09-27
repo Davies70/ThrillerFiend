@@ -1,4 +1,3 @@
-.authors,
 .hotbooks {
   margin-top: 1.5625rem; /* 25px / 16 */
   box-sizing: content-box !important;
@@ -11,13 +10,21 @@
   position: relative;
 }
 
-.authors,
 .hotbooks {
   padding-inline-start: 1.25rem; /* 20px / 16 */
   padding-inline-end: 1.25rem; /* 20px / 16 */
 }
+.hotbooks-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem; /* Adjust the gap between items as needed */
+}
 
-.authors .card,
+.hotbooks .card {
+  flex: 1 1 calc(33.333% - 1rem); /* Adjust the percentage to control the number of items per row */
+  box-sizing: border-box;
+}
+
 .hotbooks .card {
   display: inline-block;
 }
@@ -28,7 +35,6 @@
 }
 
 @media only screen and (min-width: 480px) {
-  .authors,
   .hotbooks {
     padding-inline-start: 2.25rem; /* 36px / 16 */
     padding-inline-end: 2.25rem; /* 36px / 16 */
@@ -36,7 +42,6 @@
 }
 
 @media only screen and (min-width: 1289px) {
-  .authors,
   .hotbooks {
     padding-inline-start: 3.25rem; /* 52px / 16 */
     padding-inline-end: 3.25rem; /* 52px / 16 */

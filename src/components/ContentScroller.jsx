@@ -10,6 +10,22 @@ const ContentScroller = ({
   isAuthorName,
   isDataAvailable,
 }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div
+        className='empty-message'
+        style={{
+          textAlign: 'center',
+          color: '#888',
+          fontSize: '18px',
+          padding: '20px',
+          backgroundColor: '#f0f0f0', // Light grey background to differentiate from black background
+        }}
+      >
+        No content available at the moment.
+      </div>
+    );
+  }
   return (
     <div className='wrapper'>
       <div className='content-scroll' ref={contentScrollRef}>

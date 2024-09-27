@@ -9,6 +9,8 @@ import {
   arrayUnion,
 } from 'firebase/firestore';
 
+import bookServices from './bookServices';
+
 const createUser = async (id) => {
   try {
     const userRef = doc(db, 'users', id);
@@ -20,7 +22,7 @@ const createUser = async (id) => {
       favorites: [],
       notes: {},
       ratings: {},
-      authorsFollowed: [],
+      following: [],
       created: serverTimestamp(),
     });
     console.log('User created successfully');
@@ -115,30 +117,40 @@ const getRating = async (userId, bookId) => {
   }
 };
 
-const getBookStatus = async (userId, bookId) => {
+const getBookStatus = async (userId, bookId, status) => {
   try {
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
 
     if (!userDoc.exists()) {
       console.log('User document does not exist');
-      return { haveRead: false, readLater: false, favorites: false };
+      return false;
     }
 
     const userDocData = userDoc.data();
+    if (!status) {
+      console.log('Returning all book statuses');
+      return {
+        haveRead: userDocData.haveRead?.includes(bookId) || false,
+        readLater: userDocData.readLater?.includes(bookId) || false,
+        favorites: userDocData.favorites?.includes(bookId) || false,
+      };
+    }
 
-    const haveRead = userDocData.haveRead || [];
-    const readLater = userDocData.readLater || [];
-    const favorites = userDocData.favorites || [];
-
-    return {
-      haveRead: haveRead.includes(bookId),
-      readLater: readLater.includes(bookId),
-      favorites: favorites.includes(bookId),
-    };
+    switch (status) {
+      case 'haveRead':
+        return userDocData.haveRead?.includes(bookId) || false;
+      case 'readLater':
+        return userDocData.readLater?.includes(bookId) || false;
+      case 'favorites':
+        return userDocData.favorites?.includes(bookId) || false;
+      default:
+        console.error('Invalid status:', status);
+        return false;
+    }
   } catch (error) {
     console.error('Error fetching book status:', error);
-    return { haveRead: false, readLater: false, favorites: false };
+    return false;
   }
 };
 
@@ -171,6 +183,7 @@ const addBookStatus = async (userId, bookId, status) => {
         await updateDoc(userRef, {
           favorites: arrayUnion(bookId),
         });
+
         break;
       default:
         console.error('Invalid status:', status);
@@ -228,6 +241,46 @@ const getReadLaterAndHaveReadCount = async (userId) => {
   }
 };
 
+const getReadLaters = async (userId) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    const userDocData = userDoc.data();
+    const readLater = userDocData.readLater;
+    if (!readLater || readLater.length === 0) return [];
+    const result = Promise.all(
+      readLater.map(
+        async (bookId) => await bookServices.getBookByVolumeId(bookId)
+      )
+    );
+    console.log('Read laters:', result);
+    return result;
+  } catch (error) {
+    console.error('Error fetching read laters:', error);
+    return [];
+  }
+};
+
+const getHaveReads = async (userId) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    const userDocData = userDoc.data();
+    const haveRead = userDocData.haveRead;
+    if (!haveRead || haveRead.length === 0) return [];
+    const result = Promise.all(
+      haveRead.map(
+        async (bookId) => await bookServices.getBookByVolumeId(bookId)
+      )
+    );
+    console.log('Have reads:', result);
+    return result;
+  } catch (error) {
+    console.error('Error fetching have reads:', error);
+    return [];
+  }
+};
+
 export {
   createUser,
   writeNote,
@@ -239,4 +292,6 @@ export {
   addBookStatus,
   removeBookStatus,
   getReadLaterAndHaveReadCount,
+  getReadLaters,
+  getHaveReads,
 };

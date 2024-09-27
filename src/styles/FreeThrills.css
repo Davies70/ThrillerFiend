@@ -1,0 +1,47 @@
+h1,
+h2 {
+  color: #00ffff;
+}
+
+.blog-post {
+  margin-bottom: 40px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 20px;
+}
+
+.blog-post:last-child {
+  border-bottom: none;
+}
+
+.fact-box {
+  background-color: #111;
+  border-left: 5px solid #00ffff;
+  padding: 15px;
+  margin: 20px 0;
+}
+
+.pop-culture {
+  font-style: italic;
+  color: #ccc;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  margin: 20px 0;
+}
+
+.cta-button {
+  display: inline-block;
+  background-color: #00ffff;
+  color: #000000;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.cta-button:hover {
+  background-color: #00cccc;
+}

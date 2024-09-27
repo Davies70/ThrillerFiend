@@ -59,9 +59,9 @@ const addSimilarAuthorsRandomly = async () => {
 
 const followAuthor = (authorId, userId) => {
   try {
-    const authorRef = doc(db, 'authors', authorId);
-    updateDoc(authorRef, {
-      followers: arrayUnion(userId),
+    const userRef = doc(db, 'users', userId);
+    updateDoc(userRef, {
+      following: arrayUnion(authorId),
     });
     console.log('Author followed successfully');
   } catch (error) {
@@ -71,9 +71,9 @@ const followAuthor = (authorId, userId) => {
 
 const unfollowAuthor = (authorId, userId) => {
   try {
-    const authorRef = doc(db, 'authors', authorId);
-    updateDoc(authorRef, {
-      followers: arrayRemove(userId),
+    const userRef = doc(db, 'authors', userId);
+    updateDoc(userRef, {
+      following: arrayRemove(authorId),
     });
     console.log('Author unfollowed successfully');
   } catch (error) {
@@ -83,10 +83,10 @@ const unfollowAuthor = (authorId, userId) => {
 
 const checkFollowing = async (authorId, userId) => {
   try {
-    const authorRef = doc(db, 'authors', authorId);
-    const authorDoc = await getDoc(authorRef);
-    const authorData = authorDoc.data();
-    return authorData.followers.includes(userId);
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    const userData = userDoc.data();
+    return userData.following.includes(authorId);
   } catch (error) {
     console.error('Error checking if following author:', error);
   }
@@ -111,6 +111,26 @@ const getSimilarAuthors = (id, authors) => {
   return getRandomAuthors(3);
 };
 
+const getFollowedAuthors = async (userId) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    const userData = userDoc.data();
+    const followedAuthors = [];
+    if (!userData?.following || !userData?.following.length === 0)
+      return followedAuthors;
+
+    for (const authorId of userData.following) {
+      const authorRef = doc(db, 'authors', authorId);
+      const authorDoc = await getDoc(authorRef);
+      followedAuthors.push({ id: authorDoc.id, ...authorDoc.data() });
+    }
+    return followedAuthors;
+  } catch (error) {
+    console.error('Error fetching authors:', error);
+  }
+};
+
 export default {
   getHotAuthors,
   getAuthors,
@@ -120,4 +140,5 @@ export default {
   getSimilarAuthors,
   addSimilarAuthorsRandomly,
   checkFollowing,
+  getFollowedAuthors,
 };

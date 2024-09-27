@@ -82,7 +82,6 @@
   height: 100%;
   width: 100%;
   transition: opacity 0.2s ease 0s;
-  cursor: pointer;
 }
 
 .imageWrapper:hover .bg,
@@ -91,7 +90,7 @@
   opacity: 1;
 }
 
-.bg .top-left {
+.bg .top-right {
   color: white;
   border: 0;
   box-shadow: none;
@@ -102,10 +101,10 @@
   background-color: transparent;
   font-weight: bold;
   top: 3%;
-  left: 73%; /* 15px / 16 */
+  left: 68%; /* 15px / 16 */
 }
 
-.bg .top-left:hover {
+.top-right:hover {
   color: var(--hover-blue);
   cursor: pointer;
 }
@@ -128,7 +127,6 @@
   background-color: var(--light-gray-1);
   transform: scale(1.2);
   transition: opacity 0.2s ease 0s;
-  cursor: pointer;
 }
 
 .bg .right-button {
@@ -146,7 +144,7 @@
   font-weight: bold;
 }
 
-.bg .right-button:hover {
+.right-button:hover {
   color: var(--hover-blue);
   cursor: pointer;
 }
