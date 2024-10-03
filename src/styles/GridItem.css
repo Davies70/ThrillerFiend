@@ -78,6 +78,16 @@
   line-height: 1.25rem; /* 20px / 16px per rem */
   cursor: pointer;
 }
+
+.grid-center-title a {
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .grid-center-author {
   margin-top: 0.125rem; /* 2px / 16 */
   color: rgba(255, 255, 255, 0.6);

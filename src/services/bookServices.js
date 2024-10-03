@@ -520,6 +520,32 @@ const deduplicateAndRankResults = (results, originalQuery) => {
     .slice(0, 8);
 };
 
+const getBooksByQuery = async (query) => {
+  let data = getWithExpiry(`booksByQuery-${query}`);
+  if (data) {
+    console.log(`Books by ${query} data retrieved from localStorage`);
+    return data;
+  }
+  console.log(
+    `Books by ${query} data not in localStorage or expired, fetching from API...`
+  );
+  const config = buildQueryConfig(query, null, 20);
+  data = await fetch(config);
+  if (!data.items || !Array.isArray(data.items)) return [];
+  const dataToStore = data.items.map((book) => {
+    return {
+      title: book.volumeInfo?.title,
+      book_image: book.volumeInfo.imageLinks?.thumbnail,
+      authors: book.volumeInfo?.authors,
+      book_id: book.id,
+    };
+  });
+
+  setWithExpiry(`booksByQuery-${query}`, dataToStore, CACHE_TTL);
+
+  return dataToStore;
+};
+
 export default {
   getHotBooks,
   getBooksByAuthor,
@@ -528,4 +554,5 @@ export default {
   getBookByAuthorAndTitle,
   getSimilarBooks,
   getBestSellers,
+  getBooksByQuery,
 };

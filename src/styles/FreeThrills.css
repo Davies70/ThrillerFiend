@@ -1,6 +1,16 @@
-h1,
-h2 {
-  color: #00ffff;
+.free-thrills h2 {
+  margin: 0;
+  margin-top: 2rem;
+}
+
+.free-thrills h1 {
+  margin: 0;
+}
+
+.free-thrills {
+  max-width: 50rem;
+  margin: 0 auto;
+  padding: 1.25rem;
 }
 
 .blog-post {
@@ -9,15 +19,25 @@ h2 {
   padding-bottom: 20px;
 }
 
+.blog-link {
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.blog-link:hover {
+  color: #00cccc;
+}
+
 .blog-post:last-child {
   border-bottom: none;
 }
 
 .fact-box {
   background-color: #111;
-  border-left: 5px solid #00ffff;
+  border-left: 5px solid var(--blue-text);
   padding: 15px;
-  margin: 20px 0;
+  margin: 1.25rem 0;
 }
 
 .pop-culture {
@@ -25,15 +45,15 @@ h2 {
   color: #ccc;
 }
 
-img {
+.blog-img {
   max-width: 100%;
   height: auto;
-  margin: 20px 0;
+  margin: 1.25rem 0;
 }
 
 .cta-button {
   display: inline-block;
-  background-color: #00ffff;
+  background-color: var(--blue-text);
   color: #000000;
   padding: 10px 20px;
   text-decoration: none;
@@ -43,5 +63,5 @@ img {
 }
 
 .cta-button:hover {
-  background-color: #00cccc;
+  background-color: #005f5f;
 }

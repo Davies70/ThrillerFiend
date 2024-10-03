@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
         console.error('Error setting up auth persistence:', error);
       }
     };
-    setUpAuth;
+    setUpAuth();
   }, []);
 
   const value = {

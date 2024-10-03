@@ -27,7 +27,6 @@
   color: #fff;
   width: 100%;
   height: 100%;
-  cursor: pointer;
   /* justify-content: space-around; */
   text-decoration: none;
   list-style-type: none;
@@ -114,6 +113,8 @@
 .sign-in-wrapper {
   margin: 0 0 0 1rem; /* 16px / 16px per rem */
   padding: 0 0.75rem 0 0; /* 12px / 16px per rem */
+  display: inline-flex;
+  justify-content: center;
 }
 
 /* Sign-in Button Hover Styles */
@@ -127,6 +128,8 @@
 .sign-out-wrapper {
   margin: 0 0 0 1rem; /* 16px / 16px per rem */
   padding: 0.5 0.75rem 0 0; /* 12px / 16px per rem */
+  display: inline-flex;
+  justify-content: center;
 }
 
 /* Sign-out Button Hover Styles */

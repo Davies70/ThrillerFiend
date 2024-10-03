@@ -9,10 +9,13 @@ import OutsideClickHandler from '../components/OutsideClickHandler.jsx';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import Loader from '../components/Loader.jsx';
 import { useAuth } from '../context/AuthProvider.jsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function Author() {
   const { id } = useParams();
   const { user } = useAuth();
+
+  const navigate = useNavigate();
 
   const [isFollowing, setIsFollowing] = useState(false);
   const [notification, setNotification] = useState({
@@ -100,6 +103,8 @@ export default function Author() {
   const followClass = isFollowing ? 'unfollow-button' : 'follow-button';
 
   const follow = () => {
+    !user && navigate('/signin');
+    if (!user) return;
     try {
       authorServices.followAuthor(id, user?.uid);
       setNotification({
@@ -121,6 +126,8 @@ export default function Author() {
   };
 
   const unfollowAfterModal = () => {
+    !user && navigate('/signin');
+    if (!user) return;
     try {
       authorServices.unfollowAuthor(id, user?.uid);
       setNotification({

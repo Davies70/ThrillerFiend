@@ -8,6 +8,7 @@ import { auth, provider } from '../firebase/config';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import Alert from '@mui/material/Alert';
 import Loader from '../components/Loader';
+import { createUser } from '../services/userServices';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
@@ -53,9 +54,9 @@ const SignIn = () => {
         const user = response.user;
         sessionStorage.setItem('user', JSON.stringify(user));
         console.log('Successfully signed in with Google');
-        console.log({ response });
         setEmail('');
         setPassword('');
+        await createUser(user.uid);
         navigate('/');
       } else {
         setSignInError('An error occurred while signing in with Google');
@@ -84,6 +85,7 @@ const SignIn = () => {
               autoComplete='off'
               value={email}
               onChange={({ target }) => setEmail(target.value)}
+              id='email'
             />
           </div>
           <div className='input-group'>
@@ -93,6 +95,7 @@ const SignIn = () => {
               autoComplete='off'
               value={password}
               onChange={({ target }) => setPassword(target.value)}
+              id='password'
             />
           </div>
         </div>

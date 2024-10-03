@@ -13,12 +13,21 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useAuth } from '../context/AuthProvider';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Shape = ({ shape, isAuthorName, book, author }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [isRead, setIsRead] = useState(false);
   const [isReadLater, setIsReadLater] = useState(false);
+
+  const navigate = useNavigate();
+
+  const redirectToLogIn = () => {
+    if (!user) {
+      navigate('/signin');
+    }
+  };
 
   const {
     data: state,
@@ -51,21 +60,25 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
   });
 
   const handleAddToReadLater = async () => {
-    updateBookStatusMutation.mutate({
-      userId: user?.uid,
-      bookId: book?.book_id,
-      status: 'readLater',
-      action: 'add',
-    });
+    redirectToLogIn();
+    user &&
+      updateBookStatusMutation.mutate({
+        userId: user?.uid,
+        bookId: book?.book_id,
+        status: 'readLater',
+        action: 'add',
+      });
   };
 
   const handleMarkAsRead = async () => {
-    updateBookStatusMutation.mutate({
-      userId: user?.uid,
-      bookId: book?.book_id,
-      status: 'haveRead',
-      action: 'add',
-    });
+    redirectToLogIn();
+    user &&
+      updateBookStatusMutation.mutate({
+        userId: user?.uid,
+        bookId: book?.book_id,
+        status: 'haveRead',
+        action: 'add',
+      });
   };
 
   // const handleRemoveReadLater = async () => {

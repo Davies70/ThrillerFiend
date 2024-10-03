@@ -251,7 +251,7 @@
 }
 
 .notecard-header {
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .notecard-container {
@@ -259,6 +259,13 @@
   gap: 1rem;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 1.5rem;
+}
+
+.no-notes {
+  color: var(--light-gray-3);
+  font-size: 1rem;
+  margin: 0;
+  font-style: italic;
 }
 
 textarea:target {

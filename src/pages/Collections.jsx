@@ -5,6 +5,7 @@ import GridScroller from '../components/sections/GridScroller';
 import authorServices from '../services/authorServices';
 import { useAuth } from '../context/AuthProvider';
 import { getReadLaters, getHaveReads } from '../services/userServices';
+import '../styles/Collections.css';
 
 const Collections = () => {
   // return <div>nothing</div>;
@@ -55,7 +56,7 @@ const Collections = () => {
   const haveRead = haveReadQuery.data ?? [];
 
   return (
-    <div>
+    <div className='collections'>
       <h1>Collections</h1>
 
       <BookScroller

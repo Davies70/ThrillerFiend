@@ -24,7 +24,7 @@ const HotBooks = () => {
   return (
     <div className='hotbooks'>
       <header>
-        <div className='header-text'>
+        <div className='hotbooks-header-text'>
           <h2>Thrills of the Week</h2>
         </div>
       </header>

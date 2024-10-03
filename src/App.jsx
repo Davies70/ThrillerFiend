@@ -11,6 +11,7 @@ import Book from './pages/Book';
 import Books from './pages/Book';
 import Authors from './pages/Authors';
 import HotBooks from './pages/HotBooks';
+import SimilarBooks from './pages/SimilarBooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './styles/theme';
@@ -37,6 +38,7 @@ function App() {
               <Route path='/books' element={<Books />} />
               <Route path='/authors' element={<Authors />} />
               <Route path='/hotbooks' element={<HotBooks />} />
+              <Route path='/similarbooks/:id' element={<SimilarBooks />} />
             </Routes>
           </Layout>
         </ThemeProvider>

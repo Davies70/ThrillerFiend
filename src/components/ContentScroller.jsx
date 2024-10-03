@@ -16,6 +16,7 @@ const ContentScroller = ({
         className='empty-message'
         style={{
           textAlign: 'center',
+          fontStyle: 'italic',
           color: '#888',
           fontSize: '18px',
           padding: '20px',

@@ -14,8 +14,11 @@ const LibraryModal = ({
   userId,
   bookState,
   setBookState,
+  redirectToLogIn,
 }) => {
   const toggleState = async (stateKey) => {
+    redirectToLogIn();
+    if (!userId) return;
     try {
       if (bookState[stateKey]) {
         await removeBookStatus(userId, bookId, stateKey);
@@ -94,9 +97,10 @@ const LibraryModal = ({
 LibraryModal.propTypes = {
   closeModal: Proptypes.func.isRequired,
   bookId: Proptypes.string.isRequired,
-  userId: Proptypes.string.isRequired,
+  userId: Proptypes.string,
   bookState: Proptypes.object.isRequired,
   setBookState: Proptypes.func.isRequired,
+  redirectToLogIn: Proptypes.func.isRequired,
 };
 
 export default LibraryModal;

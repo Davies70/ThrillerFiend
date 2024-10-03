@@ -63,6 +63,7 @@ const SignUp = () => {
               autoComplete='off'
               value={userName}
               onChange={({ target }) => setUserName(target.value)}
+              id='username'
             />
           </div>
           <div className='input-group'>
@@ -74,6 +75,7 @@ const SignUp = () => {
               autoComplete='off'
               value={email}
               onChange={({ target }) => setEmail(target.value)}
+              id='email'
             />
           </div>
           <div className='input-group'>
@@ -84,6 +86,7 @@ const SignUp = () => {
               placeholder={'At least 6 characters'}
               value={password}
               onChange={({ target }) => setPassword(target.value)}
+              id='password'
             />
           </div>
         </div>

@@ -18,6 +18,7 @@ import { useAuth } from '../context/AuthProvider';
 import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const Nav = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -109,7 +110,7 @@ const Nav = () => {
       });
   };
 
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   const dontShowSignInButton =
     location.pathname === '/signin' || location.pathname === '/signup';
@@ -200,7 +201,7 @@ const Nav = () => {
             <span id='nav-icon'>
               <WhatshotIcon />
             </span>
-            <span className='nav-text'>Free Thrills</span>
+            <span className='nav-text'>Hot Thrills</span>
           </Link>
           <Link
             className={
@@ -254,7 +255,19 @@ const Nav = () => {
               />
             )}
           </div>
-          {user ? (
+          {loading ? (
+            <li className='loading-button-wrapper'>
+              <LoadingButton
+                loading
+                variant='contained'
+                color='blue'
+                sx={{
+                  borderRadius: '1.5rem',
+                }}
+                size='small'
+              ></LoadingButton>
+            </li>
+          ) : user ? (
             <li className='sign-out-wrapper'>
               <Button
                 onClick={handleSignOut}
@@ -273,7 +286,6 @@ const Nav = () => {
               <li className='sign-in-wrapper'>
                 <Button
                   variant='contained'
-                  color='blue'
                   sx={{
                     borderRadius: '1.5rem',
                   }}
@@ -284,7 +296,18 @@ const Nav = () => {
               </li>
             )
           )}
-          {user ? (
+          {loading ? (
+            <li className='loading-button-wrapper'>
+              <LoadingButton
+                loading
+                variant='contained'
+                sx={{
+                  borderRadius: '1.5rem',
+                }}
+                size='small'
+              ></LoadingButton>
+            </li>
+          ) : user ? (
             <li className='profile p-signout'>
               <button onClick={handleSignOut}>
                 <LogoutIcon />

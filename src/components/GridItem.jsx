@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 const GridItem = ({ book }) => {
   const { title, book_image, authors, book_id } = book;
   return (
-    <div className='gridItem'>
+    <div className='gridItem' title={title}>
       <div className='gridItem-content'>
         <Link className='grid-left' to={`/book/${book_id}`}>
           <img src={book_image} loading='lazy' alt={title} />

@@ -29,11 +29,19 @@ import {
 import { useAuth } from '../context/AuthProvider';
 import LoadingButton from '@mui/lab/LoadingButton';
 import useBookNotes from '../hooks/useBookNotes';
+import { useNavigate } from 'react-router-dom';
 
 const Book = () => {
   const { id } = useParams();
 
   const { user } = useAuth();
+
+  const navigation = useNavigate();
+  const redirectToLogIn = () => {
+    if (!user) {
+      navigation('/signin');
+    }
+  };
 
   const [isTextExpanded, setIsTextExpanded] = useState(false);
 
@@ -301,6 +309,7 @@ const Book = () => {
               userId={user?.uid}
               bookState={bookState}
               setBookState={setBookState}
+              redirectToLogIn={redirectToLogIn}
             />
           )}
 
@@ -418,12 +427,13 @@ const Book = () => {
           <div className='note-actions'>
             <textarea
               type='text'
-              placeholder='Add a note...'
+              placeholder={user ? 'Write a note' : 'Sign in to write a note'}
               rows={10}
               cols={30}
               id='write-note'
               value={noteText}
               onChange={({ target }) => setNoteText(target.value)}
+              disabled={!user}
             />
 
             <span className='save-button'>
@@ -433,6 +443,7 @@ const Book = () => {
                 color='blue'
                 onClick={handleAddNote}
                 size='small'
+                disabled={!user}
               >
                 Save
               </LoadingButton>
@@ -454,7 +465,7 @@ const Book = () => {
                 />
               ))
             ) : (
-              <p>No notes added yet</p>
+              <p className='no-notes'>No notes added yet</p>
             )}
           </div>
         </section>
