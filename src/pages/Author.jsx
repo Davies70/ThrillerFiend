@@ -49,7 +49,7 @@ export default function Author() {
     isError: booksByAuthorIsError,
   } = useQuery({
     queryKey: ['booksByAuthor', id],
-    queryFn: () => bookServices.getBooksByAuthor(author),
+    queryFn: () => bookServices.getBooksByAuthor(author, 'relevance'),
     enabled: !!author,
   });
 

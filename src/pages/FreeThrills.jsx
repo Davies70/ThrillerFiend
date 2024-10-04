@@ -131,7 +131,7 @@ const FreeThrills = () => {
         />
         <p>
           Stieg Larsson&apos;s Millennium series, starting with &quot;
-          <a className='blog-link' href='book/I3grDwAAQBAJ' target='_blank'>
+          <a className='blog-link' href='book/qYcJVplnx5cC' target='_blank'>
             The Girl with the Dragon Tattoo
           </a>
           ,&quot; brought Nordic noir to the global stage and introduced us to

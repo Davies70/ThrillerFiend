@@ -71,7 +71,7 @@ const followAuthor = (authorId, userId) => {
 
 const unfollowAuthor = (authorId, userId) => {
   try {
-    const userRef = doc(db, 'authors', userId);
+    const userRef = doc(db, 'users', userId);
     updateDoc(userRef, {
       following: arrayRemove(authorId),
     });

@@ -6,12 +6,18 @@ import authorServices from '../services/authorServices';
 import { useAuth } from '../context/AuthProvider';
 import { getReadLaters, getHaveReads } from '../services/userServices';
 import '../styles/Collections.css';
+import bookServices from '../services/bookServices';
 
 const Collections = () => {
   // return <div>nothing</div>;
   const { user } = useAuth();
 
-  const [followedAuthorsQuery, wantToReadQuery, haveReadQuery] = useQueries({
+  const [
+    followedAuthorsQuery,
+    wantToReadQuery,
+    haveReadQuery,
+    latestBooksQuery,
+  ] = useQueries({
     queries: [
       {
         queryKey: ['followedAuthors'],
@@ -28,13 +34,20 @@ const Collections = () => {
         queryFn: () => getHaveReads(user.uid),
         enabled: !!user?.uid,
       },
+      {
+        queryKey: ['latestBooksByAuthorUserFollows'],
+        queryFn: () =>
+          bookServices.getLatestBooksByAuthorsUserFollows(user.uid),
+        enabled: !!user?.uid,
+      },
     ],
   });
 
   if (
     followedAuthorsQuery.isLoading ||
     wantToReadQuery.isLoading ||
-    haveReadQuery.isLoading
+    haveReadQuery.isLoading ||
+    latestBooksQuery.isLoading
   ) {
     return <Loader />;
   }
@@ -51,9 +64,14 @@ const Collections = () => {
     return <div>Something went wrong with have read</div>;
   }
 
+  if (latestBooksQuery.isError) {
+    return <div>Something went wrong with latest books</div>;
+  }
+
   const authorsYouFollow = followedAuthorsQuery.data ?? [];
   const wantToRead = wantToReadQuery.data ?? [];
   const haveRead = haveReadQuery.data ?? [];
+  const latestBooks = latestBooksQuery.data ?? [];
 
   return (
     <div className='collections'>
@@ -64,16 +82,34 @@ const Collections = () => {
         shape='circle'
         isControls={authorsYouFollow.length > 6}
         data={authorsYouFollow}
+        isAuthorName
       />
 
+      {latestBooks.length > 12 ? (
+        <GridScroller
+          data={latestBooks}
+          headerText='Latest Books By Authors You Follow'
+          isControls
+        />
+      ) : (
+        <BookScroller
+          headerText={'Latest Books By Authors You Follow'}
+          shape='square'
+          isControls={latestBooks.length > 6}
+          data={latestBooks}
+          isAuthorName
+        />
+      )}
+
       {wantToRead.length > 12 ? (
-        <GridScroller data={wantToRead} />
+        <GridScroller data={wantToRead} headerText='Read Later' isControls />
       ) : (
         <BookScroller
           headerText={'Read Later'}
           shape='square'
           isControls={wantToRead.length > 6}
           data={wantToRead}
+          isAuthorName
         />
       )}
       {haveRead.length > 12 ? (
@@ -84,6 +120,7 @@ const Collections = () => {
           shape='square'
           isControls={haveRead.length > 6}
           data={haveRead}
+          isAuthorName
         />
       )}
     </div>

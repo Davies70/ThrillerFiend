@@ -9,6 +9,7 @@ const BOOKS_BASEURL = `https://www.googleapis.com/books/v1/volumes?`;
 const BOOKS_API_KEY = import.meta.env.VITE_BOOKS_API_KEY;
 import { setSome } from '../utils/utils';
 import axios from 'axios';
+import authorServices from './authorServices';
 
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
@@ -94,19 +95,33 @@ const isTitleUnique = (bookTitle, titles) => {
   return !setSome(titles, (title) => bookTitle.toLowerCase().includes(title));
 };
 
-const getBooksByAuthor = async (author) => {
+const getBooksByAuthor = async (author, orderBy, searchType = true) => {
   const { authorName, notableWorks } = author;
-  let data = getWithExpiry('booksByAuthor-' + authorName);
+
+  const latest = !searchType ? 'latest' : '';
+
+  let data = getWithExpiry(latest + ' ' + 'booksByAuthor-' + authorName);
   if (data) {
-    console.log(`Books by ${authorName} data retrieved from localStorage`);
+    console.log(
+      `${latest} Books by ${authorName} data retrieved from localStorage`
+    );
     return data;
   }
 
   console.log(
-    `Books by ${authorName} data not in localStorage or expired, fetching from API...`
+    `${latest} Books by ${authorName} data not in localStorage or expired, fetching from API...`
   );
 
-  const config = buildQueryConfig(`${authorName}`, 'inauthor', 40);
+  const configSearchType = searchType ? 'inauthor' : null;
+
+  const config = buildQueryConfig(
+    `${authorName}`,
+    configSearchType,
+    40,
+    orderBy,
+  
+  );
+
   data = await fetch(config);
 
   if (!data.items || !Array.isArray(data.items)) return [];
@@ -146,6 +161,7 @@ const getBooksByAuthor = async (author) => {
       book_image: book.volumeInfo.imageLinks?.thumbnail,
       authors: book.volumeInfo?.authors,
       book_id: book.id,
+      publishedDate: book.volumeInfo?.publishedDate,
     };
   });
 
@@ -162,11 +178,15 @@ const getBooksByAuthor = async (author) => {
   if (books.length === 0) return;
 
   if (books.length > 12) {
-    setWithExpiry('booksByAuthor-' + authorName, books, CACHE_TTL);
+    setWithExpiry(
+      latest + ' ' + 'booksByAuthor-' + authorName,
+      books,
+      CACHE_TTL
+    );
     return books.slice(0, 12);
   }
 
-  setWithExpiry('booksByAuthor-' + authorName, books, CACHE_TTL);
+  setWithExpiry(latest + ' ' + 'booksByAuthor-' + authorName, books, CACHE_TTL);
   return books;
 };
 
@@ -229,7 +249,7 @@ const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
     `Book by ${authorNameAndTitle} data not in localStorage or expired, fetching from API...`
   );
 
-  const config = buildQueryConfig(authorNameAndTitle, null, 20);
+  const config = buildQueryConfig(authorNameAndTitle, null, 20, 'relevance');
   const books = await fetch(config);
 
   if (!books.items || !Array.isArray(books.items)) return;
@@ -413,9 +433,14 @@ const fetchAndProcessQueries = async (searchQuery) => {
   const authorQuery = searchQuery; // We'll use the original query for author search
 
   const titleConfigs = titleQueries.map((query) =>
-    buildQueryConfig(query, 'intitle', 10)
+    buildQueryConfig(query, 'intitle', 10, 'relevance')
   );
-  const authorConfig = buildQueryConfig(authorQuery, 'inauthor', 10);
+  const authorConfig = buildQueryConfig(
+    authorQuery,
+    'inauthor',
+    10,
+    'relevance'
+  );
 
   const allConfigs = [...titleConfigs, authorConfig];
 
@@ -467,15 +492,15 @@ const generateTitleQueries = (searchQuery) => {
   return queries;
 };
 
-const buildQueryConfig = (query, searchType, maxResults) => ({
+const buildQueryConfig = (query, searchType, maxResults, orderBy) => ({
   params: new URLSearchParams({
     q: searchType ? `${searchType}:${query}` : query,
     key: BOOKS_API_KEY,
     maxResults,
     langRestrict: 'en',
     country: 'US',
-    printType: 'all',
-    orderBy: 'relevance',
+    printType: 'books',
+    orderBy,
   }),
   headers: {
     'Content-Type': 'application/json',
@@ -529,7 +554,7 @@ const getBooksByQuery = async (query) => {
   console.log(
     `Books by ${query} data not in localStorage or expired, fetching from API...`
   );
-  const config = buildQueryConfig(query, null, 20);
+  const config = buildQueryConfig(query, null, 20, 'relevance');
   data = await fetch(config);
   if (!data.items || !Array.isArray(data.items)) return [];
   const dataToStore = data.items.map((book) => {
@@ -546,6 +571,18 @@ const getBooksByQuery = async (query) => {
   return dataToStore;
 };
 
+const getLatestBooksByAuthorsUserFollows = async (userId) => {
+  const authors = await authorServices.getFollowedAuthors(userId);
+  if (authors.length === 0) return [];
+  const latestBooks = await Promise.all(
+    authors.map(async (author) => {
+      const books = await getBooksByAuthor(author, 'newest', false);
+      return books.slice(0, 3);
+    })
+  );
+  return latestBooks.flat();
+};
+
 export default {
   getHotBooks,
   getBooksByAuthor,
@@ -555,4 +592,5 @@ export default {
   getSimilarBooks,
   getBestSellers,
   getBooksByQuery,
+  getLatestBooksByAuthorsUserFollows,
 };

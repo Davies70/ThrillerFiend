@@ -31,6 +31,28 @@ const createUser = async (id) => {
   }
 };
 
+const getUser = async (id) => {
+  try {
+    const userRef = doc(db, 'users', id);
+    const userDoc = await getDoc(userRef);
+    return userDoc.data();
+  } catch (error) {
+    console.error('Error getting user:', error);
+    return null;
+  }
+};
+
+const doesUserExist = async (id) => {
+  try {
+    const userRef = doc(db, 'users', id);
+    const userDoc = await getDoc(userRef);
+    return userDoc.exists();
+  } catch (error) {
+    console.error('Error checking if user exists:', error);
+    return false;
+  }
+};
+
 const writeNote = async (userId, bookId, noteText) => {
   try {
     const notesRef = doc(db, 'users', userId, 'notes', bookId);
@@ -294,4 +316,6 @@ export {
   getReadLaterAndHaveReadCount,
   getReadLaters,
   getHaveReads,
+  getUser,
+  doesUserExist,
 };

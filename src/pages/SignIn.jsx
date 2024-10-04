@@ -8,7 +8,7 @@ import { auth, provider } from '../firebase/config';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import Alert from '@mui/material/Alert';
 import Loader from '../components/Loader';
-import { createUser } from '../services/userServices';
+import { createUser, doesUserExist } from '../services/userServices';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
@@ -56,6 +56,11 @@ const SignIn = () => {
         console.log('Successfully signed in with Google');
         setEmail('');
         setPassword('');
+        const userExists = await doesUserExist(user.uid);
+        if (userExists) {
+          navigate('/');
+          return;
+        }
         await createUser(user.uid);
         navigate('/');
       } else {
