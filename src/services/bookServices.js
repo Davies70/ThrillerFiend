@@ -95,10 +95,10 @@ const isTitleUnique = (bookTitle, titles) => {
   return !setSome(titles, (title) => bookTitle.toLowerCase().includes(title));
 };
 
-const getBooksByAuthor = async (author, orderBy, searchType = true) => {
+const getBooksByAuthor = async (author, orderBy) => {
   const { authorName, notableWorks } = author;
 
-  const latest = !searchType ? 'latest' : '';
+  const latest = orderBy === 'newest' ? 'latest' : '';
 
   let data = getWithExpiry(latest + ' ' + 'booksByAuthor-' + authorName);
   if (data) {
@@ -112,15 +112,9 @@ const getBooksByAuthor = async (author, orderBy, searchType = true) => {
     `${latest} Books by ${authorName} data not in localStorage or expired, fetching from API...`
   );
 
-  const configSearchType = searchType ? 'inauthor' : null;
+  // const configSearchType = searchType ? 'inauthor' : null;
 
-  const config = buildQueryConfig(
-    `${authorName}`,
-    configSearchType,
-    40,
-    orderBy,
-  
-  );
+  const config = buildQueryConfig(`${authorName}`, 40, orderBy);
 
   data = await fetch(config);
 
@@ -129,31 +123,33 @@ const getBooksByAuthor = async (author, orderBy, searchType = true) => {
   const uniqueBooks = [];
   const titles = new Set();
 
-  data.items.forEach((book) => {
-    const title = book.volumeInfo.title
-      .toLowerCase()
-      .replace(/&/g, 'and')
-      .replace(/^the\s/i, '');
+  data.items
+    .filter((book) => book.volumeInfo.description)
+    .forEach((book) => {
+      const title = book.volumeInfo.title
+        .toLowerCase()
+        .replace(/&/g, 'and')
+        .replace(/^the\s/i, '');
 
-    let authorsName = '';
+      let authorsName = '';
 
-    authorsName = book.volumeInfo.authors?.join(' ').toLowerCase();
+      authorsName = book.volumeInfo.authors?.join(' ').toLowerCase();
 
-    if (authorsName === undefined) {
-      authorsName = '';
-    }
+      if (authorsName === undefined) {
+        authorsName = '';
+      }
 
-    if (
-      !titles.has(title) &&
-      isTitleUnique(title, titles) &&
-      !title.includes(authorsName) &&
-      authorsName.includes(authorName.toLowerCase()) &&
-      book.volumeInfo.language === 'en'
-    ) {
-      titles.add(title);
-      uniqueBooks.push(book);
-    }
-  });
+      if (
+        !titles.has(title) &&
+        isTitleUnique(title, titles) &&
+        !title.includes(authorsName) &&
+        authorsName.includes(authorName.toLowerCase()) &&
+        book.volumeInfo.language === 'en'
+      ) {
+        titles.add(title);
+        uniqueBooks.push(book);
+      }
+    });
 
   const booksByAuthor = uniqueBooks.map((book) => {
     return {
@@ -249,7 +245,7 @@ const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
     `Book by ${authorNameAndTitle} data not in localStorage or expired, fetching from API...`
   );
 
-  const config = buildQueryConfig(authorNameAndTitle, null, 20, 'relevance');
+  const config = buildQueryConfig(authorNameAndTitle, 20, 'relevance');
   const books = await fetch(config);
 
   if (!books.items || !Array.isArray(books.items)) return;
@@ -492,9 +488,9 @@ const generateTitleQueries = (searchQuery) => {
   return queries;
 };
 
-const buildQueryConfig = (query, searchType, maxResults, orderBy) => ({
+const buildQueryConfig = (query, maxResults, orderBy) => ({
   params: new URLSearchParams({
-    q: searchType ? `${searchType}:${query}` : query,
+    q: query,
     key: BOOKS_API_KEY,
     maxResults,
     langRestrict: 'en',

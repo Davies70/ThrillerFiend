@@ -415,11 +415,12 @@ const Book = () => {
         </ul>
       </div>
       <span className='book-genre-tags'>
-        {categories.map((category, key) => (
-          <span className='book-genre-tag' key={key}>
-            {category}
-          </span>
-        ))}
+        {categories &&
+          categories.map((category, key) => (
+            <span className='book-genre-tag' key={key}>
+              {category}
+            </span>
+          ))}
       </span>
 
       <div className='notes'>
