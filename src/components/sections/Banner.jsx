@@ -29,7 +29,7 @@ const Banner = () => {
             y='25%'
             fontFamily='Roboto, sans-serif'
             fontSize='30'
-            fill='white'
+            fill='black'
             textAnchor='middle'
             dominantBaseline='middle'
             fontWeight={700}
@@ -41,7 +41,7 @@ const Banner = () => {
             y='25%'
             fontFamily='Nosifer, sans-serif'
             fontSize='30'
-            fill='white'
+            fill='black'  
             textAnchor='middle'
             dominantBaseline='middle'
             fontWeight={700}
@@ -53,7 +53,7 @@ const Banner = () => {
             y='52%'
             fontFamily='Roboto, sans-serif'
             fontSize='30'
-            fill='white'
+            fill='black'
             textAnchor='middle'
             dominantBaseline='middle'
             fontWeight={700}
@@ -65,7 +65,7 @@ const Banner = () => {
             y='81%'
             fontFamily='Roboto, sans-serif'
             fontSize='20'
-            fill='#000'
+            fill='black'
             textAnchor='middle'
             dominantBaseline='middle'
             fontWeight={700}
@@ -77,7 +77,7 @@ const Banner = () => {
             y='80%'
             fontFamily='Creepster, sans-serif'
             fontSize='25'
-            fill='#000'
+            fill='black'
             textAnchor='middle'
             dominantBaseline='middle'
             fontWeight={700}
@@ -89,7 +89,7 @@ const Banner = () => {
             y='81%'
             fontFamily='Roboto, sans-serif'
             fontSize='20'
-            fill='#000'
+            fill='black'
             textAnchor='middle'
             dominantBaseline='middle'
             fontWeight={700}
