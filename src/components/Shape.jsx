@@ -92,7 +92,8 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
 
   if (shape === 'circle') {
     // ... (circle shape rendering remains unchanged)
-    const { authorName, coverPhoto, id, name } = author;
+    const { authorName, coverPhoto, id, name, authorId } = author;
+    const realId = id || authorId;
     return (
       <div className='card'>
         <div className='card-content'>
@@ -112,7 +113,7 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
                 }}
               />
             }
-            <Link className='bg cirlce' to={`/author/${id}`}>
+            <Link className='bg cirlce' to={`/author/${realId}`}>
               <button className='right-button'>
                 <MoreHorizOutlinedIcon />
               </button>
@@ -121,7 +122,7 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
           <div className='tag'>
             <Link
               className='taglink'
-              to={`/author/${id}`}
+              to={`/author/${realId}`}
               style={{
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',

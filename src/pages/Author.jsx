@@ -167,6 +167,8 @@ export default function Author() {
     setNotification({ title: '', message: '', type: '' });
   };
 
+  console.log(similarAuthors);
+
   return (
     <div className='author-page'>
       <Notification
