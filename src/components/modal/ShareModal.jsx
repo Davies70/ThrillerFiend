@@ -32,6 +32,7 @@ const ShareModal = ({ closeModal, setNotification, clearNotification }) => {
 
   const copyLinkToClipboard = () => {
     navigator.clipboard.writeText(currentUrl).then(
+      alert('Link copied to clipboard'),
       () => {
         setNotification({
           title: 'Success',

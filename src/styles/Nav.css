@@ -148,13 +148,13 @@
   text-align: center;
   text-decoration: none;
   font-size: 0.75rem;
-
   white-space: normal;
   cursor: pointer;
 }
 
 .p-signout {
-  background-color: #e3d026;
+  background-color: transparent;
+  display: none;
 }
 
 /* Search Container Styles */
@@ -438,6 +438,11 @@ input {
     flex-shrink: 0;
   }
 
+  .p-signout {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
   .search-icon-small {
     display: inline-flex;
     color: white;
@@ -475,7 +480,8 @@ input {
   .search-container {
     display: none;
   }
-  .profile {
+  .profile,
+  .p-signout {
     display: none;
   }
   .sign-in-wrapper,

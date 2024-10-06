@@ -308,9 +308,9 @@ const Nav = () => {
               ></LoadingButton>
             </li>
           ) : user ? (
-            <li className='profile p-signout'>
+            <li className='p-signout'>
               <button onClick={handleSignOut}>
-                <LogoutIcon />
+                <LogoutIcon color='ochre' />
               </button>
             </li>
           ) : (
