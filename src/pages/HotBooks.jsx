@@ -33,7 +33,7 @@ const HotBooks = () => {
           <Shape
             key={i}
             shape={shape}
-            isAuthorName={false}
+            isAuthorName={true}
             book={book}
             isDataAvailable={true}
           />

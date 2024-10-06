@@ -27,7 +27,7 @@ const Authors = () => {
     <div className='authors'>
       <header>
         <div className='header-text'>
-          <h2>Hot Authors</h2>
+          <h1>Hot Authors</h1>
         </div>
       </header>
       {authors.map((author, i) => (

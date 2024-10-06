@@ -97,15 +97,21 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
       <div className='card'>
         <div className='card-content'>
           <div className='imageWrapper circle'>
-            <img
-              src={coverPhoto}
-              loading='lazy'
-              alt={authorName || name}
-              style={{
-                maxWidth: '100%',
-                height: 'auto',
-              }}
-            />
+            {
+              <img
+                src={coverPhoto}
+                loading='lazy'
+                alt={authorName || name}
+                style={{
+                  maxWidth: '100%',
+                  height: 'auto',
+                }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = `https://lgimages.s3.amazonaws.com/nc-md.gif`;
+                }}
+              />
+            }
             <Link className='bg cirlce' to={`/author/${id}`}>
               <button className='right-button'>
                 <MoreHorizOutlinedIcon />

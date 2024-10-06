@@ -37,6 +37,8 @@ const NoteCard = ({ noteText, created, deleteNote, updateNote, noteId }) => {
             onBlur={handleSaveClick}
             autoFocus
             className='note-card-input'
+            aria-label='Edit note'
+            
           />
         ) : (
           <p className='note-card-text'>{noteText}</p>

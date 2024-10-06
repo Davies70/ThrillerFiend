@@ -41,6 +41,7 @@ export default function Author() {
   } = useQuery({
     queryKey: ['author', id],
     queryFn: () => authorServices.getAuthorById(id),
+    enabled: !!id,
   });
 
   const {

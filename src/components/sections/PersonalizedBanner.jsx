@@ -9,7 +9,8 @@ const PersonalizedBanner = ({ username, booksRead, booksToRead }) => {
       <div className='banner-content'>
         <div className='user-info'>
           <div className='user-info-child'>
-            <h2>Welcome back, {username}!</h2>
+            <h2>Welcome, </h2>
+            <h2>{username}!</h2>
             <p>Ready for your next thrilling read?</p>
           </div>
         </div>

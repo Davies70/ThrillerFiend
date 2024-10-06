@@ -5,3 +5,21 @@
   margin: 0;
   margin-left: 2.25rem;
 }
+
+@media screen and (min-width: 0) {
+  .collections h1 {
+    margin-left: 1.2rem;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .collections h1 {
+    margin-left: 0;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .collections h1 {
+    margin-left: 3.2rem;
+  }
+}

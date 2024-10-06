@@ -4,7 +4,11 @@ import { useQueries } from '@tanstack/react-query';
 import GridScroller from '../components/sections/GridScroller';
 import authorServices from '../services/authorServices';
 import { useAuth } from '../context/AuthProvider';
-import { getReadLaters, getHaveReads } from '../services/userServices';
+import {
+  getReadLaters,
+  getHaveReads,
+  getFavorites,
+} from '../services/userServices';
 import '../styles/Collections.css';
 import bookServices from '../services/bookServices';
 
@@ -17,6 +21,7 @@ const Collections = () => {
     wantToReadQuery,
     haveReadQuery,
     latestBooksQuery,
+    favoritesQuery,
   ] = useQueries({
     queries: [
       {
@@ -40,6 +45,11 @@ const Collections = () => {
           bookServices.getLatestBooksByAuthorsUserFollows(user.uid),
         enabled: !!user?.uid,
       },
+      {
+        queryKey: ['favorites'],
+        queryFn: () => getFavorites(user.uid),
+        enabled: !!user?.uid,
+      },
     ],
   });
 
@@ -47,7 +57,9 @@ const Collections = () => {
     followedAuthorsQuery.isLoading ||
     wantToReadQuery.isLoading ||
     haveReadQuery.isLoading ||
-    latestBooksQuery.isLoading
+    latestBooksQuery.isLoading ||
+    !user?.uid ||
+    favoritesQuery.isLoading
   ) {
     return <Loader />;
   }
@@ -68,10 +80,15 @@ const Collections = () => {
     return <div>Something went wrong with latest books</div>;
   }
 
+  if (favoritesQuery.isError) {
+    return <div>Something went wrong with favorites</div>;
+  }
+
   const authorsYouFollow = followedAuthorsQuery.data ?? [];
   const wantToRead = wantToReadQuery.data ?? [];
   const haveRead = haveReadQuery.data ?? [];
   const latestBooks = latestBooksQuery.data ?? [];
+  const favorites = favoritesQuery.data ?? [];
 
   return (
     <div className='collections'>
@@ -120,6 +137,17 @@ const Collections = () => {
           shape='square'
           isControls={haveRead.length > 6}
           data={haveRead}
+          isAuthorName
+        />
+      )}
+      {favorites.length > 12 ? (
+        <GridScroller data={favorites} headerText='Your Favorites' isControls />
+      ) : (
+        <BookScroller
+          headerText={'Your Favorites'}
+          shape='square'
+          isControls={favorites.length > 6}
+          data={favorites}
           isAuthorName
         />
       )}

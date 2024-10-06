@@ -275,7 +275,6 @@ const getReadLaters = async (userId) => {
         async (bookId) => await bookServices.getBookByVolumeId(bookId)
       )
     );
-    console.log('Read laters:', result);
     return result;
   } catch (error) {
     console.error('Error fetching read laters:', error);
@@ -295,10 +294,30 @@ const getHaveReads = async (userId) => {
         async (bookId) => await bookServices.getBookByVolumeId(bookId)
       )
     );
-    console.log('Have reads:', result);
+
     return result;
   } catch (error) {
     console.error('Error fetching have reads:', error);
+    return [];
+  }
+};
+
+const getFavorites = async (userId) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    const userDocData = userDoc.data();
+    const favorites = userDocData.favorites;
+    if (!favorites || favorites.length === 0) return [];
+    const result = Promise.all(
+      favorites.map(
+        async (bookId) => await bookServices.getBookByVolumeId(bookId)
+      )
+    );
+    console.log('Favorites:', result);
+    return result;
+  } catch (error) {
+    console.error('Error fetching favorites:', error);
     return [];
   }
 };
@@ -318,4 +337,5 @@ export {
   getHaveReads,
   getUser,
   doesUserExist,
+  getFavorites,
 };

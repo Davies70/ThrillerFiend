@@ -171,7 +171,7 @@ const getBooksByAuthor = async (author, orderBy) => {
     }
   });
 
-  if (books.length === 0) return;
+  if (books.length === 0) return [];
 
   if (books.length > 12) {
     setWithExpiry(
@@ -429,13 +429,13 @@ const fetchAndProcessQueries = async (searchQuery) => {
   const authorQuery = searchQuery; // We'll use the original query for author search
 
   const titleConfigs = titleQueries.map((query) =>
-    buildQueryConfig(query, 'intitle', 10, 'relevance')
+    buildQueryConfig(query, 10, 'relevance', 'intitle')
   );
   const authorConfig = buildQueryConfig(
     authorQuery,
-    'inauthor',
     10,
-    'relevance'
+    'relevance',
+    'inauthor'
   );
 
   const allConfigs = [...titleConfigs, authorConfig];
@@ -488,9 +488,9 @@ const generateTitleQueries = (searchQuery) => {
   return queries;
 };
 
-const buildQueryConfig = (query, maxResults, orderBy) => ({
+const buildQueryConfig = (query, maxResults, orderBy, option) => ({
   params: new URLSearchParams({
-    q: query,
+    q: option ? `${option}:${query}` : query,
     key: BOOKS_API_KEY,
     maxResults,
     langRestrict: 'en',
@@ -550,7 +550,7 @@ const getBooksByQuery = async (query) => {
   console.log(
     `Books by ${query} data not in localStorage or expired, fetching from API...`
   );
-  const config = buildQueryConfig(query, null, 20, 'relevance');
+  const config = buildQueryConfig(query,  20, 'relevance');
   data = await fetch(config);
   if (!data.items || !Array.isArray(data.items)) return [];
   const dataToStore = data.items.map((book) => {

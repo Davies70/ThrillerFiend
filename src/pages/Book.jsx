@@ -313,7 +313,13 @@ const Book = () => {
             />
           )}
 
-          {isShareModalOpen && <ShareModal closeModal={closeShareModal} />}
+          {isShareModalOpen && (
+            <ShareModal
+              closeModal={closeShareModal}
+              setNotification={setNotification}
+              clearNotification={clearNotification}
+            />
+          )}
         </div>
         <div className='book-right'>
           <div className='book-image-container'>
@@ -435,6 +441,7 @@ const Book = () => {
               value={noteText}
               onChange={({ target }) => setNoteText(target.value)}
               disabled={!user}
+              aria-label='Write a note'
             />
 
             <span className='save-button'>

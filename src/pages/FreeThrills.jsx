@@ -7,7 +7,7 @@ const FreeThrills = () => {
       <h1>Hot Thrills</h1>
       <p>
         Welcome to the edge-of-your-seat world of thriller novels! Dive into our
-        blog for spine-chilling facts, pop culture connections, and
+        world of spine-chilling facts, pop culture connections, and
         recommendations that will keep you up all night.
       </p>
 
