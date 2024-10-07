@@ -81,14 +81,7 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
       });
   };
 
-  // const handleRemoveReadLater = async () => {
-  //   updateBookStatusMutation.mutate({
-  //     userId: user?.uid,
-  //     bookId: book?.book_id,
-  //     status: 'readLater',
-  //     action: 'remove',
-  //   });
-  // };
+  
 
   if (shape === 'circle') {
     // ... (circle shape rendering remains unchanged)

@@ -61,7 +61,7 @@ const getNewYorkTimesBestSellers = async () => {
 async function getHotBooks() {
   let data = getWithExpiry('hotBooks');
 
-  if (data) {
+  if (data && data.length > 0) {
     console.log('HotBooks Data retrieved from localStorage');
     return data;
   }
@@ -234,45 +234,108 @@ const getBookByVolumeId = async (volumeId) => {
   return data;
 };
 
+// const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
+//   const result = getWithExpiry(`bookByAuthorAndTitle-${authorNameAndTitle}`);
+//   if (result) {
+//     console.log(
+//       `Book by ${authorNameAndTitle} data retrieved from localStorage`
+//     );
+//     return result;
+//   }
+
+//   console.log(
+//     `Book by ${authorNameAndTitle} data not in localStorage or expired, fetching from API...`
+//   );
+
+//   const config = buildQueryConfig(authorNameAndTitle, 10, 'relevance');
+//   const books = await fetch(config);
+
+//   if (!books.items || !Array.isArray(books.items)) return;
+
+//   const data = books.items.find(
+//     (book) =>
+//       book.volumeInfo.imageLinks?.thumbnail &&
+//       book.volumeInfo.description &&
+//       book.volumeInfo.pageCount > 0
+//   );
+
+//   const dataToStore = {
+//     title: data.volumeInfo?.title,
+//     book_image: data.volumeInfo.imageLinks?.thumbnail,
+//     authors: data.volumeInfo?.authors,
+//     book_id: data.id,
+//   };
+
+//   setWithExpiry(
+//     `bookByAuthorAndTitle-${authorNameAndTitle}`,
+//     dataToStore,
+//     CACHE_TTL
+//   );
+
+//   return dataToStore;
+// };
+
 const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
-  const result = getWithExpiry(`bookByAuthorAndTitle-${authorNameAndTitle}`);
-  if (result) {
+  // Check localStorage first
+  const cachedResult = getWithExpiry(
+    `bookByAuthorAndTitle-${authorNameAndTitle}`
+  );
+  if (cachedResult) {
     console.log(
       `Book by ${authorNameAndTitle} data retrieved from localStorage`
     );
-    return result;
+    return cachedResult;
   }
 
   console.log(
     `Book by ${authorNameAndTitle} data not in localStorage or expired, fetching from API...`
   );
 
-  const config = buildQueryConfig(authorNameAndTitle, 10, 'relevance');
-  const books = await fetch(config);
+  try {
+    const config = buildQueryConfig(authorNameAndTitle, 10, 'relevance');
+    const books = await fetch(config);
 
-  if (!books.items || !Array.isArray(books.items)) return;
+    if (
+      !books.items ||
+      !Array.isArray(books.items) ||
+      books.items.length === 0
+    ) {
+      console.log('No books found or invalid response from API');
+      return null;
+    }
 
-  const data = books.items.find(
-    (book) =>
-      book.volumeInfo.imageLinks?.thumbnail &&
-      book.volumeInfo.description &&
-      book.volumeInfo.pageCount > 0
-  );
+    const data = books.items.find((book) => {
+      const volumeInfo = book.volumeInfo || {};
+      return (
+        volumeInfo.imageLinks?.thumbnail &&
+        volumeInfo.description &&
+        volumeInfo.pageCount > 0
+      );
+    });
 
-  const dataToStore = {
-    title: data.volumeInfo?.title,
-    book_image: data.volumeInfo.imageLinks?.thumbnail,
-    authors: data.volumeInfo?.authors,
-    book_id: data.id,
-  };
+    if (!data) {
+      console.log('No book matching criteria found');
+      return null;
+    }
 
-  setWithExpiry(
-    `bookByAuthorAndTitle-${authorNameAndTitle}`,
-    dataToStore,
-    CACHE_TTL
-  );
+    const dataToStore = {
+      title: data.volumeInfo?.title || 'Unknown Title',
+      book_image: data.volumeInfo.imageLinks?.thumbnail || '',
+      authors: data.volumeInfo?.authors || ['Unknown Author'],
+      book_id: data.id || '',
+    };
 
-  return dataToStore;
+    setWithExpiry(
+      `bookByAuthorAndTitle-${authorNameAndTitle}`,
+      dataToStore,
+      CACHE_TTL
+    );
+
+    return dataToStore;
+  } catch (error) {
+    console.error('Error fetching book data:', error);
+    return null;
+  }
 };
 
 const getSimilarBooks = async (title) => {
