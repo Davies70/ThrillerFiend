@@ -427,7 +427,7 @@ input {
   }
   #logo-small {
     display: inline-flex;
-    margin-inline-end: 0.75rem; /* 12% of 16px / 16px per rem */
+    margin-inline-start: 1rem; /* 16px / 16px per rem */
   }
   #logo {
     display: none;
