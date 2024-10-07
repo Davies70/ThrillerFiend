@@ -125,7 +125,10 @@ const Book = () => {
 
   useEffect(() => {
     const fetchRating = async () => {
-      if (!user) return;
+      if (!user) {
+        setRatingPrompt('Sign in to rate this book');
+        return;
+      }
       const rating = await getRating(user?.uid, id);
       setCurrentRating(rating || 0);
     };
@@ -344,6 +347,7 @@ const Book = () => {
               sx={{
                 fontSize: '3rem',
               }}
+              disabled={!user}
             />
           </div>
           <div className='rating-tag'>
