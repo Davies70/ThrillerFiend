@@ -127,10 +127,12 @@ const SignIn = () => {
           onChange={({ target }) => setEmail(target.value)}
           id='email'
           type='email'
+          
         />
         <InputLabel htmlFor='password'>Password</InputLabel>
         <Input
           value={password}
+          autoComplete='off'
           onChange={({ target }) => setPassword(target.value)}
           id='password'
           type={showPassword ? 'text' : 'password'}

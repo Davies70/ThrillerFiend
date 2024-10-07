@@ -15,15 +15,14 @@ import { auth } from '../firebase/config';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
-import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import LoadingButton from '@mui/lab/LoadingButton';
+import AuthButton from './AuthButton';
 
 const Nav = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchContainer, setShowSearchContainer] = useState(false);
-  // const [suggestions, setSuggestions] = useState([]);
   const [triggerSearch, setTriggerSearch] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
@@ -255,71 +254,41 @@ const Nav = () => {
               />
             )}
           </div>
-          {loading ? (
-            <li className='loading-button-wrapper'>
-              <LoadingButton
-                loading
-                variant='contained'
-                color='blue'
-                sx={{
-                  borderRadius: '1.5rem',
-                }}
-                size='small'
-              ></LoadingButton>
-            </li>
-          ) : user ? (
-            <li className='sign-out-wrapper'>
-              <Button
-                onClick={handleSignOut}
-                variant='contained'
-                color='ochre'
-                sx={{
-                  borderRadius: '1.5rem',
-                }}
-                size='small'
-              >
-                <span>Sign out</span>
-              </Button>
-            </li>
-          ) : (
-            !dontShowSignInButton && (
-              <li className='sign-in-wrapper'>
-                <Button
-                  variant='contained'
-                  sx={{
-                    borderRadius: '1.5rem',
-                  }}
-                  size='small'
-                >
-                  <Link to={'/signin'}>Sign in</Link>
-                </Button>
-              </li>
-            )
-          )}
-          {loading ? (
-            <li className='loading-button-wrapper'>
+          <AuthButton
+            loading={loading}
+            user={user}
+            handleSignOut={handleSignOut}
+            dontShowSignInButton={dontShowSignInButton}
+          />
+          <li
+            className={
+              location.pathname === '/signin'
+                ? 'nav-link-active profile-icon-wrapper'
+                : 'nav-link profile-icon-wrapper'
+            }
+          >
+            {loading ? (
               <LoadingButton
                 loading
                 variant='contained'
                 sx={{
                   borderRadius: '1.5rem',
+                  minWidth: '40px', // Ensure consistent width
+                  width: '40px',
+                  height: '40px',
                 }}
                 size='small'
-              ></LoadingButton>
-            </li>
-          ) : user ? (
-            <li className='p-signout'>
-              <button onClick={handleSignOut}>
+              />
+            ) : user ? (
+              <button onClick={handleSignOut} className='profile-button'>
                 <LogoutIcon color='ochre' />
               </button>
-            </li>
-          ) : (
-            <li className='profile'>
-              <Link to={'/signin'}>
+            ) : (
+              <Link to={'/signin'} className='profile-link'>
                 <AccountCircleIcon />
               </Link>
-            </li>
-          )}
+            )}
+          </li>
         </ul>
       )}
     </nav>

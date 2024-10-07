@@ -35,6 +35,34 @@
   padding-right: 0; /* 15px / 16px per rem */
   position: relative;
   margin: 0 auto;
+  justify-content: space-between;
+}
+
+.auth-button-wrapper,
+.profile-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px; /* Consistent width for auth button area */
+  height: 40px; /* Consistent height */
+  margin-inline-end: 1rem; /* 10px / 16px per rem */
+}
+
+.profile-icon-wrapper {
+  min-width: 40px; /* Adjust as needed */
+}
+
+.profile-button,
+.profile-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 /* Logo Styles */
@@ -51,12 +79,13 @@
 /* Small Logo Styles */
 #logo-small {
   display: none;
-  width: 6.25rem; /* 100px / 16px per rem */
+  width: 5.25rem; /* 100px / 16px per rem */
   height: 100%;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
   margin-top: 0.9375rem; /* 15px / 16px per rem */
+  margin-inline-start: 1rem; /* 10px / 16px per rem */
 }
 
 /* Navigation Link Styles */
@@ -481,7 +510,8 @@ input {
     display: none;
   }
   .profile,
-  .p-signout {
+  .p-signout,
+  .profile-icon-wrapper {
     display: none;
   }
   .sign-in-wrapper,
@@ -555,6 +585,16 @@ input {
   }
   #home-icon {
     display: inline-flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-button-wrapper {
+    display: none; /* Hide on mobile if needed */
+  }
+
+  .profile-icon-wrapper {
+    min-width: 40px; /* Adjust for mobile */
   }
 }
 

@@ -234,47 +234,6 @@ const getBookByVolumeId = async (volumeId) => {
   return data;
 };
 
-// const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
-//   const result = getWithExpiry(`bookByAuthorAndTitle-${authorNameAndTitle}`);
-//   if (result) {
-//     console.log(
-//       `Book by ${authorNameAndTitle} data retrieved from localStorage`
-//     );
-//     return result;
-//   }
-
-//   console.log(
-//     `Book by ${authorNameAndTitle} data not in localStorage or expired, fetching from API...`
-//   );
-
-//   const config = buildQueryConfig(authorNameAndTitle, 10, 'relevance');
-//   const books = await fetch(config);
-
-//   if (!books.items || !Array.isArray(books.items)) return;
-
-//   const data = books.items.find(
-//     (book) =>
-//       book.volumeInfo.imageLinks?.thumbnail &&
-//       book.volumeInfo.description &&
-//       book.volumeInfo.pageCount > 0
-//   );
-
-//   const dataToStore = {
-//     title: data.volumeInfo?.title,
-//     book_image: data.volumeInfo.imageLinks?.thumbnail,
-//     authors: data.volumeInfo?.authors,
-//     book_id: data.id,
-//   };
-
-//   setWithExpiry(
-//     `bookByAuthorAndTitle-${authorNameAndTitle}`,
-//     dataToStore,
-//     CACHE_TTL
-//   );
-
-//   return dataToStore;
-// };
-
 const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
   // Check localStorage first
   const cachedResult = getWithExpiry(
