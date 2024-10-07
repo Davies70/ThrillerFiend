@@ -5,6 +5,7 @@
 ThrillerFiend is a web application for thriller enthusiasts to discover, track, and engage with their favorite books. Built with React and powered by various APIs, it offers a rich, interactive experience for book lovers.
 
 ![ThrillerFiend Homepage](/public/thrillerfiend.PNG)
+![ThrillerFiend Homepage Mobile](/public/thrilerfiend2.PNG)
 
 ## Live Demo
 
