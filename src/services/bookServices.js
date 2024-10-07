@@ -5,13 +5,14 @@ import {
 } from './cacheService';
 const NYT_BASEURL = 'https://api.nytimes.com/svc/books/v3/';
 const NYT_API_KEY = import.meta.env.VITE_BOOK_NYT_API_KEY;
-const BOOKS_BASEURL = `https://www.googleapis.com/books/v1/volumes?`;
-const BOOKS_API_KEY = import.meta.env.VITE_BOOKS_API_KEY;
 import { setSome } from '../utils/utils';
 import axios from 'axios';
 import authorServices from './authorServices';
+import { buildQueryConfig } from '../utils/bookServiceUtils';
 
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+const BOOKS_API_KEY = import.meta.env.VITE_BOOKS_API_KEY;
+const BOOKS_BASEURL = `https://www.googleapis.com/books/v1/volumes?`;
 
 const nytConfig = {
   headers: {
@@ -70,7 +71,6 @@ async function getHotBooks() {
   );
 
   const NYTbooks = await getNewYorkTimesBestSellers();
-  console.log({ NYTbooks });
   const hotBooks = await Promise.all(
     NYTbooks.map(async (book) => {
       const { title, authorName } = book;
@@ -86,9 +86,11 @@ async function getHotBooks() {
   );
 
   data = hotBooks.filter((book) => book !== undefined);
-  if (data.length > 0) setWithExpiry('hotBooks', data, CACHE_TTL);
-
-  return data;
+  if (data.length > 0) {
+    setWithExpiry('hotBooks', data, CACHE_TTL);
+    return data;
+  }
+  return [];
 }
 
 const isTitleUnique = (bookTitle, titles) => {
@@ -245,7 +247,7 @@ const getBookByAuthorAndTitle = async (authorNameAndTitle) => {
     `Book by ${authorNameAndTitle} data not in localStorage or expired, fetching from API...`
   );
 
-  const config = buildQueryConfig(authorNameAndTitle, 20, 'relevance');
+  const config = buildQueryConfig(authorNameAndTitle, 10, 'relevance');
   const books = await fetch(config);
 
   if (!books.items || !Array.isArray(books.items)) return;
@@ -488,23 +490,6 @@ const generateTitleQueries = (searchQuery) => {
   return queries;
 };
 
-const buildQueryConfig = (query, maxResults, orderBy, option) => ({
-  params: new URLSearchParams({
-    q: option ? `${option}:${query}` : query,
-    key: BOOKS_API_KEY,
-    maxResults,
-    langRestrict: 'en',
-    country: 'US',
-    printType: 'books',
-    orderBy,
-  }),
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  method: 'GET',
-  url: BOOKS_BASEURL,
-});
-
 const deduplicateAndRankResults = (results, originalQuery) => {
   const seen = new Set();
   return results
@@ -550,7 +535,7 @@ const getBooksByQuery = async (query) => {
   console.log(
     `Books by ${query} data not in localStorage or expired, fetching from API...`
   );
-  const config = buildQueryConfig(query,  20, 'relevance');
+  const config = buildQueryConfig(query, 20, 'relevance');
   data = await fetch(config);
   if (!data.items || !Array.isArray(data.items)) return [];
   const dataToStore = data.items.map((book) => {

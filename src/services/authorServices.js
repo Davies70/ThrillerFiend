@@ -18,7 +18,6 @@ const getHotAuthors = async () => {
 const getAuthors = async () => {
   try {
     const authorsCollection = collection(db, 'authors');
-    console.log(authorsCollection);
     const authorsSnapshot = await getDocs(authorsCollection);
     const authors = [];
     authorsSnapshot.forEach((doc) => {

@@ -11,12 +11,12 @@ import useReadingStatusCount from '../hooks/useReadingStatusCount';
 
 const Home = () => {
   const { user } = useAuth();
-  const [bestSellerQuery, hotAuthorsQuery] = useQueries({
+  const [hotBooksQuery, bestSellerQuery, hotAuthorsQuery] = useQueries({
     queries: [
-      // {
-      //   queryKey: ['hotbooks'],
-      //   queryFn: bookServices.getHotBooks,
-      // },
+      {
+        queryKey: ['hotbooks'],
+        queryFn: bookServices.getHotBooks,
+      },
       {
         queryKey: ['bestsellers'],
         queryFn: bookServices.getBestSellers,
@@ -25,11 +25,6 @@ const Home = () => {
         queryKey: ['authors'],
         queryFn: authorServices.getHotAuthors,
       },
-      // {
-      //   queryKey: ['count'],
-      //   queryFn: () => getReadLaterAndHaveReadCount(user.uid),
-      //   enabled: !!user?.uid,
-      // },
     ],
   });
 
@@ -41,7 +36,7 @@ const Home = () => {
   } = useReadingStatusCount(user?.uid);
 
   if (
-    // hotBooksQuery.isLoading ||
+    hotBooksQuery.isLoading ||
     bestSellerQuery.isLoading ||
     hotAuthorsQuery.isLoading ||
     counterLoading
@@ -49,9 +44,9 @@ const Home = () => {
     return <Loader />;
   }
 
-  // if (hotBooksQuery.isError) {
-  //   return <div>Something went wrong with hotbooks</div>;
-  // }
+  if (hotBooksQuery.isError) {
+    return <div>Something went wrong with hotbooks</div>;
+  }
 
   if (bestSellerQuery.isError) {
     return <div>Something went wrong with bestsellers</div>;
@@ -63,10 +58,9 @@ const Home = () => {
 
   if (counterError) return <div>Something went wrong with counter</div>;
 
-  // const hotbooks = hotBooksQuery.data.slice(0, 12);
+  const hotbooks = hotBooksQuery.data.slice(0, 12);
   const bestSellers = bestSellerQuery.data;
   const hotAuthors = hotAuthorsQuery.data;
-  // const { haveReadCount, readLaterCount } = countQuery.data ?? {};
 
   return (
     <div>
@@ -90,7 +84,7 @@ const Home = () => {
         <Banner />
       )}
 
-      {/* <BookScroller
+      <BookScroller
         data={hotbooks}
         shape='square'
         headerText='Thrills of the Week'
@@ -99,7 +93,7 @@ const Home = () => {
         isAuthorName={true}
         isControls={true}
         isDataAvailable={false}
-      /> */}
+      />
       <GridScroller
         data={bestSellers}
         isControls={true}
