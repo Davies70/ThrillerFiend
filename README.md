@@ -82,11 +82,11 @@ Visit [ThrillerFiend](https://thrillerfiend.netlify.app) to see the app in actio
    npm run dev
    ```
 
-6. Open `http://localhost:3000` in your browser.
+6. Open `http://localhost:5173` in your browser.
 
 ## Usage
 
-![Search Feature](path/to/search-feature-screenshot.png)
+![Search Feature](/public/thillerfiend3.PNG)
 
 1. **Search for Books**: Use the search bar to find thriller books.
 2. **Explore Latest Releases**: Check out the "Hot Thrills" section for new releases.
@@ -94,13 +94,8 @@ Visit [ThrillerFiend](https://thrillerfiend.netlify.app) to see the app in actio
 4. **Interact with Books**: Rate books, add notes, and track your reading progress.
 5. **Discover Authors**: Explore the author collection for more insights.
 
-## Contributing
 
-We welcome contributions to ThrillerFiend! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
@@ -111,7 +106,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For any queries or suggestions, please reach out to [your-email@example.com](mailto:your-email@example.com).
+For any queries or suggestions, please reach out to [ajayidavies7@gmail.com](mailto:ajayidavies7@gmail.com).
 
 ---
 
