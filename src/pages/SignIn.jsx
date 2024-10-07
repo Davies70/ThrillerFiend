@@ -9,10 +9,23 @@ import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import Alert from '@mui/material/Alert';
 import Loader from '../components/Loader';
 import { createUser, doesUserExist } from '../services/userServices';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import Box from '@mui/material/Box';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const [signInWithEmailAndPassword, , loading] =
     useSignInWithEmailAndPassword(auth);
   const [signInError, setSignInError] = useState(null);
@@ -20,7 +33,7 @@ const SignIn = () => {
   const navigate = useNavigate();
 
   const header = 'Sign in';
-  const prompt = 'Sign in to your account to access your thrills';
+  const prompt = 'Sign in to your account and access your thrills';
   const buttonText = 'Sign in';
   const buttonColor = 'blue';
   const endPrompt = "Don't have an account?";
@@ -77,34 +90,63 @@ const SignIn = () => {
 
   return (
     <div className='signIn-Container'>
-      <form className='signIn-Form'>
-        <h1>{header}</h1>
-        <p className='signIn-prompt'>{prompt}</p>
-        {signInError && <Alert severity='error'>{signInError}</Alert>}
-        <div className='input-groups'>
-          <div className='input-group'>
-            <label htmlFor='email'>Email</label>
-            <input
-              type='email'
-              required
-              autoComplete='off'
-              value={email}
-              onChange={({ target }) => setEmail(target.value)}
-              id='email'
-            />
-          </div>
-          <div className='input-group'>
-            <label htmlFor='password'>Password</label>
-            <input
-              type='password'
-              autoComplete='off'
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-              id='password'
-            />
-          </div>
-        </div>
+      {signInError && <Alert severity='error'>{signInError}</Alert>}
+      <Box
+        onSubmit={handleSignIn}
+        autoComplete='off'
+        sx={{
+          bgcolor: 'background.paper',
+          boxShadow: 1,
+          p: 4,
+          borderRadius: 1,
 
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+          margin: 'auto',
+          width: { xs: '90%', sm: '80%', md: '50%', lg: '40%' },
+        }}
+        component='form'
+      >
+        <Box
+          component='h2'
+          sx={{
+            textAlign: 'center',
+            color: 'text.primary',
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            margin: '0',
+          }}
+        >
+          {header}
+        </Box>
+        <p className='signIn-prompt'>{prompt}</p>
+        <InputLabel htmlFor='email'>Email</InputLabel>
+        <Input
+          value={email}
+          onChange={({ target }) => setEmail(target.value)}
+          id='email'
+          type='email'
+        />
+        <InputLabel htmlFor='password'>Password</InputLabel>
+        <Input
+          value={password}
+          onChange={({ target }) => setPassword(target.value)}
+          id='password'
+          type={showPassword ? 'text' : 'password'}
+          endAdornment={
+            <InputAdornment position='end'>
+              <IconButton
+                onClick={togglePasswordVisibility}
+                className='password-visibility'
+                aria-label='toggle password visibility'
+                edge='end'
+              >
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
         <div className='signIn-buttons'>
           <Button
             variant='contained'
@@ -128,7 +170,7 @@ const SignIn = () => {
             Continue with Google
           </Button>
         </div>
-      </form>
+      </Box>
       <p className='signUp-prompt'>
         {endPrompt}{' '}
         <Link to={'/signup'}>

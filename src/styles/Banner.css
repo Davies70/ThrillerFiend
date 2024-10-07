@@ -4,6 +4,8 @@
   padding: 24px 0px;
   width: 100%;
   visibility: inherit;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
 }
 
 .banner {
@@ -74,5 +76,4 @@
   .bg-container {
     padding-inline: calc(52px);
   }
-  
 }
