@@ -19,6 +19,9 @@ const NoteCard = ({ noteText, created, deleteNote, updateNote, noteId }) => {
     event.preventDefault();
     setIsEditing(false);
     // Here you can add a function to save the edited text
+    if (editedText === noteText) {
+      return;
+    }
     updateNote(editedText, noteId);
   };
 
@@ -38,7 +41,6 @@ const NoteCard = ({ noteText, created, deleteNote, updateNote, noteId }) => {
             autoFocus
             className='note-card-input'
             aria-label='Edit note'
-            
           />
         ) : (
           <p className='note-card-text'>{noteText}</p>
