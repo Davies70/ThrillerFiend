@@ -45,7 +45,11 @@ const Home = () => {
   }
 
   if (hotBooksQuery.isError) {
-    return <div>Something went wrong with hotbooks</div>;
+    return (
+      <div>
+        Something went wrong with hotbooks: {hotBooksQuery.error.message}
+      </div>
+    );
   }
 
   if (bestSellerQuery.isError) {
