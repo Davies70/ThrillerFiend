@@ -20,7 +20,6 @@
   inset-inline-start: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  max-width: inherit;
   width: 80vw;
   gap: 1rem;
   display: flex;
