@@ -14,12 +14,30 @@ import { useAuth } from '../context/AuthProvider';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Notification from './Notification';
 
 const Shape = ({ shape, isAuthorName, book, author }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [isRead, setIsRead] = useState(false);
   const [isReadLater, setIsReadLater] = useState(false);
+
+  const [notification, setNotification] = useState({
+    title: '',
+    message: '',
+    type: '',
+  });
+
+  const clearNotification = () => {
+    setTimeout(() => {
+      setNotification({ title: '', message: '', type: '' });
+    }, 1500);
+  };
+
+  const closeNotification = (event) => {
+    event.preventDefault();
+    setNotification({ title: '', message: '', type: '' });
+  };
 
   const navigate = useNavigate();
 
@@ -68,6 +86,14 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
         status: 'readLater',
         action: 'add',
       });
+    setNotification({
+      title: 'Success',
+      message: `${book.title} by ${book.authors.join(
+        ', '
+      )} added to Read Later`,
+      type: 'success',
+    });
+    clearNotification();
   };
 
   const handleMarkAsRead = async () => {
@@ -79,9 +105,13 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
         status: 'haveRead',
         action: 'add',
       });
+    setNotification({
+      title: 'Success',
+      message: `${book.title} by ${book.authors.join(', ')} marked as Read`,
+      type: 'success',
+    });
+    clearNotification();
   };
-
-  
 
   if (shape === 'circle') {
     // ... (circle shape rendering remains unchanged)
@@ -192,6 +222,12 @@ const Shape = ({ shape, isAuthorName, book, author }) => {
             )}
           </div>
         </div>
+        {notification.title && (
+          <Notification
+            notification={notification}
+            closeNotification={closeNotification}
+          />
+        )}
       </div>
     );
   }
