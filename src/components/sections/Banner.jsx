@@ -1,8 +1,14 @@
 import '../../styles/Banner.css';
+import { useNavigate } from 'react-router-dom';
 
 const Banner = () => {
+  const navigate = useNavigate();
+  const goToSignUp = () => {
+    navigate('/signup');
+  };
+
   return (
-    <div className='bg-container'>
+    <div className='bg-container' onClick={goToSignUp}>
       <div className='banner'>
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -41,7 +47,7 @@ const Banner = () => {
             y='25%'
             fontFamily='Nosifer, sans-serif'
             fontSize='30'
-            fill='black'  
+            fill='black'
             textAnchor='middle'
             dominantBaseline='middle'
             fontWeight={700}
