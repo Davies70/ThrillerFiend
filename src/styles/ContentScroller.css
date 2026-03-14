@@ -1,87 +1,45 @@
-.content-scroll {
-  overflow: auto;
-  display: flex;
-  height: 100%;
-  width: 100%;
-  box-sizing: border-box;
-  margin: 0;
-  min-height: 0.0625rem; /* 1px / 16 */
-  scrollbar-width: none;
-  scroll-behavior: smooth;
-}
-
-@media (pointer: fine) and (min-width: 0) {
-  .content-scroll {
-    width: calc(100% - 0.25rem); /* 4px / 16 */
-  }
-}
-@media (pointer: fine) and (min-width: 360px) {
-  .content-scroll {
-    width: calc(100% - 0.25rem); /* 4px / 16 */
-  }
-}
-@media (pointer: fine) and (min-width: 640px) {
-  .content-scroll {
-    width: calc(100% - 0.75rem); /* 12px / 16 */
-  }
-}
-@media (pointer: fine) and (min-width: 840px) {
-  .content-scroll {
-    width: calc(100% - 0.75rem); /* 12px / 16 */
-  }
-}
-@media (pointer: fine) and (min-width: 1024px) {
-  .content-scroll {
-    width: calc(100% - 0.75rem); /* 12px / 16 */
-  }
-}
-@media (pointer: fine) and (min-width: 1440px) {
-  .content-scroll {
-    width: calc(100% - 1.25rem); /* 20px / 16 */
-  }
-}
-
-@media (min-width: 0) {
-  .content-scroll {
-    padding-inline: 1.25rem; /* 20px / 16 */
-  }
-}
-@media (min-width: 360px) {
-  .content-scroll {
-    padding-inline: 1.25rem; /* 20px / 16 */
-  }
-}
-@media (min-width: 480px) {
-  .content-scroll {
-    padding-inline: 2.25rem; /* 36px / 16 */
-  }
-}
-@media (min-width: 640px) {
-  .content-scroll {
-    padding-inline: 2.25rem; /* 36px / 16 */
-  }
-}
-@media (min-width: 840px) {
-  .content-scroll {
-    padding-inline: 2.25rem; /* 36px / 16 */
-  }
-}
-@media (min-width: 1024px) {
-  .content-scroll {
-    padding-inline: 2.25rem; /* 36px / 16 */
-  }
-}
-@media (min-width: 1280px) {
-  .content-scroll {
-    padding-inline: 3.25rem; /* 52px / 16 */
-  }
-}
-@media (min-width: 1440px) {
-  .content-scroll {
-    padding-inline: 3.25rem; /* 52px / 16 */
-  }
-}
-
 .wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.content-scroll {
   display: flex;
+  gap: 16px;
+  padding: 16px 24px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  /* Hide scrollbar for a clean look */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.content-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ensure empty states look modern in the dark theme */
+.empty-message {
+  width: 100%;
+  text-align: center;
+  font-style: italic;
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  padding: 40px 20px;
+  background-color: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px dashed var(--border-subtle);
+}
+
+@media (max-width: 768px) {
+  .content-scroll {
+    padding: 16px;
+    gap: 12px;
+  }
 }

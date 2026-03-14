@@ -1,140 +1,56 @@
 :root {
-  --xv-xray-panel-header-height: 62px;
-  --xv-xray-panel-width: 468px;
-}
+  /* Core Theme Colors */
+  --bg-primary: #050505; /* Deep rich black */
+  --bg-secondary: #121212; /* Slightly elevated black */
+  --text-primary: #e5e7eb; /* Crisp gray-white */
+  --text-secondary: #9ca3af; /* Muted gray for subtitles/meta */
 
-/* html {
-  overflow-y: scroll;
-} */
+  /* Accents */
+  --accent-blue: #25d1da;
+  --hover-blue: #5ce3ed;
+  --accent-red: #ef4444;
 
-:root {
-  --nav-icon-width: 24px;
-  --nav-icon-height: 24px;
-  --hover-blue: #a8edf0;
-  --primary-color: white;
-  color: var(--primary-color);
-  font-size: 16px;
-  --light-gray-1: rgba(255, 255, 255, 0.3);
-  --light-gray-2: rgba(255, 255, 255, 0.15);
-  --light-gray-3: rgba(255, 255, 255, 0.6);
-  --gray-1: rgba(0, 0, 0, 0.3);
-  --gray-2: rgba(0, 0, 0, 0.6);
-  --blue-text: rgb(37 208 218 / 1);
-  --white-text: rgb(255 255 255 / 1);
-}
+  /* Borders & Overlays */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --overlay-dark: rgba(0, 0, 0, 0.75);
 
-@media screen and (max-width: 1024px) {
-  :root {
-    font-size: 15px; /* 1rem = 15px */
-  }
-}
-
-/* Adjust rem size for small screens */
-@media screen and (max-width: 768px) {
-  :root {
-    font-size: 14px; /* 1rem = 14px */
-  }
-}
-
-/* Adjust rem size for very small screens */
-@media screen and (max-width: 480px) {
-  :root {
-    font-size: 13px; /* 1rem = 13px */
-  }
-}
-.hydrated {
-  visibility: inherit;
+  /* Animation Timing */
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 html {
-  line-height: 1.15;
+  line-height: 1.5;
   -webkit-text-size-adjust: 100%;
-
-  height: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  width: auto;
-  max-width: 100%;
-}
-html {
-  text-size-adjust: 100%;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  overflow: auto;
-  display: block;
-  min-width: auto;
-}
-* {
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  visibility: inherit;
-}
-
-::-webkit-scrollbar {
-  z-index: 100;
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  z-index: 101;
-  background: var(--light-gray-1);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb {
-  z-index: 101;
-  background: var(--light-gray-1);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-track {
-  background: var(--gray-2);
-}
-::-webkit-scrollbar-track {
-  background: var(--gray-2);
-}
-
-body {
-  position: relative;
-}
-
-body {
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
-  margin: 0;
-  padding: 0;
-  /* width: auto;
-  max-width: 100%; */
-  -ms-touch-action: manipulation;
-  touch-action: manipulation;
-  -webkit-user-drag: none;
-  -ms-content-zooming: none;
-  word-wrap: break-word;
-  -webkit-text-size-adjust: none;
-  -moz-text-size-adjust: none;
-  -ms-text-size-adjust: none;
-  text-size-adjust: none;
-  padding: 0;
-  margin: 0;
-  font-family: 'Ember', 'Helvetica', 'Arial', 'sans-serif';
-  transition: all 0.15s ease 0s;
+}
 
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: "Space Grotesk", "Ember", "Helvetica", "Arial", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   padding-bottom: 72px;
-  font-weight: normal;
-  white-space: normal;
-  text-overflow: ellipsis;
-  background: black;
-  z-index: -1;
+  overflow-x: hidden;
 }
 
 a {
   text-decoration: none;
   color: inherit;
+  transition: var(--transition-smooth);
+}
+
+a:hover {
+  color: var(--hover-blue);
 }
 
 button {
@@ -142,19 +58,21 @@ button {
   border: none;
   cursor: pointer;
   outline: none;
+  transition: var(--transition-smooth);
 }
 
-.section {
-  display: flex;
-  color: #fff;
-  line-height: 18.4px;
-  padding: 0px 0px 12px;
-  flex-direction: column;
-  margin-top: 10px;
+/* Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
-
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
 }

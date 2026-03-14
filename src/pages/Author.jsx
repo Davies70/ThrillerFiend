@@ -1,259 +1,241 @@
-import { useState, useEffect } from 'react';
-import authorServices from '../services/authorServices.js';
-import bookServices from '../services/bookServices.js';
-import { useParams } from 'react-router-dom';
-import BookScroller from '../components/sections/BookScroller.jsx';
-import Notification from '../components/Notification';
-import '../styles/Author.css';
-import OutsideClickHandler from '../components/OutsideClickHandler.jsx';
-import { useQueries, useQuery } from '@tanstack/react-query';
-import Loader from '../components/Loader.jsx';
-import { useAuth } from '../context/AuthProvider.jsx';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery, useQueries } from "@tanstack/react-query";
+import { Fade, Box, Typography } from "@mui/material";
+
+import authorServices from "../services/authorServices.js";
+import bookServices from "../services/bookServices.js";
+import { useAuth } from "../context/AuthProvider.jsx";
+
+// Components
+import BookScroller from "../components/sections/BookScroller.jsx";
+import Notification from "../components/Notification";
+import OutsideClickHandler from "../components/OutsideClickHandler.jsx";
+import Loader from "../components/Loader.jsx";
+import "../styles/pages/Author.css"; // Connects to the new responsive CSS
 
 export default function Author() {
   const { id } = useParams();
   const { user } = useAuth();
-
   const navigate = useNavigate();
 
   const [isFollowing, setIsFollowing] = useState(false);
-  const [notification, setNotification] = useState({
-    title: '',
-    message: '',
-    type: '',
-  });
+  const [notification, setNotification] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // 1. Smoothly scroll to the top whenever the Author ID changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [id]);
+
+  // 2. Check Following Status
   useEffect(() => {
     if (!user) return;
     const checkFollowing = async () => {
-      const isFollowing = await authorServices.checkFollowing(id, user.uid);
-      setIsFollowing(isFollowing);
+      const status = await authorServices.checkFollowing(id, user.uid);
+      setIsFollowing(status);
     };
     checkFollowing();
   }, [user, id]);
 
+  // 3. Fetch Data
   const {
     data: author,
     isLoading: authorIsLoading,
     isError: authorIsError,
   } = useQuery({
-    queryKey: ['author', id],
+    queryKey: ["author", id],
     queryFn: () => authorServices.getAuthorById(id),
     enabled: !!id,
   });
 
-  const {
-    data: booksByAuthor,
-    isLoading: booksByAuthorIsLoading,
-    isError: booksByAuthorIsError,
-  } = useQuery({
-    queryKey: ['booksByAuthor', id],
-    queryFn: () => bookServices.getBooksByAuthor(author, 'relevance'),
+  const { data: booksByAuthor, isLoading: booksByAuthorIsLoading } = useQuery({
+    queryKey: ["booksByAuthor", id],
+    queryFn: () => bookServices.getBooksByAuthor(author, "relevance"),
     enabled: !!author,
   });
 
-  const notableWorks = author?.notableWorks ? author.notableWorks : [];
+  const notableWorks = author?.notableWorks || [];
 
   const notableWorksQueries = useQueries({
-    queries:
-      notableWorks.length > 0
-        ? notableWorks.map((notableWork) => ({
-            queryKey: ['notableThrills', notableWork],
-            queryFn: () =>
-              bookServices.getBookByAuthorAndTitle(
-                `intitle:${notableWork}+inauthor:${author.authorName}`
-              ),
-            enabled: !!author,
-          }))
-        : [],
+    queries: notableWorks.map((notableWork) => ({
+      queryKey: ["notableThrills", notableWork],
+      queryFn: () =>
+        bookServices.getBookByAuthorAndTitle(
+          `intitle:${notableWork}+inauthor:${author?.authorName}`,
+        ),
+      enabled: !!author,
+    })),
   });
 
-  if (
+  const isLoading =
     authorIsLoading ||
     booksByAuthorIsLoading ||
-    notableWorksQueries.some((query) => query.isLoading)
-  ) {
-    return <Loader />;
+    notableWorksQueries.some((q) => q.isLoading);
+
+  if (isLoading) return <Loader />;
+
+  if (authorIsError || !author) {
+    return (
+      <Box sx={{ p: 10, textAlign: "center" }}>
+        <Typography variant="h5" color="text.primary">
+          Author not found.
+        </Typography>
+      </Box>
+    );
   }
 
-  if (authorIsError) {
-    return <div>Something went wrong wih author</div>;
-  }
+  // 4. Clean up fetched data for the scrollers
+  // THE FIX: Filter out any undefined/failed queries so the page doesn't crash
+  const notableThrills = notableWorksQueries
+    .filter((q) => !q.isError && q.data)
+    .map((q) => q.data);
 
-  if (booksByAuthorIsError) {
-    return <div>Something went wrong with books by author</div>;
-  }
+  // Map similar authors to perfectly match the Shape component's expectations
+  const mappedSimilarAuthors = (author.similarAuthors || []).map((sim) => ({
+    id: sim.authorId,
+    authorName: sim.name,
+    coverPhoto: sim.coverPhoto,
+  }));
 
-  if (notableWorksQueries.some((query) => query.isError)) {
-    return <div>Something went wrong with notable works</div>;
-  }
+  // 5. Follow / Unfollow Logic
+  const triggerNotification = (title, message, type) => {
+    setNotification({ title, message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
 
-  const notableThrills = notableWorksQueries.map((query) => query.data);
-
-  const {
-    authorName,
-    coverPhoto,
-    nationality,
-    genres,
-    description,
-    similarAuthors,
-  } = author;
-
-  const followClass = isFollowing ? 'unfollow-button' : 'follow-button';
-
-  const follow = () => {
-    !user && navigate('/signin');
-    if (!user) return;
+  const handleFollow = async () => {
+    if (!user) return navigate("/signin");
     try {
-      authorServices.followAuthor(id, user?.uid);
-      setNotification({
-        title: 'Success',
-        message: `You are now following ${authorName}`,
-        type: 'success',
-      });
+      await authorServices.followAuthor(id, user.uid);
       setIsFollowing(true);
-      clearNotification();
+      triggerNotification(
+        "Success",
+        `You are now following ${author.authorName}`,
+        "success",
+      );
     } catch (error) {
-      setNotification({
-        title: 'Error',
-        message: 'There was an error following the author',
-        type: 'error',
-      });
       console.error(error.message);
-      clearNotification();
+      triggerNotification("Error", "Failed to follow author.", "error");
     }
   };
 
-  const unfollowAfterModal = () => {
-    !user && navigate('/signin');
-    if (!user) return;
+  const handleUnfollowConfirm = async () => {
+    if (!user) return navigate("/signin");
     try {
-      authorServices.unfollowAuthor(id, user?.uid);
-      setNotification({
-        title: 'Success',
-        message: `You have unfollowed ${authorName}`,
-        type: 'success',
-      });
+      await authorServices.unfollowAuthor(id, user.uid);
       setIsFollowing(false);
       setIsModalOpen(false);
-      clearNotification();
+      triggerNotification(
+        "Success",
+        `Unfollowed ${author.authorName}`,
+        "success",
+      );
     } catch (error) {
-      setNotification({
-        title: 'Error',
-        message: 'There was an error unfollowing the author',
-        type: 'error',
-      });
       console.error(error.message);
-      clearNotification();
+      triggerNotification("Error", "Failed to unfollow author.", "error");
     }
-  };
-
-  const unfollow = () => {
-    setIsModalOpen(true);
-  };
-
-  const chooseFollow = isFollowing ? unfollow : follow;
-
-  const clearNotification = () => {
-    setTimeout(() => {
-      setNotification({ title: '', message: '', type: '' });
-    }, 1500);
-  };
-
-  const closeNotification = (event) => {
-    event.preventDefault();
-    setNotification({ title: '', message: '', type: '' });
   };
 
   return (
-    <div className='author-page'>
-      <Notification
-        notification={notification}
-        closeNotification={closeNotification}
-      />
-      {isModalOpen && (
-        <OutsideClickHandler
-          onOutsideClick={() => setIsModalOpen(false)}
-          className='unfollow-modal'
-        >
-          <div className='unfollow-modal-content'>
-            <p>
-              Are you sure you want to unfollow {authorName}? Their books will
-              no longer appear in Collections
-            </p>
-            <div className='unfollow-actions'>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className='unfollow-no'
-              >
-                Cancel
-              </button>
-              <button className='unfollow-yes' onClick={unfollowAfterModal}>
-                Unfollow
-              </button>
-            </div>
-          </div>
-        </OutsideClickHandler>
-      )}
-      <div>
-        <div className='author-grid'>
-          <div className='author-info'>
-            <div className='author-header'>
-              <img className='author-image' src={coverPhoto} alt='Author' />
-              <div className='author-right'>
-                <h1 className='author-name'>{authorName}</h1>
-                <p className='author-title'> {nationality} author</p>
-                <div className='author-actions'>
-                  <button
-                    onClick={chooseFollow}
-                    className={followClass}
-                  ></button>
+    <Fade in={true} timeout={800}>
+      {/* MATCHING THE NEW CSS CLASSES */}
+      <div className="author-page-container">
+        {notification && (
+          <Notification
+            notification={notification}
+            closeNotification={() => setNotification(null)}
+          />
+        )}
 
-                  <div className='genre-tags'>
-                    {genres.length > 0 &&
-                      genres.map((genre, index) => (
-                        <span key={index} className='genre-tag'>
-                          {genre}
-                        </span>
-                      ))}
-                  </div>
-                </div>
+        {/* Improved Unfollow Modal */}
+        {isModalOpen && (
+          <div className="modal-overlay">
+            <OutsideClickHandler
+              onOutsideClick={() => setIsModalOpen(false)}
+              className="unfollow-modal-content"
+            >
+              <h3>Unfollow {author.authorName}?</h3>
+              <p>
+                Their books will no longer appear in your personalized
+                collections.
+              </p>
+              <div className="unfollow-actions">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="btn-cancel"
+                >
+                  Cancel
+                </button>
+                <button onClick={handleUnfollowConfirm} className="btn-confirm">
+                  Unfollow
+                </button>
               </div>
-            </div>
+            </OutsideClickHandler>
           </div>
-          <div className='author-bio'>
-            <p>{description}</p>
+        )}
+
+        {/* Premium Profile Header */}
+        <div className="author-profile-header">
+          <img
+            className="author-avatar"
+            src={author.coverPhoto}
+            alt={author.authorName}
+          />
+
+          <div className="author-meta">
+            <h1 className="author-name">{author.authorName}</h1>
+            <p className="author-subtitle">{author.nationality} Author</p>
+
+            <div className="author-tags">
+              {author.genres?.map((genre, index) => (
+                <span key={index} className="tag">
+                  {genre}
+                </span>
+              ))}
+            </div>
+
+            <button
+              onClick={isFollowing ? () => setIsModalOpen(true) : handleFollow}
+              className={`action-btn-main ${isFollowing ? "following" : ""}`}
+            >
+              {isFollowing ? "Following" : "Follow"}
+            </button>
           </div>
         </div>
 
-        <BookScroller
-          shape='square'
-          headerText='Notable thrills'
-          data={notableThrills}
-          isControls={false}
-          isDataAvailable={true}
-        />
+        {/* Bio Section */}
+        <div className="author-bio-section">
+          <p>{author.description}</p>
+        </div>
 
-        <BookScroller
-          shape='square'
-          data={booksByAuthor}
-          headerText='Other thrills by this author'
-          isNavLink={false}
-          isAuthorName={false}
-          isControls={booksByAuthor.length > 7}
-          isDataAvailable={true}
-        />
+        {/* Scrollers */}
+        <div className="author-content-rows">
+          <BookScroller
+            shape="square"
+            headerText="Notable Thrills"
+            data={notableThrills}
+            isControls={false}
+            isDataAvailable={notableThrills.length > 0}
+          />
 
-        <BookScroller
-          shape='circle'
-          data={similarAuthors}
-          headerText='Similar authors'
-          isNavLink={false}
-          isControls={false}
-        />
+          <BookScroller
+            shape="square"
+            headerText="Other works by this author"
+            data={booksByAuthor || []}
+            isControls={true}
+            isDataAvailable={(booksByAuthor || []).length > 0}
+          />
+
+          <BookScroller
+            shape="circle"
+            headerText="Similar Authors"
+            data={mappedSimilarAuthors}
+            isControls={false}
+            isDataAvailable={mappedSimilarAuthors.length > 0}
+          />
+        </div>
       </div>
-    </div>
+    </Fade>
   );
 }

@@ -1,155 +1,169 @@
-import BookScroller from '../components/sections/BookScroller';
-import Loader from '../components/Loader';
-import { useQueries } from '@tanstack/react-query';
-import GridScroller from '../components/sections/GridScroller';
-import authorServices from '../services/authorServices';
-import { useAuth } from '../context/AuthProvider';
-import {
-  getReadLaters,
-  getHaveReads,
-  getFavorites,
-} from '../services/userServices';
-import '../styles/Collections.css';
-import bookServices from '../services/bookServices';
+import { useState, useEffect, useRef } from "react";
+import { useQueries } from "@tanstack/react-query";
+import { useAuth } from "../context/AuthProvider";
+import { getBooksByStatus } from "../services/userServices";
+import { Link, useNavigate } from "react-router-dom";
+import { Tabs, Tab, Box, Fade, Typography } from "@mui/material";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+
+// Components
+import Shape from "../components/Shape";
+import Loader from "../components/Loader";
+import "../styles/pages/Collections.css";
+import "../styles/ContentScroller.css";
 
 const Collections = () => {
-  // return <div>nothing</div>;
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("haveRead");
+  const scrollRef = useRef(null);
 
-  const [
-    followedAuthorsQuery,
-    wantToReadQuery,
-    haveReadQuery,
-    latestBooksQuery,
-    favoritesQuery,
-  ] = useQueries({
+  // 1. Parallel Data Fetching
+  const [haveRead, readLater, favorites] = useQueries({
     queries: [
       {
-        queryKey: ['followedAuthors'],
-        queryFn: () => authorServices.getFollowedAuthors(user.uid),
+        queryKey: ["coll", user?.uid, "haveRead"],
+        queryFn: () => getBooksByStatus(user?.uid, "haveRead"),
         enabled: !!user?.uid,
       },
       {
-        queryKey: ['wantToRead'],
-        queryFn: () => getReadLaters(user.uid),
+        queryKey: ["coll", user?.uid, "readLater"],
+        queryFn: () => getBooksByStatus(user?.uid, "readLater"),
         enabled: !!user?.uid,
       },
       {
-        queryKey: ['haveRead'],
-        queryFn: () => getHaveReads(user.uid),
-        enabled: !!user?.uid,
-      },
-      {
-        queryKey: ['latestBooksByAuthorUserFollows'],
-        queryFn: () =>
-          bookServices.getLatestBooksByAuthorsUserFollows(user.uid),
-        enabled: !!user?.uid,
-      },
-      {
-        queryKey: ['favorites'],
-        queryFn: () => getFavorites(user.uid),
+        queryKey: ["coll", user?.uid, "favorites"],
+        queryFn: () => getBooksByStatus(user?.uid, "favorites"),
         enabled: !!user?.uid,
       },
     ],
   });
 
+  // 2. Prepare Data (Definition before usage!)
+  const collections = {
+    haveRead: haveRead.data || [],
+    readLater: readLater.data || [],
+    favorites: favorites.data || [],
+  };
+
+  const activeBooks = collections[activeTab];
+
+  // 3. Security Redirect & Logging (Placed after definitions)
+  useEffect(() => {
+    if (!authLoading && !user) navigate("/signin");
+  }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    console.group("🚀 Library Watchdog");
+    console.log("Current Tab:", activeTab);
+    console.log("Books in current view:", activeBooks?.length);
+    console.log("Full Collection State:", collections);
+    console.groupEnd();
+  }, [activeTab, activeBooks, collections]);
+
+  // 4. Loading States
   if (
-    followedAuthorsQuery.isLoading ||
-    wantToReadQuery.isLoading ||
-    haveReadQuery.isLoading ||
-    latestBooksQuery.isLoading ||
-    !user?.uid ||
-    favoritesQuery.isLoading
+    authLoading ||
+    haveRead.isLoading ||
+    readLater.isLoading ||
+    favorites.isLoading
   ) {
     return <Loader />;
   }
 
-  if (followedAuthorsQuery.isError) {
-    return <div>Something went wrong with followed authors</div>;
-  }
-
-  if (wantToReadQuery.isError) {
-    return <div>Something went wrong with want to read</div>;
-  }
-
-  if (haveReadQuery.isError) {
-    return <div>Something went wrong with have read</div>;
-  }
-
-  if (latestBooksQuery.isError) {
-    return <div>Something went wrong with latest books</div>;
-  }
-
-  if (favoritesQuery.isError) {
-    return <div>Something went wrong with favorites</div>;
-  }
-
-  const authorsYouFollow = followedAuthorsQuery.data ?? [];
-  const wantToRead = wantToReadQuery.data ?? [];
-  const haveRead = haveReadQuery.data ?? [];
-  const latestBooks = latestBooksQuery.data ?? [];
-  const favorites = favoritesQuery.data ?? [];
+  console.log("Rendering Collections with data:", collections);
 
   return (
-    <div className='collections'>
-      <h1>Collections</h1>
+    <div className="collections-page">
+      <div className="collections-header">
+        <h1>Your Library</h1>
+        <p>Your curated collection of dark mysteries and favorite reads.</p>
+      </div>
 
-      <BookScroller
-        headerText={'Authors You Follow'}
-        shape='circle'
-        isControls={authorsYouFollow.length > 6}
-        data={authorsYouFollow}
-        isAuthorName
-      />
+      <Box
+        className="tabs-container"
+        sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}
+      >
+        <Tabs
+          value={activeTab}
+          onChange={(e, v) => setActiveTab(v)}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            "& .MuiTabs-indicator": { backgroundColor: "var(--accent-blue)" },
+            "& .MuiTab-root": {
+              color: "var(--text-secondary)",
+              fontWeight: 600,
+            },
+            "& .Mui-selected": { color: "var(--text-primary) !important" },
+          }}
+        >
+          <Tab
+            value="haveRead"
+            label={`Have Read (${collections.haveRead.length})`}
+          />
+          <Tab
+            value="readLater"
+            label={`Read Later (${collections.readLater.length})`}
+          />
+          <Tab
+            value="favorites"
+            label={`Favorites (${collections.favorites.length})`}
+          />
+        </Tabs>
+      </Box>
 
-      {latestBooks.length > 12 ? (
-        <GridScroller
-          data={latestBooks}
-          headerText='Latest Books By Authors You Follow'
-          isControls
-        />
+      {activeBooks.length > 0 ? (
+        <Fade in={true} timeout={500} key={activeTab}>
+          <div className="wrapper">
+            {/* The BookScroller Style Layout */}
+            <div
+              className="content-scroll"
+              ref={scrollRef}
+              style={{
+                display: "flex",
+                gap: "20px",
+                overflowX: "auto",
+                padding: "10px 0",
+              }}
+            >
+              {activeBooks.map((book, index) => (
+                <Shape
+                  shape="square"
+                  book={book}
+                  key={book.book_id || book.id || `lib-item-${index}`}
+                />
+              ))}
+            </div>
+          </div>
+        </Fade>
       ) : (
-        <BookScroller
-          headerText={'Latest Books By Authors You Follow'}
-          shape='square'
-          isControls={latestBooks.length > 6}
-          data={latestBooks}
-          isAuthorName
-        />
-      )}
-
-      {wantToRead.length > 12 ? (
-        <GridScroller data={wantToRead} headerText='Read Later' isControls />
-      ) : (
-        <BookScroller
-          headerText={'Read Later'}
-          shape='square'
-          isControls={wantToRead.length > 6}
-          data={wantToRead}
-          isAuthorName
-        />
-      )}
-      {haveRead.length > 12 ? (
-        <GridScroller data={haveRead} headerText='Have Read' isControls />
-      ) : (
-        <BookScroller
-          headerText={'Have Read'}
-          shape='square'
-          isControls={haveRead.length > 6}
-          data={haveRead}
-          isAuthorName
-        />
-      )}
-      {favorites.length > 12 ? (
-        <GridScroller data={favorites} headerText='Your Favorites' isControls />
-      ) : (
-        <BookScroller
-          headerText={'Your Favorites'}
-          shape='square'
-          isControls={favorites.length > 6}
-          data={favorites}
-          isAuthorName
-        />
+        <Fade in={true}>
+          <div
+            className="empty-collection"
+            style={{ textAlign: "center", padding: "60px 20px" }}
+          >
+            <LibraryBooksIcon
+              sx={{ fontSize: 64, color: "var(--border-subtle)", mb: 2 }}
+            />
+            <Typography
+              variant="h5"
+              sx={{ color: "var(--text-primary)", mb: 1 }}
+            >
+              It's quiet here...
+            </Typography>
+            <Typography sx={{ color: "var(--text-secondary)" }}>
+              Add some thrills from the{" "}
+              <Link
+                to="/"
+                style={{ color: "var(--accent-blue)", textDecoration: "none" }}
+              >
+                Home
+              </Link>{" "}
+              page.
+            </Typography>
+          </div>
+        </Fade>
       )}
     </div>
   );

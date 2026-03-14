@@ -1,144 +1,135 @@
-// import hotAuthors from '../../../api/authors';
 import {
-  collection,
-  getDocs,
-  getDoc,
   doc,
   updateDoc,
+  getDoc,
   arrayUnion,
   arrayRemove,
-} from 'firebase/firestore';
-import { db } from '../firebase/config';
+} from "firebase/firestore";
+import { db } from "../firebase/config";
+import rawAuthorData from "../data/authors.js"; // Renamed to avoid confusion
 
-const getHotAuthors = async () => {
-  const hotAuthors = await getAuthors();
-  return hotAuthors.slice(0, 12);
+// THE FIX: Smartly extract the array whether it was exported as an array OR an object
+const authorsArray = Array.isArray(rawAuthorData)
+  ? rawAuthorData
+  : rawAuthorData?.authors || [];
+
+/**
+ * THE MASQUERADE MAPPER
+ */
+const mapAuthorToShape = (author) => {
+  if (!author) return null;
+  return {
+    ...author,
+    book_id: author.id,
+    title: author.authorName,
+    book_image: author.coverPhoto,
+    isAuthor: true,
+  };
 };
 
-const getAuthors = async () => {
-  try {
-    const authorsCollection = collection(db, 'authors');
-    const authorsSnapshot = await getDocs(authorsCollection);
-    const authors = [];
-    authorsSnapshot.forEach((doc) => {
-      authors.push({ id: doc.id, ...doc.data() });
-    });
-    return authors;
-  } catch (error) {
-    console.error('Error fetching authors:', error);
+/**
+ * ==========================================
+ * LOCAL AUTHOR DATA
+ * ==========================================
+ */
+
+const getHotAuthors = async () => {
+  if (!authorsArray || authorsArray.length === 0) {
+    console.warn("Author array is empty or failed to import correctly.");
+    return [];
   }
+  // Map and return the top 12 authors
+  return authorsArray.map(mapAuthorToShape);
 };
 
 const getAuthorById = async (id) => {
-  // const author = hotAuthors.find((author) => author.id === id);
-  // const similarAuthors = getSimilarAuthors(id);
-  // return { ...author, similarAuthors };
-  const authorRef = doc(db, 'authors', id);
-  const authorSnapshot = await getDoc(authorRef);
-  if (authorSnapshot.exists()) {
-    return { id: authorSnapshot.id, ...authorSnapshot.data() };
-  } else {
-    console.error('Author not found');
-  }
+  const author = authorsArray.find((a) => a.id === id);
+  return author ? mapAuthorToShape(author) : null;
 };
 
-const addSimilarAuthorsRandomly = async () => {
-  try {
-    const authors = await getAuthors();
-
-    for (const author of authors) {
-      const similarAuthors = getSimilarAuthors(author.id, authors);
-      await updateDoc(doc(db, 'authors', author.id), {
-        similarAuthors,
-      });
-    }
-  } catch (error) {
-    console.error('Error adding similar authors:', error);
-  }
+const getSimilarAuthors = async (id) => {
+  const otherAuthors = authorsArray.filter((author) => author.id !== id);
+  const shuffled = otherAuthors.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, 3).map(mapAuthorToShape);
 };
 
-const followAuthor = (authorId, userId) => {
+// ... keep your follow/unfollow Firebase logic here ...
+/**
+ * ==========================================
+ * USER SPECIFIC DATA (Firestore)
+ * ==========================================
+ */
+
+const followAuthor = async (authorId, userId) => {
+  if (!authorId || !userId) return;
   try {
-    const userRef = doc(db, 'users', userId);
-    updateDoc(userRef, {
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {
       following: arrayUnion(authorId),
     });
-    console.log('Author followed successfully');
   } catch (error) {
-    console.error('Error following author:', error);
+    console.error("Error following author:", error);
   }
 };
 
-const unfollowAuthor = (authorId, userId) => {
+const unfollowAuthor = async (authorId, userId) => {
+  if (!authorId || !userId) return;
   try {
-    const userRef = doc(db, 'users', userId);
-    updateDoc(userRef, {
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {
       following: arrayRemove(authorId),
     });
-    console.log('Author unfollowed successfully');
   } catch (error) {
-    console.error('Error unfollowing author:', error);
+    console.error("Error unfollowing author:", error);
   }
 };
 
 const checkFollowing = async (authorId, userId) => {
+  if (!authorId || !userId) return false;
   try {
-    const userRef = doc(db, 'users', userId);
+    const userRef = doc(db, "users", userId);
     const userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) return false;
+
     const userData = userDoc.data();
-    return userData.following.includes(authorId);
+    return userData.following?.includes(authorId) ?? false;
   } catch (error) {
-    console.error('Error checking if following author:', error);
+    console.error("Error checking following status:", error);
+    return false;
   }
 };
 
-const getSimilarAuthors = (id, authors) => {
-  const getRandomAuthors = (count) => {
-    const randomAuthors = [];
-    const shuffledAuthors = authors
-      .filter((author) => author.id != id)
-      .sort(() => Math.random() - 0.5);
-    for (let i = 0; i < count; i++) {
-      randomAuthors.push(shuffledAuthors[i]);
-    }
-    return randomAuthors.map((author) => ({
-      authorId: author.id,
-      name: author.authorName,
-      coverPhoto: author.coverPhoto,
-    }));
-  };
-
-  return getRandomAuthors(3);
-};
-
 const getFollowedAuthors = async (userId) => {
+  if (!userId) return [];
   try {
-    const userRef = doc(db, 'users', userId);
+    const userRef = doc(db, "users", userId);
     const userDoc = await getDoc(userRef);
-    const userData = userDoc.data();
-    const followedAuthors = [];
-    if (!userData?.following || !userData?.following.length === 0)
-      return followedAuthors;
 
-    for (const authorId of userData.following) {
-      const authorRef = doc(db, 'authors', authorId);
-      const authorDoc = await getDoc(authorRef);
-      followedAuthors.push({ id: authorDoc.id, ...authorDoc.data() });
-    }
+    if (!userDoc.exists()) return [];
+
+    const followingIds = userDoc.data().following || [];
+    if (followingIds.length === 0) return [];
+
+    // Map the followed IDs back to our local author objects, then shape them
+    const followedAuthors = followingIds
+      .map((id) => data.authors.find((author) => author.id === id))
+      .filter(Boolean) // Removes any if an author was deleted from the local file
+      .map(mapAuthorToShape);
+
     return followedAuthors;
   } catch (error) {
-    console.error('Error fetching authors:', error);
+    console.error("Error fetching followed authors:", error);
+    return [];
   }
 };
 
 export default {
   getHotAuthors,
-  getAuthors,
   getAuthorById,
   followAuthor,
   unfollowAuthor,
   getSimilarAuthors,
-  addSimilarAuthorsRandomly,
   checkFollowing,
   getFollowedAuthors,
 };

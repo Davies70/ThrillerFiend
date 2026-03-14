@@ -1,0 +1,158 @@
+/* =========================================
+   PAGE STRUCTURE & ANIMATIONS
+   ========================================= */
+.collections-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 64px 24px;
+  min-height: 80vh;
+  animation: fadeInPage 0.5s ease-out forwards;
+}
+
+@keyframes fadeInPage {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================
+   LIBRARY HEADER (Glassy & Premium)
+   ========================================= */
+.collections-header {
+  position: relative;
+  margin: 32px 0;
+  padding: 48px 32px;
+  background: linear-gradient(
+    135deg,
+    rgba(37, 209, 218, 0.1) 0%,
+    rgba(18, 18, 18, 0.8) 100%
+  );
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Cyan accent glow line */
+.collections-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent-blue),
+    transparent
+  );
+}
+
+.collections-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.collections-header p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* =========================================
+   TABS CONTAINER
+   ========================================= */
+.tabs-container {
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* =========================================
+   BOOK GRID
+   ========================================= */
+.collections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 24px;
+  width: 100%;
+  animation: fadeGrid 0.4s ease-in-out;
+}
+
+@keyframes fadeGrid {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =========================================
+   EMPTY STATE
+   ========================================= */
+.empty-collection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  margin-top: 32px;
+}
+
+.empty-collection h3 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.empty-collection p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 400px;
+}
+
+/* =========================================
+   MOBILE RESPONSIVENESS
+   ========================================= */
+@media (max-width: 768px) {
+  .collections-page {
+    padding: 0 16px 80px 16px; /* Extra padding for bottom nav */
+  }
+  .collections-header {
+    padding: 32px 20px;
+    margin: 24px 0;
+  }
+  .collections-header h1 {
+    font-size: 2rem;
+  }
+  .collections-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .collections-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+  }
+}

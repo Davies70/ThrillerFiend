@@ -1,245 +1,354 @@
-import { useState, useRef, useEffect } from 'react';
-import '../styles/Nav.css';
-import Logo from './icons/nav/Logo';
-import LogoSmall from './icons/nav/LogoSmall';
-import HomeIcon from '@mui/icons-material/Home';
-import WhatshotIcon from '@mui/icons-material/Whatshot';
-import SearchIcon from '@mui/icons-material/Search';
-import CancelIcon from '@mui/icons-material/Cancel';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link, useLocation } from 'react-router-dom';
-import Suggestions from './Suggestions';
-import bookServices from '../services/bookServices';
-import { useQuery } from '@tanstack/react-query';
-import { auth } from '../firebase/config';
-import { signOut } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthProvider';
-import LogoutIcon from '@mui/icons-material/Logout';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import LoadingButton from '@mui/lab/LoadingButton';
-import AuthButton from './AuthButton';
+import { useState, useRef, useEffect } from "react";
+import "../styles/Nav.css";
+import Logo from "./icons/nav/Logo";
+import LogoSmall from "./icons/nav/LogoSmall";
+import HomeIcon from "@mui/icons-material/Home";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
+import SearchIcon from "@mui/icons-material/Search";
+import CancelIcon from "@mui/icons-material/Cancel";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import LogoutIcon from "@mui/icons-material/Logout";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import Suggestions from "./Suggestions";
+import bookServices from "../services/bookServices";
+import { useQuery } from "@tanstack/react-query";
+import { auth } from "../firebase/config";
+import { signOut } from "firebase/auth";
+import { useAuth } from "../context/AuthProvider";
+import LoadingButton from "@mui/lab/LoadingButton";
+import AuthButton from "./AuthButton";
 
 const Nav = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearchContainer, setShowSearchContainer] = useState(false);
-  const [triggerSearch, setTriggerSearch] = useState(false);
+  // 1. Decoupled Search States
+  const [searchQuery, setSearchQuery] = useState("");
+  const [submittedQuery, setSubmittedQuery] = useState("");
+
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
 
-  const inputRef = useRef(null);
+  // Mobile states
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const desktopContainerRef = useRef(null);
+  const mobileInputRef = useRef(null);
+
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
 
-  const handleSearchIconClick = (event) => {
-    event.preventDefault();
-    setShowSearchContainer(true);
-    setTimeout(() => {
-      inputRef.current.focus();
-    }, 0);
-  };
-
-  const handleBlur = (event) => {
-    event.preventDefault();
-    setTimeout(() => {
-      if (!inputRef.current.contains(event.relatedTarget)) {
-        setShowSearchContainer(false);
-        setSuggestions([]);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        desktopContainerRef.current &&
+        !desktopContainerRef.current.contains(event.target)
+      ) {
+        setShowSuggestions(false);
       }
-    }, 200);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Closes mobile modal if you navigate pages
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setIsMobileSearchOpen(false);
+  }, [location.pathname]);
+
+  const openMobileSearch = () => {
+    setIsMobileSearchOpen(true);
+    setTimeout(() => mobileInputRef.current?.focus(), 100);
   };
 
-  const clearSearchQuery = (event) => {
-    event.preventDefault();
-    setSearchQuery('');
+  const closeMobileSearch = () => {
+    setIsMobileSearchOpen(false);
+    setShowSuggestions(false);
+    setSearchQuery("");
+    setSubmittedQuery("");
+  };
+
+  // Universal handler for when a user selects a book from the list
+  const handleSuggestionClick = () => {
+    setShowSuggestions(false);
+    setIsMobileSearchOpen(false);
     setSuggestions([]);
-    setTimeout(() => {
-      inputRef.current.focus();
-    }, 0);
+    setSearchQuery("");
+    setSubmittedQuery("");
   };
 
   const fetchSuggestions = async (q) => {
+    if (!q || q.trim() === "") return [];
     try {
       const data = await bookServices.getBooksSuggestions(q);
-      if (data && data.length > 0) {
-        return data;
-      } else {
-        return [{ title: 'No results found', authors: 'Try another search' }];
-      }
+      return data?.length > 0
+        ? data
+        : [{ title: "No results found", authors: "Try another search" }];
     } catch (error) {
-      console.error('Error fetching suggestions:', error);
+      console.error("Error fetching suggestions:", error);
+      return [];
     }
   };
 
-  const handleSearchQuery = (event) => {
+  // 2. Only update submittedQuery on actual form submit
+  const handleSearchSubmit = (event) => {
     event.preventDefault();
-    if (searchQuery) {
+    if (searchQuery.trim()) {
+      setSubmittedQuery(searchQuery.trim());
       setShowSuggestions(true);
-      setTriggerSearch(true);
     }
   };
 
+  // 3. Only update the input text while typing, but don't fetch yet
+  const handleInputChange = (e) => {
+    const val = e.target.value;
+    setSearchQuery(val);
+    setShowSuggestions(false); // Hide stale suggestions while typing
+
+    if (val.trim() === "") {
+      setSubmittedQuery("");
+      setSuggestions([]);
+    }
+  };
+
+  // 4. React Query only fires when submittedQuery is populated
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['search', searchQuery],
-    queryFn: () => fetchSuggestions(searchQuery),
-    enabled: triggerSearch,
+    queryKey: ["search", submittedQuery],
+    queryFn: () => fetchSuggestions(submittedQuery),
+    enabled: !!submittedQuery,
   });
-
-  useEffect(() => {
-    if (data) {
-      setSuggestions(data);
-      setTriggerSearch(false);
-    }
-  }, [data]);
-
-  const closeSugesstions = () => {
-    setShowSuggestions(false);
-  };
-
-  const navigate = useNavigate();
 
   const handleSignOut = (event) => {
     event.preventDefault();
     signOut(auth)
       .then(() => {
-        console.log('Sign out successful');
-        navigate('/signin');
+        navigate("/signin");
+        setIsMobileMenuOpen(false);
       })
-      .catch((error) => {
-        console.error('Sign out error:', error);
-      });
+      .catch(console.error);
   };
 
-  const { user, loading } = useAuth();
+  useEffect(() => {
+    if (data && submittedQuery.trim() !== "") {
+      setSuggestions(data);
+      setShowSuggestions(true);
+    }
+  }, [data, submittedQuery]);
 
   const dontShowSignInButton =
-    location.pathname === '/signin' || location.pathname === '/signup';
-
-  const searchContainer = () => {
-    return (
-      <div className='show-search-container'>
-        <form
-          className='search-form-mini'
-          autoComplete='off'
-          ref={inputRef}
-          onSubmit={handleSearchQuery}
-        >
-          <input
-            className='search-bar-mini'
-            aria-label='Search'
-            type='search'
-            id='search'
-            value={searchQuery}
-            placeholder='Search Books...'
-            onChange={({ target }) => setSearchQuery(target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                handleSearchQuery(event);
-              }
-            }}
-          />
-          {searchQuery ? (
-            <button
-              className='cancel-search-mini'
-              onClick={clearSearchQuery}
-              tabIndex='-1'
-            >
-              <CancelIcon />
-            </button>
-          ) : null}
-          <button className='search-icon-button-mini' onClick={handleBlur}>
-            cancel
-          </button>
-        </form>
-        {showSuggestions && (
-          <Suggestions
-            onSuggestionClick={() => {
-              setShowSearchContainer(false);
-            }}
-            suggestions={suggestions}
-            isError={isError}
-            isLoading={isLoading}
-            closeSuggestions={closeSugesstions}
-          />
-        )}
-      </div>
-    );
-  };
+    location.pathname === "/signin" || location.pathname === "/signup";
 
   return (
-    <nav className='nav'>
-      {showSearchContainer ? (
-        searchContainer()
-      ) : (
-        <ul className='nav-list'>
-          <Link to={'/'} id='logo'>
-            <Logo />
-          </Link>
+    <>
+      {/* ================= MAIN NAVIGATION BAR ================= */}
+      <nav className="nav">
+        <div className="nav-content">
+          {/* LOGOS */}
+          <div className="nav-brand">
+            <Link to={"/"} id="logo">
+              <Logo />
+            </Link>
+            <Link to={"/"} id="logo-small">
+              <LogoSmall />
+            </Link>
+          </div>
 
-          <Link to={'/'} id='logo-small'>
-            <LogoSmall />
-          </Link>
+          {/* DESKTOP CENTER LINKS */}
+          <ul className="nav-links hidden-on-mobile">
+            <Link
+              className={
+                location.pathname === "/" ? "nav-link-active" : "nav-link"
+              }
+              to={"/"}
+            >
+              <HomeIcon /> <span>Home</span>
+            </Link>
+            <Link
+              className={
+                location.pathname === "/blog" ? "nav-link-active" : "nav-link"
+              }
+              to={"/blog"}
+            >
+              <WhatshotIcon /> <span>Hot Thrills</span>
+            </Link>
+            <Link
+              className={
+                location.pathname === "/collections"
+                  ? "nav-link-active"
+                  : "nav-link"
+              }
+              to={user ? "/collections" : "/signin"}
+            >
+              <LibraryBooksIcon /> <span>Collections</span>
+            </Link>
+          </ul>
 
-          <Link
-            className={
-              location.pathname === '/' ? 'nav-link-active' : 'nav-link'
-            }
-            id='home-icon'
-            to={'/'}
-          >
-            <span id='nav-icon '>
-              <HomeIcon />
-            </span>
-            <span className='nav-text'> Home</span>
-          </Link>
-          <Link
-            className={
-              location.pathname === '/new' ? 'nav-link-active' : 'nav-link'
-            }
-            to={'/new'}
-          >
-            <span id='nav-icon'>
-              <WhatshotIcon />
-            </span>
-            <span className='nav-text'>Hot Thrills</span>
-          </Link>
-          <Link
-            className={
-              location.pathname === '/collections'
-                ? 'nav-link-active'
-                : 'nav-link'
-            }
-            to={user ? '/collections' : '/signin'}
-          >
-            <span id='nav-icon'>
-              <LibraryBooksIcon />
-            </span>
-            <span className='nav-text home-icon'>Collections</span>
-          </Link>
-          <button className='search-icon-small' onClick={handleSearchIconClick}>
-            <SearchIcon />
-          </button>
+          {/* RIGHT SIDE ACTIONS */}
+          <div className="nav-actions">
+            {/* 1. DESKTOP SEARCH */}
+            <div
+              className="desktop-search hidden-on-mobile"
+              ref={desktopContainerRef}
+            >
+              <form
+                className="desktop-search-form"
+                onSubmit={handleSearchSubmit}
+              >
+                <input
+                  className="desktop-search-bar"
+                  type="text"
+                  placeholder="Search Books..."
+                  value={searchQuery}
+                  onChange={handleInputChange}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    className="desktop-cancel"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSubmittedQuery("");
+                      setShowSuggestions(false);
+                    }}
+                  >
+                    <CancelIcon fontSize="small" />
+                  </button>
+                )}
+                <button
+                  className="desktop-search-icon"
+                  type="submit"
+                  tabIndex="-1"
+                >
+                  <SearchIcon />
+                </button>
+              </form>
+              {showSuggestions && !isMobileSearchOpen && (
+                <Suggestions
+                  suggestions={suggestions}
+                  isError={isError}
+                  isLoading={isLoading}
+                  onSuggestionClick={handleSuggestionClick}
+                  closeSuggestions={() => setShowSuggestions(false)}
+                />
+              )}
+            </div>
 
-          <div className='search-container'>
-            <form className='search-form' onSubmit={handleSearchQuery}>
-              <input
-                className='search-bar'
-                aria-label='Search'
-                type='search'
-                id='search'
-                placeholder='Search Books...'
-                value={searchQuery}
-                ref={inputRef}
-                onChange={({ target }) => setSearchQuery(target.value)}
+            {/* 2. DESKTOP AUTH & PROFILE */}
+            <div className="desktop-auth-container hidden-on-mobile">
+              <AuthButton
+                loading={loading}
+                user={user}
+                handleSignOut={handleSignOut}
+                dontShowSignInButton={dontShowSignInButton}
               />
-              <button className='search-icon-button' type='submit'>
+              <div className="profile-icon-wrapper">
+                {loading ? (
+                  <LoadingButton
+                    loading
+                    variant="contained"
+                    sx={{
+                      borderRadius: "50%",
+                      minWidth: "40px",
+                      width: "40px",
+                      height: "40px",
+                    }}
+                  />
+                ) : user ? (
+                  <button
+                    onClick={handleSignOut}
+                    className="profile-button"
+                    title="Sign Out"
+                  >
+                    <LogoutIcon />
+                  </button>
+                ) : (
+                  <Link to={"/signin"} className="profile-link" title="Sign In">
+                    <AccountCircleIcon fontSize="large" />
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            {/* 3. MOBILE TOP RIGHT ICONS */}
+            <div className="mobile-top-actions hidden-on-desktop">
+              <button className="mobile-action-btn" onClick={openMobileSearch}>
                 <SearchIcon />
               </button>
+              <button
+                className="mobile-action-btn"
+                onClick={() => setIsMobileMenuOpen(true)}
+              >
+                <MenuIcon />
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
 
-              {searchQuery ? (
-                <button className='cancel-search' onClick={clearSearchQuery}>
-                  <CancelIcon />
+      {/* ================= MOBILE BOTTOM BAR ================= */}
+      <div className="mobile-bottom-bar hidden-on-desktop">
+        <Link
+          className={`mobile-bottom-link ${location.pathname === "/" ? "active" : ""}`}
+          to={"/"}
+        >
+          <HomeIcon fontSize="large" />
+        </Link>
+        <Link
+          className={`mobile-bottom-link ${location.pathname === "/blog" ? "active" : ""}`}
+          to={"/blog"}
+        >
+          <WhatshotIcon fontSize="large" />
+        </Link>
+        <Link
+          className={`mobile-bottom-link ${location.pathname === "/collections" ? "active" : ""}`}
+          to={user ? "/collections" : "/signin"}
+        >
+          <LibraryBooksIcon fontSize="large" />
+        </Link>
+      </div>
+
+      {/* ================= MOBILE SEARCH OVERLAY ================= */}
+      {isMobileSearchOpen && (
+        <div className="mobile-search-overlay hidden-on-desktop">
+          <button className="mobile-overlay-back" onClick={closeMobileSearch}>
+            <ArrowBackIcon />
+          </button>
+
+          <div className="mobile-search-input-wrapper">
+            <form onSubmit={handleSearchSubmit} className="mobile-search-form">
+              <input
+                ref={mobileInputRef}
+                className="mobile-search-input"
+                type="text"
+                placeholder="Search titles, authors..."
+                value={searchQuery}
+                onChange={handleInputChange}
+              />
+
+              {/* ACTION BUTTONS WRAPPER */}
+              <div className="mobile-search-actions">
+                {searchQuery && (
+                  <button
+                    type="button"
+                    className="mobile-overlay-clear"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSubmittedQuery("");
+                      setShowSuggestions(false);
+                      mobileInputRef.current?.focus(); // Keeps keyboard open
+                    }}
+                  >
+                    <CancelIcon fontSize="small" />
+                  </button>
+                )}
+                <button type="submit" className="mobile-overlay-submit">
+                  <SearchIcon />
                 </button>
-              ) : null}
+              </div>
             </form>
 
             {showSuggestions && (
@@ -247,51 +356,111 @@ const Nav = () => {
                 suggestions={suggestions}
                 isError={isError}
                 isLoading={isLoading}
-                onSuggestionClick={() => {
-                  setShowSearchContainer(false);
-                }}
-                closeSuggestions={closeSugesstions}
+                onSuggestionClick={handleSuggestionClick}
+                closeSuggestions={closeMobileSearch}
               />
             )}
           </div>
-          <AuthButton
-            loading={loading}
-            user={user}
-            handleSignOut={handleSignOut}
-            dontShowSignInButton={dontShowSignInButton}
-          />
-          <li
-            className={
-              location.pathname === '/signin'
-                ? 'nav-link-active profile-icon-wrapper'
-                : 'nav-link profile-icon-wrapper'
-            }
-          >
-            {loading ? (
-              <LoadingButton
-                loading
-                variant='contained'
-                sx={{
-                  borderRadius: '1.5rem',
-                  minWidth: '40px', // Ensure consistent width
-                  width: '40px',
-                  height: '40px',
-                }}
-                size='small'
-              />
-            ) : user ? (
-              <button onClick={handleSignOut} className='profile-button'>
-                <LogoutIcon color='ochre' />
-              </button>
-            ) : (
-              <Link to={'/signin'} className='profile-link'>
-                <AccountCircleIcon />
-              </Link>
-            )}
-          </li>
-        </ul>
+        </div>
       )}
-    </nav>
+
+      {/* ================= MOBILE HAMBURGER MENU OVERLAY ================= */}
+      {isMobileMenuOpen && (
+        <div
+          className="mobile-menu-backdrop hidden-on-desktop"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          <div
+            className="mobile-menu-drawer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mobile-menu-header">
+              <span>Account Menu</span>
+              <button
+                className="mobile-menu-close"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <CloseIcon />
+              </button>
+            </div>
+
+            <div className="mobile-menu-body">
+              <div className="mobile-menu-item">
+                <span
+                  style={{
+                    color: "#9ca3af",
+                    fontSize: "0.8rem",
+                    textTransform: "uppercase",
+                    marginBottom: "8px",
+                  }}
+                >
+                  Profile
+                </span>
+                {loading ? (
+                  <LoadingButton
+                    loading
+                    variant="contained"
+                    sx={{ borderRadius: "1.5rem" }}
+                  />
+                ) : user ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                      color: "#e5e7eb",
+                    }}
+                  >
+                    <AccountCircleIcon
+                      fontSize="large"
+                      sx={{ color: "#25d1da" }}
+                    />
+                    <span
+                      style={{ fontSize: "0.9rem", wordBreak: "break-all" }}
+                    >
+                      Signed in
+                    </span>
+                  </div>
+                ) : (
+                  <Link
+                    to="/signin"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                      color: "#e5e7eb",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <AccountCircleIcon fontSize="large" />
+                    <span>Sign In to Account</span>
+                  </Link>
+                )}
+              </div>
+
+              <div className="mobile-menu-item">
+                <span
+                  style={{
+                    color: "#9ca3af",
+                    fontSize: "0.8rem",
+                    textTransform: "uppercase",
+                    marginBottom: "8px",
+                  }}
+                >
+                  Actions
+                </span>
+                <AuthButton
+                  loading={loading}
+                  user={user}
+                  handleSignOut={handleSignOut}
+                  dontShowSignInButton={dontShowSignInButton}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

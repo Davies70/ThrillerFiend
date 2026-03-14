@@ -1,29 +1,45 @@
-
-import '../styles/Notification.css';
-import CancelIcon from '@mui/icons-material/Cancel';
-import Proptypes from 'prop-types';
+import "../styles/Notification.css";
+import CloseIcon from "@mui/icons-material/Close";
+import PropTypes from "prop-types";
 
 const Notification = ({ notification, closeNotification }) => {
-  if (notification.title === '') {
+  // Ensure it shows if there is either a title OR a message
+  if (!notification || (!notification.title && !notification.message)) {
     return null;
   }
+
   return (
-    <div className='notification-container'>
-      <div className='notification-body'>
-        <span className='notification-title'>{notification.message}</span>
-        <button onClick={closeNotification} className='cancel-notification'>
-          <CancelIcon />
+    <div className="toast-container">
+      <div className="toast-content">
+        <div className="toast-text">
+          {notification.title && (
+            <span className="toast-title">{notification.title}</span>
+          )}
+          <span className="toast-message">{notification.message}</span>
+        </div>
+        <button
+          onClick={closeNotification}
+          className="toast-close"
+          aria-label="Close notification"
+        >
+          <CloseIcon fontSize="small" />
         </button>
       </div>
 
-      <div className='not-loader'></div>
+      <div className="toast-progress">
+        <div className="toast-progress-bar"></div>
+      </div>
     </div>
   );
 };
 
 Notification.propTypes = {
-  notification: Proptypes.object,
-  closeNotification: Proptypes.func,
+  notification: PropTypes.shape({
+    title: PropTypes.string,
+    message: PropTypes.string,
+    type: PropTypes.string,
+  }),
+  closeNotification: PropTypes.func.isRequired,
 };
 
 export default Notification;

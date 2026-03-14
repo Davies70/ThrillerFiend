@@ -1,0 +1,140 @@
+/* =========================================
+   LAYOUT STRUCTURE
+   ========================================= */
+.auth-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Left Side: Visual/Branding (Hidden on Mobile) */
+.auth-visual {
+  flex: 1;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(5, 5, 5, 0.9) 0%,
+      rgba(37, 209, 218, 0.1) 100%
+    ),
+    url("https://images.unsplash.com/photo-1512149177596-f817c7ef5d4c?auto=format&fit=crop&q=80&w=1000");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 64px;
+  border-right: 1px solid var(--border-subtle);
+}
+
+.auth-visual h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: -0.03em;
+}
+
+.auth-visual h1 span {
+  color: var(--accent-blue);
+}
+
+/* Right Side: The Form */
+.auth-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.auth-header {
+  text-align: left;
+}
+
+.auth-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.auth-header p {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* =========================================
+   FORM ELEMENTS
+   ========================================= */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.auth-input {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.auth-input:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 1px var(--accent-blue);
+  background-color: rgba(37, 209, 218, 0.05);
+}
+
+.auth-footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.auth-link {
+  color: var(--accent-blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+/* =========================================
+   RESPONSIVENESS
+   ========================================= */
+@media (max-width: 1024px) {
+  .auth-visual {
+    display: none;
+  }
+  .auth-container {
+    flex: 1;
+    background-color: var(--bg-primary);
+  }
+}

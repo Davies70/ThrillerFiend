@@ -1,245 +1,136 @@
-import '../styles/Shape.css';
-import Proptypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
-import IconButton from '@mui/material/IconButton';
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthProvider";
 import {
-  addBookStatus,
   getBookStatus,
+  addBookStatus,
   removeBookStatus,
-} from '../services/userServices';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { useAuth } from '../context/AuthProvider';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Notification from './Notification';
+} from "../services/userServices";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
+import Notification from "./Notification";
+import "../styles/Shape.css";
 
-const Shape = ({ shape, isAuthorName, book, author }) => {
+const Shape = ({ book, shape = "square" }) => {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const [isRead, setIsRead] = useState(false);
-  const [isReadLater, setIsReadLater] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [notif, setNotif] = useState(null);
+  const [isShaking, setIsShaking] = useState(false);
 
-  const [notification, setNotification] = useState({
-    title: '',
-    message: '',
-    type: '',
-  });
+  if (!book) return null;
 
-  const clearNotification = () => {
-    setTimeout(() => {
-      setNotification({ title: '', message: '', type: '' });
-    }, 1500);
-  };
+  // 1. Let the 'shape' prop dictate the component's identity
+  const isAuthorShape = shape === "circle";
 
-  const closeNotification = (event) => {
-    event.preventDefault();
-    setNotification({ title: '', message: '', type: '' });
-  };
+  // 2. Resilient data extraction (works for both raw author objects and book objects)
+  const itemId = book.book_id || book.id;
+  const itemTitle = book.title || book.authorName;
+  const itemImage = book.book_image || book.coverPhoto;
+  const itemAuthors = book.authors;
 
-  const navigate = useNavigate();
-
-  const redirectToLogIn = () => {
-    if (!user) {
-      navigate('/signin');
-    }
-  };
-
-  const {
-    data: state,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['bookStatus', user?.uid, book?.book_id],
-    queryFn: () => getBookStatus(user?.uid, book?.book_id),
-    enabled: !!user?.uid && !!book,
-  });
+  // 3. Set dynamic routing based on the shape
+  const linkDestination = isAuthorShape
+    ? `/author/${itemId}`
+    : `/book/${itemId}`;
 
   useEffect(() => {
-    if (state) {
-      setIsRead(state.haveRead);
-      setIsReadLater(state.readLater);
-    }
-  }, [state]);
-
-  const updateBookStatusMutation = useMutation({
-    mutationFn: ({ userId, bookId, status, action }) => {
-      if (action === 'add') {
-        return addBookStatus(userId, bookId, status);
-      } else if (action === 'remove') {
-        return removeBookStatus(userId, bookId, status);
+    const checkStatus = async () => {
+      // Skip the Firestore check if this is rendering an author circle
+      if (user?.uid && itemId && !isAuthorShape) {
+        const status = await getBookStatus(user.uid, itemId);
+        setIsSaved(status.readLater || status.haveRead);
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['bookStatus', user?.uid, book?.book_id]);
-    },
-  });
+    };
+    checkStatus();
+  }, [user?.uid, itemId, isAuthorShape]);
 
-  const handleAddToReadLater = async () => {
-    redirectToLogIn();
-    user &&
-      updateBookStatusMutation.mutate({
-        userId: user?.uid,
-        bookId: book?.book_id,
-        status: 'readLater',
-        action: 'add',
+  const handleQuickAdd = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!user) {
+      setNotif({
+        title: "Access Denied",
+        message: "Please sign in to save this thriller.",
       });
-    setNotification({
-      title: 'Success',
-      message: `${book.title} by ${book.authors.join(
-        ', '
-      )} added to Read Later`,
-      type: 'success',
-    });
-    clearNotification();
+      return;
+    }
+
+    setIsShaking(true);
+    setTimeout(() => setIsShaking(false), 500);
+
+    try {
+      if (isSaved) {
+        await removeBookStatus(user.uid, book, "readLater");
+        setIsSaved(false);
+      } else {
+        await addBookStatus(user.uid, book, "readLater");
+        setIsSaved(true);
+        setNotif({
+          title: "Library Updated",
+          message: `Added "${itemTitle}" to Read Later.`,
+        });
+        setTimeout(() => setNotif(null), 3000);
+      }
+    } catch (err) {
+      console.error("Quick Add Error:", err);
+    }
   };
 
-  const handleMarkAsRead = async () => {
-    redirectToLogIn();
-    user &&
-      updateBookStatusMutation.mutate({
-        userId: user?.uid,
-        bookId: book?.book_id,
-        status: 'haveRead',
-        action: 'add',
-      });
-    setNotification({
-      title: 'Success',
-      message: `${book.title} by ${book.authors.join(', ')} marked as Read`,
-      type: 'success',
-    });
-    clearNotification();
-  };
+  return (
+    <>
+      <div className={`shape-card ${shape} ${isShaking ? "shake-it" : ""}`}>
+        <Link to={linkDestination} className="shape-link">
+          <div className="image-container">
+            <img
+              src={itemImage || "https://lgimages.s3.amazonaws.com/nc-md.gif"}
+              alt={itemTitle}
+              loading="lazy"
+            />
 
-  if (shape === 'circle') {
-    // ... (circle shape rendering remains unchanged)
-    const { authorName, coverPhoto, id, name, authorId } = author;
-    const realId = id || authorId;
-    return (
-      <div className='card'>
-        <div className='card-content'>
-          <div className='imageWrapper circle'>
-            {
-              <img
-                src={coverPhoto}
-                loading='lazy'
-                alt={authorName || name}
-                style={{
-                  maxWidth: '100%',
-                  height: 'auto',
-                }}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = `https://lgimages.s3.amazonaws.com/nc-md.gif`;
-                }}
-              />
-            }
-            <Link className='bg cirlce' to={`/author/${realId}`}>
-              <button className='right-button'>
-                <MoreHorizOutlinedIcon />
+            {/* 4. Hide the Quick Add button if it's an author circle */}
+            {!isAuthorShape && (
+              <button
+                className={`action-btn ${isSaved ? "active" : ""}`}
+                onClick={handleQuickAdd}
+              >
+                {isSaved ? (
+                  <BookmarkAddedIcon fontSize="small" />
+                ) : (
+                  <AddBoxIcon fontSize="small" />
+                )}
               </button>
-            </Link>
+            )}
+
+            <div className="inner-shadow" />
           </div>
-          <div className='tag'>
-            <Link
-              className='taglink'
-              to={`/author/${realId}`}
-              style={{
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
+
+          <div className="text-meta">
+            <h3
+              className="title-ellipsis"
+              style={{ textAlign: isAuthorShape ? "center" : "left" }}
             >
-              {authorName || name}
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  } else {
-    const { title, book_image, authors, book_id } = book || {};
-    const authorName =
-      typeof authors === 'string' ? authors : authors?.join(', ');
+              {itemTitle}
+            </h3>
 
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error fetching book status</div>;
-
-    return (
-      <div className='card'>
-        <div className='card-content'>
-          <div className='imageWrapper square'>
-            {book_image ? (
-              <img src={book_image} loading='lazy' alt={title} />
-            ) : (
-              <img
-                src={`https://lgimages.s3.amazonaws.com/nc-md.gif`}
-                loading='lazy'
-                alt={title}
-              />
-            )}
-
-            <div className='bg square'>
-              {!isRead && (
-                <IconButton
-                  title={isReadLater ? 'Mark as Read' : 'Add to Read Later'}
-                  aria-label={
-                    isReadLater ? 'Mark as Read' : 'Add to Read Later'
-                  }
-                  onClick={
-                    isReadLater ? handleMarkAsRead : handleAddToReadLater
-                  }
-                  className='top-right'
-                >
-                  {isReadLater ? (
-                    <CheckCircleIcon color='white' />
-                  ) : (
-                    <BookmarkAddOutlinedIcon />
-                  )}
-                </IconButton>
-              )}
-              {isRead && (
-                <IconButton
-                  title='Read'
-                  aria-label='Read'
-                  disabled
-                  className='top-right'
-                >
-                  <CheckCircleIcon color='blue' />
-                </IconButton>
-              )}
-            </div>
-          </div>
-          <div className='primary-tag'>
-            <Link className='taglink' to={`/book/${book_id}`} title={title}>
-              {title}
-            </Link>
-            {isAuthorName && (
-              <div className='secondary-tag'>
-                <span>{authorName}</span>
-              </div>
+            {/* 5. Hide the author sub-text if it's an author circle */}
+            {!isAuthorShape && (
+              <p className="author-ellipsis">
+                {itemAuthors?.join(", ") || "Unknown Author"}
+              </p>
             )}
           </div>
-        </div>
-        {notification.title && (
-          <Notification
-            notification={notification}
-            closeNotification={closeNotification}
-          />
-        )}
+        </Link>
       </div>
-    );
-  }
-};
 
-Shape.propTypes = {
-  shape: Proptypes.string.isRequired,
-  isAuthorName: Proptypes.bool,
-  book: Proptypes.object,
-  author: Proptypes.object,
+      {notif && (
+        <Notification
+          notification={notif}
+          closeNotification={() => setNotif(null)}
+        />
+      )}
+    </>
+  );
 };
-
-// ... (PropTypes remain unchanged)
 
 export default Shape;

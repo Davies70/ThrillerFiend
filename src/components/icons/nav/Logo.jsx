@@ -1,46 +1,41 @@
-import * as React from 'react';
-
 const Logo = (props) => (
   <svg
-    viewBox='0 0 400 85' // Adjusted viewBox to fit the content
-    fill='none'
-    xmlns='http://www.w3.org/2000/svg'
+    viewBox="0 0 220 40"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
     {...props}
-    height={60}
-    width={200}
+    height={40}
+    width={220}
+    style={{ display: "block" }}
   >
-    {/* Background */}
-
-    {/* Text "Thriller" */}
+    {/* "THRILLER" - Bold and crisp */}
     <text
-      x='45' // Adjusted x position
-      y='45' // Adjusted y position
-      fontFamily='Nosifer, sans-serif'
-      fontSize={28}
+      x="0"
+      y="28"
+      fontFamily='"Space Grotesk", sans-serif'
+      fontSize={22}
       fontWeight={800}
-      fill='#ffffff'
+      letterSpacing="0.05em"
+      fill="#e5e7eb"
     >
-      {'Thriller Fiend'}
+      THRILLER
     </text>
 
-    {/* Polygon */}
-    <polygon
-      points='180,20 240,60 220,60 230,80 170,40 200,40' // Adjusted points to make it larger
-      fill='#ff0000' // Changed fill color
-      opacity='0.3' // Reduced opacity to make it flashy
-    />
+    {/* Sleek Diagonal Slash Accent */}
+    <path d="M126 10 L118 32 L121 32 L129 10 Z" fill="#25d1da" />
 
-    {/* <text
-      x='270' // Adjusted x position
-      y='65' // Adjusted y position
-      // fontFamily='Creepster, system-ui'
-      fontFamily='Nosifer, sans-serif'
-      fontSize={38}
-      fontWeight={100}
-      fill='#ffffff'
+    {/* "FIEND" - Thinner weight for modern contrast */}
+    <text
+      x="136"
+      y="28"
+      fontFamily='"Space Grotesk", sans-serif'
+      fontSize={22}
+      fontWeight={300}
+      letterSpacing="0.02em"
+      fill="#9ca3af"
     >
-      {'Fiend'}
-    </text> */}
+      FIEND
+    </text>
   </svg>
 );
 

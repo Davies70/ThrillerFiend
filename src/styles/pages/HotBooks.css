@@ -1,0 +1,69 @@
+/* Container for full-page grids (Authors, Hot Books, etc.) */
+.grid-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px 80px 20px;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Premium Header Styling */
+.page-header {
+  margin-bottom: 48px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 24px;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary, #ffffff);
+  margin: 0 0 12px 0;
+  letter-spacing: -0.5px;
+}
+
+.page-header p {
+  color: var(--text-secondary, #9ca3af);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* THE MAGIC GRID
+  auto-fill automatically calculates how many columns can fit.
+  minmax(150px, 1fr) means columns won't shrink below 150px.
+*/
+.shape-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 40px 24px;
+  justify-items: center; /* Ensures the circular shapes stay dead-center in their cells */
+  align-items: start;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 600px) {
+  .shape-grid-container {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 32px 16px;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+  }
+
+  .page-header p {
+    font-size: 1rem;
+  }
+}
+
+/* Entrance Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
