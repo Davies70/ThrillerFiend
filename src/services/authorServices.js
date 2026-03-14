@@ -113,7 +113,7 @@ const getFollowedAuthors = async (userId) => {
 
     // Map the followed IDs back to our local author objects, then shape them
     const followedAuthors = followingIds
-      .map((id) => data.authors.find((author) => author.id === id))
+      .map((id) => authorsArray.find((author) => author.id === id)) // <-- FIXED: Use authorsArray here
       .filter(Boolean) // Removes any if an author was deleted from the local file
       .map(mapAuthorToShape);
 

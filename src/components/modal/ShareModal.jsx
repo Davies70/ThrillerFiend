@@ -27,10 +27,7 @@ const ShareModal = ({ closeModal, setNotification }) => {
   const copyLinkToClipboard = () => {
     navigator.clipboard.writeText(currentUrl).then(
       () => {
-        setNotification({
-          title: "Success",
-          message: "Link copied to clipboard",
-        });
+        setNotification("Success", "Link copied to clipboard!");
       },
       (err) => console.error("Failed to copy: ", err),
     );

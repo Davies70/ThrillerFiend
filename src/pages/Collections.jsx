@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthProvider";
 import { getBooksByStatus } from "../services/userServices";
+import authorServices from "../services/authorServices";
 import { Link, useNavigate } from "react-router-dom";
 import { Tabs, Tab, Box, Fade, Typography } from "@mui/material";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
@@ -18,8 +19,8 @@ const Collections = () => {
   const [activeTab, setActiveTab] = useState("haveRead");
   const scrollRef = useRef(null);
 
-  // 1. Parallel Data Fetching
-  const [haveRead, readLater, favorites] = useQueries({
+  // 1. Parallel Data Fetching (Look how clean this is now!)
+  const [haveRead, readLater, favorites, following] = useQueries({
     queries: [
       {
         queryKey: ["coll", user?.uid, "haveRead"],
@@ -36,42 +37,39 @@ const Collections = () => {
         queryFn: () => getBooksByStatus(user?.uid, "favorites"),
         enabled: !!user?.uid,
       },
+      {
+        queryKey: ["coll", user?.uid, "following"],
+        queryFn: () => authorServices.getFollowedAuthors(user?.uid),
+        enabled: !!user?.uid,
+      },
     ],
   });
 
-  // 2. Prepare Data (Definition before usage!)
+  // 2. Prepare Data
   const collections = {
     haveRead: haveRead.data || [],
     readLater: readLater.data || [],
     favorites: favorites.data || [],
+    following: following.data || [],
   };
 
   const activeBooks = collections[activeTab];
 
-  // 3. Security Redirect & Logging (Placed after definitions)
+  // 3. Security Redirect
   useEffect(() => {
     if (!authLoading && !user) navigate("/signin");
   }, [user, authLoading, navigate]);
-
-  useEffect(() => {
-    console.group("🚀 Library Watchdog");
-    console.log("Current Tab:", activeTab);
-    console.log("Books in current view:", activeBooks?.length);
-    console.log("Full Collection State:", collections);
-    console.groupEnd();
-  }, [activeTab, activeBooks, collections]);
 
   // 4. Loading States
   if (
     authLoading ||
     haveRead.isLoading ||
     readLater.isLoading ||
-    favorites.isLoading
+    favorites.isLoading ||
+    following.isLoading
   ) {
     return <Loader />;
   }
-
-  console.log("Rendering Collections with data:", collections);
 
   return (
     <div className="collections-page">
@@ -110,6 +108,10 @@ const Collections = () => {
             value="favorites"
             label={`Favorites (${collections.favorites.length})`}
           />
+          <Tab
+            value="following"
+            label={`Following (${collections.following.length})`}
+          />
         </Tabs>
       </Box>
 
@@ -127,11 +129,12 @@ const Collections = () => {
                 padding: "10px 0",
               }}
             >
-              {activeBooks.map((book, index) => (
+              {activeBooks.map((item, index) => (
                 <Shape
-                  shape="square"
-                  book={book}
-                  key={book.book_id || book.id || `lib-item-${index}`}
+                  // Dynamically assign circle for authors, square for books
+                  shape={activeTab === "following" ? "circle" : "square"}
+                  book={item} // Shape component universally translates 'book' into UI
+                  key={item.book_id || item.id || `lib-item-${index}`}
                 />
               ))}
             </div>
@@ -152,15 +155,26 @@ const Collections = () => {
             >
               It's quiet here...
             </Typography>
+
+            {/* Contextual Empty State Messages */}
             <Typography sx={{ color: "var(--text-secondary)" }}>
-              Add some thrills from the{" "}
-              <Link
-                to="/"
-                style={{ color: "var(--accent-blue)", textDecoration: "none" }}
-              >
-                Home
-              </Link>{" "}
-              page.
+              {activeTab === "following" ? (
+                <>You aren't following any authors yet.</>
+              ) : (
+                <>
+                  Add some thrills from the{" "}
+                  <Link
+                    to="/"
+                    style={{
+                      color: "var(--accent-blue)",
+                      textDecoration: "none",
+                    }}
+                  >
+                    Home
+                  </Link>{" "}
+                  page.
+                </>
+              )}
             </Typography>
           </div>
         </Fade>
