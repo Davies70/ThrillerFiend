@@ -6,7 +6,7 @@ import NoteCard from "../components/NoteCard";
 import "../styles/pages/Book.css";
 
 // MUI Components & Icons
-import { Rating, Button, Fade } from "@mui/material";
+import { Rating, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ShareIcon from "@mui/icons-material/Share";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -46,14 +46,13 @@ const Book = () => {
   const [noteText, setNoteText] = useState("");
   const [saveLoading, setSaveLoading] = useState(false);
 
-  const [previousRating, setPreviousRating] = useState(0);
   const [currentRating, setCurrentRating] = useState(0);
   const [ratingPrompt, setRatingPrompt] = useState("Rate this book");
 
   const [bookState, setBookState] = useState({
     haveRead: false,
     readLater: false,
-    favorite: false,
+    favorites: false,
   });
 
   const [isLibraryModalOpen, setIsLibraryModalOpen] = useState(false);
@@ -133,7 +132,6 @@ const Book = () => {
     e.preventDefault();
     ratingMutation.mutate();
     setCurrentRating(newValue);
-    setPreviousRating(currentRating);
 
     if (newValue === null) {
       triggerNotification("Success", "Rating removed.");
@@ -174,8 +172,6 @@ const Book = () => {
     pageCount,
     language,
     saleInfo,
-    price,
-    currencyCode,
     categories,
     authors,
   } = book || {};

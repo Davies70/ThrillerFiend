@@ -13,6 +13,7 @@ const BookScroller = ({
   isAuthorName = false,
   isControls = true,
   isDataAvailable = true,
+  savedBookIds,
 }) => {
   const contentScrollRef = useRef(null);
   const sectionRef = useRef(null);
@@ -61,7 +62,7 @@ const BookScroller = ({
             shape={shape}
             data={sanitizedData}
             isAuthorName={isAuthorName}
-            isDataAvailable={isDataAvailable}
+            savedBookIds={savedBookIds}
           />
         </section>
       </Fade>
@@ -78,6 +79,7 @@ BookScroller.propTypes = {
   isAuthorName: PropTypes.bool,
   isControls: PropTypes.bool,
   isDataAvailable: PropTypes.bool,
+  savedBookIds: PropTypes.instanceOf(Set),
 };
 
 export default BookScroller;

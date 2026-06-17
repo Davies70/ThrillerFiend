@@ -1,5 +1,26 @@
+.app-shell {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: clip;
+}
+
 #content {
   display: block;
   unicode-bidi: isolate;
+  min-height: calc(100vh - 80px);
   margin-top: 80px;
+}
+
+.section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 360px;
+}
+
+@media (max-width: 768px) {
+  #content {
+    margin-top: 72px;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
 }

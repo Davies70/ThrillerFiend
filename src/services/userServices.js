@@ -9,6 +9,28 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 
+const COLLECTION_STATUSES = new Set(["haveRead", "readLater", "favorites"]);
+
+const getBookId = (book) => book?.book_id || book?.id;
+
+const bookMatchesId = (book, bookId) => {
+  if (!book || !bookId) return false;
+  return typeof book === "string" ? book === bookId : getBookId(book) === bookId;
+};
+
+const normalizeStoredBook = (book) => {
+  const bookId = getBookId(book);
+  if (!bookId) return null;
+
+  return {
+    book_id: bookId,
+    title: book.title || "Unknown Title",
+    authors: Array.isArray(book.authors) ? book.authors : ["Unknown Author"],
+    book_image: book.book_image || "",
+    categories: Array.isArray(book.categories) ? book.categories : [],
+  };
+};
+
 /**
  * ==========================================
  * USER & AUTH UTILS
@@ -65,7 +87,7 @@ export const doesUserExist = async (id) => {
  * No API hydration needed = Instant Load.
  */
 export const getBooksByStatus = async (userId, status) => {
-  if (!userId) return [];
+  if (!userId || !COLLECTION_STATUSES.has(status)) return [];
   try {
     const userRef = doc(db, "users", userId);
     const userDoc = await getDoc(userRef);
@@ -85,34 +107,49 @@ export const getBooksByStatus = async (userId, status) => {
  * Automatically handles the 'Move' from readLater to haveRead.
  */
 export const addBookStatus = async (userId, book, status) => {
-  if (!userId || !book?.book_id) return;
+  if (!userId || !COLLECTION_STATUSES.has(status)) return;
 
-  // We only store essential data to keep document size small
-  const essentialBookData = {
-    book_id: book.book_id,
-    title: book.title,
-    authors: book.authors ?? ["Unknown Author"],
-    book_image: book.book_image ?? "",
-    categories: book.categories ?? [],
-  };
+  const bookId = getBookId(book);
+  const essentialBookData = normalizeStoredBook(book);
+  if (!essentialBookData) return;
 
   try {
     const userRef = doc(db, "users", userId);
     const userDoc = await getDoc(userRef);
-    if (!userDoc.exists()) return;
+    if (!userDoc.exists()) {
+      await setDoc(userRef, {
+        id: userId,
+        haveRead: [],
+        readLater: [],
+        favorites: [],
+        following: [],
+        notes: {},
+        ratings: {},
+        created: serverTimestamp(),
+      });
+    }
 
-    const data = userDoc.data();
+    const data = userDoc.exists() ? userDoc.data() : {};
     const updatePayload = {
       [status]: arrayUnion(essentialBookData),
     };
 
-    // LOGIC: If marking as read, we must remove the PREVIOUS object from readLater
+    // Keep the two reading-state shelves mutually exclusive.
     if (status === "haveRead") {
       const existingInReadLater = data.readLater?.find(
-        (b) => b.book_id === book.book_id,
+        (b) => bookMatchesId(b, bookId),
       );
       if (existingInReadLater) {
         updatePayload.readLater = arrayRemove(existingInReadLater);
+      }
+    }
+
+    if (status === "readLater") {
+      const existingInHaveRead = data.haveRead?.find((b) =>
+        bookMatchesId(b, bookId),
+      );
+      if (existingInHaveRead) {
+        updatePayload.haveRead = arrayRemove(existingInHaveRead);
       }
     }
 
@@ -126,7 +163,9 @@ export const addBookStatus = async (userId, book, status) => {
  * Removes a specific book object from a collection.
  */
 export const removeBookStatus = async (userId, book, status) => {
-  if (!userId || !book?.book_id) return;
+  if (!userId || !COLLECTION_STATUSES.has(status)) return;
+  const bookId = getBookId(book);
+  if (!bookId) return;
 
   try {
     const userRef = doc(db, "users", userId);
@@ -135,7 +174,7 @@ export const removeBookStatus = async (userId, book, status) => {
 
     const data = userDoc.data();
     // In Firestore, arrayRemove needs the EXACT object to work.
-    const targetObject = data[status]?.find((b) => b.book_id === book.book_id);
+    const targetObject = data[status]?.find((b) => bookMatchesId(b, bookId));
 
     if (targetObject) {
       await updateDoc(userRef, {
@@ -161,7 +200,7 @@ export const getBookStatus = async (userId, bookId) => {
       return { haveRead: false, readLater: false, favorites: false };
 
     const data = userDoc.data();
-    const isIn = (list) => list?.some((b) => b.book_id === bookId) ?? false;
+    const isIn = (list) => list?.some((b) => bookMatchesId(b, bookId)) ?? false;
 
     return {
       haveRead: isIn(data.haveRead),

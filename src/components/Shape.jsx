@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthProvider";
 import {
   getBookStatus,
@@ -11,22 +13,22 @@ import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 import Notification from "./Notification";
 import "../styles/Shape.css";
 
-const Shape = ({ book, shape = "square" }) => {
+const Shape = ({ book, shape = "square", savedBookIds }) => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [isSaved, setIsSaved] = useState(false);
   const [notif, setNotif] = useState(null);
   const [isShaking, setIsShaking] = useState(false);
-
-  if (!book) return null;
+  const safeBook = book || {};
 
   // 1. Let the 'shape' prop dictate the component's identity
   const isAuthorShape = shape === "circle";
 
   // 2. Resilient data extraction (works for both raw author objects and book objects)
-  const itemId = book.book_id || book.id;
-  const itemTitle = book.title || book.authorName;
-  const itemImage = book.book_image || book.coverPhoto;
-  const itemAuthors = book.authors;
+  const itemId = safeBook.book_id || safeBook.id;
+  const itemTitle = safeBook.title || safeBook.authorName;
+  const itemImage = safeBook.book_image || safeBook.coverPhoto;
+  const itemAuthors = safeBook.authors;
 
   // 3. Set dynamic routing based on the shape
   const linkDestination = isAuthorShape
@@ -36,13 +38,22 @@ const Shape = ({ book, shape = "square" }) => {
   useEffect(() => {
     const checkStatus = async () => {
       // Skip the Firestore check if this is rendering an author circle
-      if (user?.uid && itemId && !isAuthorShape) {
+      if (isAuthorShape) return;
+
+      if (savedBookIds) {
+        setIsSaved(savedBookIds.has(itemId));
+        return;
+      }
+
+      if (user?.uid && itemId) {
         const status = await getBookStatus(user.uid, itemId);
         setIsSaved(status.readLater || status.haveRead);
       }
     };
     checkStatus();
-  }, [user?.uid, itemId, isAuthorShape]);
+  }, [user?.uid, itemId, isAuthorShape, savedBookIds]);
+
+  if (!book) return null;
 
   const handleQuickAdd = async (e) => {
     e.preventDefault();
@@ -61,10 +72,10 @@ const Shape = ({ book, shape = "square" }) => {
 
     try {
       if (isSaved) {
-        await removeBookStatus(user.uid, book, "readLater");
+        await removeBookStatus(user.uid, safeBook, "readLater");
         setIsSaved(false);
       } else {
-        await addBookStatus(user.uid, book, "readLater");
+        await addBookStatus(user.uid, safeBook, "readLater");
         setIsSaved(true);
         setNotif({
           title: "Library Updated",
@@ -72,6 +83,8 @@ const Shape = ({ book, shape = "square" }) => {
         });
         setTimeout(() => setNotif(null), 3000);
       }
+
+      await queryClient.invalidateQueries({ queryKey: ["coll", user.uid] });
     } catch (err) {
       console.error("Quick Add Error:", err);
     }
@@ -131,6 +144,12 @@ const Shape = ({ book, shape = "square" }) => {
       )}
     </>
   );
+};
+
+Shape.propTypes = {
+  book: PropTypes.object,
+  shape: PropTypes.string,
+  savedBookIds: PropTypes.instanceOf(Set),
 };
 
 export default Shape;

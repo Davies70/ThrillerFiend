@@ -38,6 +38,7 @@ const Home = () => {
   const {
     haveReadCount,
     readLaterCount,
+    savedBookIds,
     loading: counterLoading,
   } = useReadingStatusCount(user?.uid);
 
@@ -70,8 +71,7 @@ const Home = () => {
   // 4. Safe Data Extraction
   const hotbooks = (hotBooksQuery.data || []).slice(0, 12);
   const bestSellers = bestSellerQuery.data || [];
-  console.log(hotAuthorsQuery.data, "fetched authors");
-  const hotAuthors = hotAuthorsQuery.data.slice(0, 12) || [];
+  const hotAuthors = (hotAuthorsQuery.data || []).slice(0, 12);
 
   return (
     // REMOVED: MUI <Fade> wrapper to prevent IntersectionObserver conflicts
@@ -120,6 +120,7 @@ const Home = () => {
         navLink="/hotbooks"
         isControls={true}
         isDataAvailable={hotbooks.length > 0}
+        savedBookIds={savedBookIds}
       />
 
       {/* Row 4: Large Grid Bestsellers */}

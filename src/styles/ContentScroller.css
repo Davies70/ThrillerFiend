@@ -7,12 +7,13 @@
 
 .content-scroll {
   display: flex;
-  gap: 16px;
-  padding: 16px 24px;
+  gap: clamp(12px, 2vw, 18px);
+  padding: 16px 24px 20px;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
+  overscroll-behavior-inline: contain;
   -webkit-overflow-scrolling: touch;
 
   /* Hide scrollbar for a clean look */
@@ -39,7 +40,8 @@
 
 @media (max-width: 768px) {
   .content-scroll {
-    padding: 16px;
+    padding: 14px 16px 18px;
     gap: 12px;
+    scroll-padding-inline: 16px;
   }
 }

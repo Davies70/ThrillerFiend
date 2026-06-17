@@ -149,9 +149,9 @@ const Nav = () => {
         <div className="nav-content">
           {/* LOGOS */}
           <div className="nav-brand">
-            <Link to={"/"} id="logo">
-              <Logo />
-            </Link>
+              <Link to={"/"} id="logo">
+                <Logo />
+              </Link>
             <Link to={"/"} id="logo-small">
               <LogoSmall />
             </Link>
@@ -209,6 +209,7 @@ const Nav = () => {
                   <button
                     type="button"
                     className="desktop-cancel"
+                    aria-label="Clear search"
                     onClick={() => {
                       setSearchQuery("");
                       setSubmittedQuery("");
@@ -222,6 +223,7 @@ const Nav = () => {
                   className="desktop-search-icon"
                   type="submit"
                   tabIndex="-1"
+                  aria-label="Search books"
                 >
                   <SearchIcon />
                 </button>
@@ -262,6 +264,7 @@ const Nav = () => {
                     onClick={handleSignOut}
                     className="profile-button"
                     title="Sign Out"
+                    aria-label="Sign out"
                   >
                     <LogoutIcon />
                   </button>
@@ -275,12 +278,17 @@ const Nav = () => {
 
             {/* 3. MOBILE TOP RIGHT ICONS */}
             <div className="mobile-top-actions hidden-on-desktop">
-              <button className="mobile-action-btn" onClick={openMobileSearch}>
+              <button
+                className="mobile-action-btn"
+                onClick={openMobileSearch}
+                aria-label="Open search"
+              >
                 <SearchIcon />
               </button>
               <button
                 className="mobile-action-btn"
                 onClick={() => setIsMobileMenuOpen(true)}
+                aria-label="Open menu"
               >
                 <MenuIcon />
               </button>
@@ -335,6 +343,7 @@ const Nav = () => {
                   <button
                     type="button"
                     className="mobile-overlay-clear"
+                    aria-label="Clear search"
                     onClick={() => {
                       setSearchQuery("");
                       setSubmittedQuery("");
@@ -345,7 +354,11 @@ const Nav = () => {
                     <CancelIcon fontSize="small" />
                   </button>
                 )}
-                <button type="submit" className="mobile-overlay-submit">
+                <button
+                  type="submit"
+                  className="mobile-overlay-submit"
+                  aria-label="Search books"
+                >
                   <SearchIcon />
                 </button>
               </div>
@@ -379,6 +392,7 @@ const Nav = () => {
               <button
                 className="mobile-menu-close"
                 onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close menu"
               >
                 <CloseIcon />
               </button>

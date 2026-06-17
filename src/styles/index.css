@@ -9,6 +9,7 @@
   --accent-blue: #25d1da;
   --hover-blue: #5ce3ed;
   --accent-red: #ef4444;
+  --focus-ring: 0 0 0 3px rgba(37, 209, 218, 0.32);
 
   /* Borders & Overlays */
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -59,6 +60,18 @@ button {
   cursor: pointer;
   outline: none;
   transition: var(--transition-smooth);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+img {
+  display: block;
+  max-width: 100%;
 }
 
 /* Modern Scrollbar */

@@ -8,7 +8,7 @@ const GridContentScroller = ({ contentScrollRef, data }) => {
     <div className='grid-wrapper'>
       <div className='content-scroll-grid' ref={contentScrollRef}>
         {data.map((book, i) => (
-          <GridItem key={i} book={book} />
+          <GridItem key={book?.book_id || i} book={book} />
         ))}
       </div>
     </div>

@@ -6,7 +6,7 @@ const ContentScroller = ({
   contentScrollRef,
   shape,
   data,
-  isDataAvailable,
+  savedBookIds,
 }) => {
   if (!data || data.length === 0) {
     return (
@@ -26,6 +26,7 @@ const ContentScroller = ({
             shape={shape}
             // Pass the raw item; the Shape component does the translation!
             book={item}
+            savedBookIds={savedBookIds}
           />
         ))}
       </div>
@@ -40,7 +41,7 @@ ContentScroller.propTypes = {
   ]).isRequired,
   shape: PropTypes.string.isRequired,
   data: PropTypes.array,
-  isDataAvailable: PropTypes.bool,
+  savedBookIds: PropTypes.instanceOf(Set),
 };
 
 export default ContentScroller;

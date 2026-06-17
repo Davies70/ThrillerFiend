@@ -3,17 +3,9 @@ import PropTypes from 'prop-types';
 
 const Layout = ({ children }) => {
   return (
-    <div
-      className='container'
-      style={{
-        position: 'relative',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        overflow: 'hidden',
-      }}
-    >
+    <div className="app-shell">
       <Nav />
-      <div id='content'>{children}</div>
+      <main id="content">{children}</main>
     </div>
   );
 };

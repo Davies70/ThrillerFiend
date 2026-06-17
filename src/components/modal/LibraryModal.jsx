@@ -1,5 +1,6 @@
 import OutsideClickHandler from "../OutsideClickHandler";
 import { Button, Typography, Box } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import TurnedInIcon from "@mui/icons-material/TurnedIn";
@@ -18,6 +19,8 @@ const LibraryModal = ({
   setBookState,
   redirectToLogIn,
 }) => {
+  const queryClient = useQueryClient();
+
   const toggleState = async (stateKey) => {
     // 1. Guard for logged-out users
     if (!userId) {
@@ -27,6 +30,8 @@ const LibraryModal = ({
 
     try {
       // 2. Logic uses the full 'book' object for Firestore persistence
+      const nextValue = !bookState[stateKey];
+
       if (bookState[stateKey]) {
         // Service now finds the object in the array and removes it
         await removeBookStatus(userId, book, stateKey);
@@ -36,7 +41,14 @@ const LibraryModal = ({
       }
 
       // 3. Update local UI state
-      setBookState((prev) => ({ ...prev, [stateKey]: !prev[stateKey] }));
+      setBookState((prev) => ({
+        ...prev,
+        [stateKey]: nextValue,
+        ...(stateKey === "haveRead" && nextValue ? { readLater: false } : {}),
+        ...(stateKey === "readLater" && nextValue ? { haveRead: false } : {}),
+      }));
+
+      await queryClient.invalidateQueries({ queryKey: ["coll", userId] });
     } catch (err) {
       console.error(`LibraryModal Error [${stateKey}]:`, err);
     }
@@ -90,7 +102,6 @@ const LibraryModal = ({
               sx={buttonStyle(bookState.haveRead)}
               fullWidth
               onClick={() => toggleState("haveRead")}
-              disabled={bookState.readLater}
             >
               <Typography variant="body2" sx={{ fontWeight: 600 }}>
                 {bookState.haveRead ? 'In "Have Read"' : "Mark as Read"}
@@ -104,7 +115,6 @@ const LibraryModal = ({
               sx={buttonStyle(bookState.readLater)}
               fullWidth
               onClick={() => toggleState("readLater")}
-              disabled={bookState.haveRead}
             >
               <Typography variant="body2" sx={{ fontWeight: 600 }}>
                 {bookState.readLater ? 'In "Read Later"' : "Want to Read"}
